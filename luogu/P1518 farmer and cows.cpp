@@ -1,4 +1,5 @@
 // P1518 240301
+// I finished the code before learning graph theory.
 #include <bits/stdc++.h>
 #define endl '\n'
 using namespace std;
