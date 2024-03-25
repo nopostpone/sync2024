@@ -1,5 +1,5 @@
 // B3944
-// A simple maintain method
+// A simple maintaining method
 // Maintain the data with modulo in every cycle
 #include <iostream>
 #include <bits/stdc++.h>
