@@ -1,8 +1,6 @@
 // P1080
 // 国王游戏
 // 从相邻两项交换前后的不同 推导贪心的条件
-// 还要用高精度，很麻烦，这里没写
-#include <iostream>
 #include <bits/stdc++.h>
 using namespace std;
 #define endl "\n"
@@ -11,12 +9,10 @@ using ll = long long;
 const ll inf = pow(2, 31) - 1;
 const int N = 1e6 + 100;
 
-string res;
-
 struct ren
 {
     int l, r;
-    string money;
+    double m = 0;
     bool operator<(const ren &rhs) const
     {
         return max(rhs.r, l * r) < max(r, rhs.l * rhs.r);
@@ -30,6 +26,15 @@ void solve()
     for (int i = 0; i <= n; i++)
         cin >> a[i].l >> a[i].r;
     sort(a + 1, a + 1 + n);
+    a[1].m = (double)a[0].l / a[1].r;
+    for (int i = 2; i <= n; i++)
+        a[i].m = (a[i - 1].m) * a[i - 1].r * a[i - 1].l / (double)(a[i].r);
+    // for (int i = 0; i <= n; i++)
+    //     cout << i space a[i].m << endl;
+    double res;
+    for (int i = 1; i <= n; i++)
+        res = max(a[i - 1].m, a[i].m);
+    cout << ll(res);
 }
 
 int main()
