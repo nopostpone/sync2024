@@ -1,4 +1,5 @@
 // luogu P10056 240209
+// https://www.luogu.com.cn/problem/P10056
 #include <bits/stdc++.h>
 using namespace std;
 using ll = long long;

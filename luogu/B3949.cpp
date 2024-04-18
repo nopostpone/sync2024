@@ -1,4 +1,5 @@
 // B3949
+// https://www.luogu.com.cn/problem/B3949
 // 给定10^n的范围，找数位和不大于k的数有多少
 // 初见的时候思路太混沌了，越急越做不出来= =
 #include <iostream>

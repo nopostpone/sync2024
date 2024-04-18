@@ -1,4 +1,5 @@
 // P5736 质数筛
+// https://www.luogu.com.cn/problem/P5736
 // 输入 n 个不大于 1e5 的正整数。要求全部储存在数组中，去除掉不是质数的数字，依次输出剩余的质数。
 // 埃氏筛（Eratosthenes）
 #include <bits/stdc++.h>

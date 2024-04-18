@@ -1,4 +1,5 @@
 # P1080 国王游戏
+# https://www.luogu.com.cn/problem/
 # 用py3可以不用手写高精度
 import sys
 

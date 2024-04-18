@@ -1,4 +1,5 @@
 // luogu P1152 240209
+// https://www.luogu.com.cn/problem/P1152
 #include <bits/stdc++.h>
 using namespace std;
 const int N = 1000;

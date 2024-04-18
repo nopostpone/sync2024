@@ -1,4 +1,5 @@
-//from https://blog.csdn.net/eliyou/article/details/124812798
+// https://www.luogu.com.cn/problem/P2482
+// from https://blog.csdn.net/eliyou/article/details/124812798
 #include <bits/stdc++.h>
 using namespace std;
 

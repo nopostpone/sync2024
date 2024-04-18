@@ -1,11 +1,10 @@
 #include <bits/stdc++.h>
-#define endl '\n'
 using namespace std;
+#define endl "\n"
+#define qwq (cout << "qwq" << endl)
 using ll = long long;
-
-const int N = 1e5 + 10;
-// priority_queue<ll, vector<ll>, greater<ll>> pq;
-// ll x;
+const ll inf = 0x3f3f3f3f;
+const int N = 1e6 + 100; // CUSTOMIZE
 
 void solve()
 {
