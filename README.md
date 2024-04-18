@@ -8,4 +8,6 @@
 存放在[洛谷](https://www.luogu.com.cn/)刷题的代码
 每份文件头部都有该题的网址，方便快速访问
 
-![img](https://w.wallhaven.cc/full/7p/wallhaven-7px1je.jpg)
+<br>
+
+<center><img src='/pic/wallhaven-3lykgv_1080x1920.png' height = 50% width = 50%></center>
