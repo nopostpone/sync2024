@@ -10,7 +10,3 @@
 
 ### note
 存放笔记
-
-<br>
-
-<center><img src='/pic/wallhaven-3lykgv_1080x1920.png' height = 50% width = 50%></center>
