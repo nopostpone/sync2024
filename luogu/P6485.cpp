@@ -8,15 +8,15 @@ const ll inf = 0x3f3f3f3f;
 const int N = 1e6 + 100;
 
 int num[6];
-double p, res;
+long double p, res;
 int l, r;
 
-double akiba(int x)
+double tempres(int x)
 {
     num[x]++;
     // for (int i = 1; i <= 5; i++)
     //     cout << num[i] << " \n"[i == 5];
-    double tmpres = 0;
+    long double tmpres = 0;
     double time = 0;
     for (int i = 1; i <= 5; i++)
         tmpres += (num[i] * i), time += num[i];
@@ -26,9 +26,9 @@ double akiba(int x)
     return tmpres;
 }
 
-void dfs()
+void __()
 {
-    double tl = akiba(l), tr = akiba(r);
+    double tl = tempres(l), tr = tempres(r);
     if (tr - p >= p - tl)
         num[l]++, res = tl;
     else
@@ -40,7 +40,7 @@ void dfs()
         exit(0);
     }
     // cout << res << endl;
-    dfs();
+    __();
 }
 
 void solve()
@@ -62,7 +62,7 @@ void solve()
         }
     l = int(p), r = l + 1;
     // cout << l << ' ' << r << endl;
-    dfs();
+    __();
 }
 
 int main()
