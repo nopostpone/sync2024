@@ -1,5 +1,6 @@
 // luogu P1901
 // https://www.luogu.com.cn/problem/P1901
+// 单调栈板子题
 #include <bits/stdc++.h>
 using namespace std;
 using ll = long long;
