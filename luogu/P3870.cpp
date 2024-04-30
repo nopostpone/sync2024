@@ -22,14 +22,6 @@ inline int read()
     }
     return x * f;
 }
-void write(int x)
-{
-    if (x < 0)
-        putchar('-'), x = -x;
-    if (x >= 10)
-        write(x / 10);
-    putchar(x % 10 + '0');
-}
 
 int n, m;
 bitset<N> a;
@@ -88,7 +80,7 @@ void solve()
         co.push_back(caozuo{read(), read(), read()});
     for (vector<caozuo>::iterator i = co.begin(); i != co.end(); i++)
         if ((*i).isQuery)
-            write(getsum((*i).l, (*i).r, 1, n, 1)), putchar(endl);
+            cout << getsum((*i).l, (*i).r, 1, n, 1) << endl;
         else
             update((*i).l, (*i).r, 1, n, 1);
 }
