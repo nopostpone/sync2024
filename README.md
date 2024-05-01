@@ -4,9 +4,12 @@
 
 ## 文件夹说明
 
-### luogu 
-存放在[洛谷](https://www.luogu.com.cn/)刷题的代码
+### luogu, LOJ, ...
+存放在各类OJ网站刷题的代码
+
 每份文件头部都有该题的网址，方便快速访问
+- [洛谷](https://www.luogu.com.cn/)
+- [LibreOJ](https://loj.ac/)
 
 ### note
 存放笔记
