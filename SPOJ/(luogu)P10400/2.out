@@ -1,0 +1,10 @@
+9
+dec 1
+dec 1
+dec 1
+assign 2 1
+dec 2
+new 3
+iftry 2 goto 5
+dec 1
+ifneq 1 4 goto 4

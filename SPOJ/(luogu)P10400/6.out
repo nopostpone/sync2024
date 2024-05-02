@@ -1,0 +1,30 @@
+29
+assign 2 1
+dec 2
+dec 2
+assign 3 2
+dec 2
+dec 2
+dec 2
+assign 4 1
+assign 5 1
+assign 6 1
+assign 7 1
+assign 8 1
+assign 9 1
+assign 10 1
+new 11
+dec 10
+ifneq 10 2 goto 15
+dec 9
+ifneq 9 2 goto 14
+dec 8
+ifneq 8 2 goto 13
+dec 7
+ifneq 7 3 goto 12
+dec 6
+ifneq 6 3 goto 11
+dec 5
+ifneq 5 3 goto 10
+dec 4
+ifneq 4 3 goto 9

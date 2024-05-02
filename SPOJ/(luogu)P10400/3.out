@@ -1,0 +1,35 @@
+34
+dec 2
+dec 2
+dec 3
+dec 3
+dec 3
+dec 5
+dec 5
+dec 5
+dec 5
+dec 5
+dec 6
+assign 7 100
+dec 7
+assign 8 100
+dec 8
+assign 9 100
+dec 9
+assign 10 100
+dec 10
+assign 11 100
+dec 11
+dec 4
+ifneq 5 11 goto 21
+ifneq 5 10 goto 19
+ifneq 3 9 goto 17
+ifneq 2 8 goto 15
+ifneq 2 7 goto 13
+ifneq 2 6 goto 11
+dec 1
+dec 12
+ifneq 1 100 goto 29
+new 101
+dec 12
+ifneq 4 12 goto 32
