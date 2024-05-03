@@ -1,5 +1,7 @@
-// This is an interesting little game that I made when I first learned C++ classes in the summer of 2023.
-// I'll probably refactor it once I get more familiar with c++.
+// 控制台井字棋游戏：方向键控制下棋位置，enter键下棋。
+// 刚学cpp类的时候心血来潮搞的，花了好长时间才做出来的四不像。
+// 虽然做得很烂，但有一说一，当时的我真的好有耐心，竟然可以忍受把所有东西都写在一个文件里（世称：单文件战神），而且还能写出来。
+// 以后有空了会重构，还是用控制台做UI，争取多点功能。
 
 // ONLY UTF-8
 #include <iostream>
