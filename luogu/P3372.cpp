@@ -94,8 +94,8 @@ void solve()
             co.push_back(caozuo{true, read(), read(), 0});
         else
             co.push_back(caozuo{false, read(), read(), read()});
-    for (vector<caozuo>::iterator i = co.begin(); i != co.end(); i++)
-        if ((*i).isQuery)
+    for (auto i = co.begin(); i != co.end(); i++)
+        if (i->isQuery)
             cout << getsum((*i).l, (*i).r, 1, n, 1) << endl;
         else
             update((*i).l, (*i).r, (*i).k, 1, n, 1);
