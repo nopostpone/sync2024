@@ -1,5 +1,5 @@
 // B3944
-// https://www.luogu.com.cn/problem/P3944
+// https://www.luogu.com.cn/problem/B3944
 // A simple maintaining method
 // Maintain the data with modulo in every cycle
 #include <iostream>
