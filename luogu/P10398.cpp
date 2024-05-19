@@ -1,5 +1,5 @@
 // https://www.luogu.com.cn/problem/P10398
-// 只能拿subtask#1
+// 思路：https://www.luogu.com.cn/article/bix5nmak
 #include <bits/stdc++.h>
 using namespace std;
 #define endl "\n"
@@ -40,23 +40,27 @@ void write(ll x)
 int n, a[N];
 string fst = "Alice", lst = "Bob";
 
+bool ck(int x, int y)
+{
+    if (x == 1)
+        return 1;
+    if (x == 2)
+        return !((a[n - 1] - y) & 1);
+    if (a[n - x + 1] - y != 1)
+        return !((x + a[n - 1] - y) & 1);
+    return !ck(x - 1, y + 1) || !ck(x - 1, y);
+}
+
 void solve()
 {
     n = read();
     for (int i = 1; i <= n; i++)
         a[i] = read();
-    if (n == 1)
+    sort(a + 1, a + n + 1);
+    if (ck(n, 0))
         cout << fst << endl;
-    else if (n == 2)
-    {
-        sort(a + 1, a + n + 1);
-        if (a[1] & 1)
-            cout << lst << endl;
-        else
-            cout << fst << endl;
-    }
     else
-        cout << "?" << endl;
+        cout << lst << endl;
 }
 
 int main()
