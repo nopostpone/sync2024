@@ -1,4 +1,5 @@
 // https://www.luogu.com.cn/problem/P6485
+// 把浮点全变成整型做
 #include <bits/stdc++.h>
 using namespace std;
 #define endl "\n"
@@ -8,61 +9,27 @@ const ll inf = 0x3f3f3f3f;
 const int N = 1e6 + 100;
 
 int num[6];
-long double p, res;
 int l, r;
-
-double tempres(int x)
-{
-    num[x]++;
-    // for (int i = 1; i <= 5; i++)
-    //     cout << num[i] << " \n"[i == 5];
-    long double tmpres = 0;
-    double time = 0;
-    for (int i = 1; i <= 5; i++)
-        tmpres += (num[i] * i), time += num[i];
-    tmpres /= time;
-    // cout << tmpres << ' ' << time << endl;
-    num[x]--;
-    return tmpres;
-}
-
-void __()
-{
-    double tl = tempres(l), tr = tempres(r);
-    if (tr - p >= p - tl)
-        num[l]++, res = tl;
-    else
-        num[r]++, res = tr;
-    if (res == p)
-    {
-        for (int i = 1; i <= 5; i++)
-            cout << num[i] << ' ';
-        exit(0);
-    }
-    // cout << res << endl;
-    __();
-}
+double p;
 
 void solve()
 {
     cin >> p;
-    for (int i = 1; i <= 5; i++)
-        if (p == i)
-        {
-            num[i]++;
-            for (int j = 1; j <= 5; j++)
-                cout << num[j] << ' ';
-            return;
-        }
-        else if (p < 1 or p > 5)
-        {
-            for (int j = 1; j <= 5; j++)
-                cout << num[j] << ' ';
-            return;
-        }
     l = int(p), r = l + 1;
-    // cout << l << ' ' << r << endl;
-    __();
+    double res = 0, sum = 0;
+    while (1)
+    {
+        if (res == sum * p and res!=0 and sum!=0)
+            break;
+        sum++;
+        double a = abs(res - sum * p + l), b = abs(res - sum * p + r);
+        if (a <= b)
+            num[l]++, res += l;
+        else
+            num[r]++, res += r;
+    }
+    for (int i = 1; i <= 5; i++)
+        cout << num[i] << ' ';
 }
 
 int main()

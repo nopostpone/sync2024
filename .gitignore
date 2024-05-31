@@ -2,3 +2,4 @@
 .vs
 **/.cph
 *.exe
+/luogu/_temp.cpp
