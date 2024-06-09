@@ -5,10 +5,7 @@ using namespace std;
 using ll = long long;
 #define endl '\n'
 #define enter putchar('\n')
-#define lst pos << 1
-#define rst pos << 1 | 1
 const int N = 1e5 + 100;
-const int inf = 0x3f3f3f3f;
 
 inline char nc()
 {
