@@ -14,6 +14,10 @@
 每份文件头部都有该题的网址，方便快速访问
 - [洛谷](https://www.luogu.com.cn/)
 - [LibreOJ](https://loj.ac/)
+- [CF](https://codeforces.com/)
+
+### Special
+特殊形式的提交（如提交文件）
 
 ### note
 存放笔记
