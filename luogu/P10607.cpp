@@ -1,9 +1,10 @@
+// https://www.luogu.com.cn/problem/P10607
 #include <bits/stdc++.h>
 using namespace std;
 using ll = long long;
 #define endl '\n'
 #define enter putchar('\n')
-const int N = 1e5 + 100;
+const int N = 2e5 + 100;
 
 inline char nc()
 {
@@ -36,9 +37,23 @@ void write(ll x)
     putchar(x % 10 + '0');
 }
 
+struct node
+{
+    int x, y, k;
+} q[N];
+
+bool cmp1(const node &a, const node &b)
+{
+    return a.x > b.x;
+}
+
+bool cmp2(const node &a, const node &b)
+{
+    return a.y > b.y;
+}
+
 void solve()
 {
-  
 }
 
 int main()
