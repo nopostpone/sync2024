@@ -6,40 +6,9 @@ using ll = long long;
 #define enter putchar('\n')
 const int N = 1e5 + 100;
 
-inline char nc()
-{
-    static char buf[100000], *p1 = buf, *p2 = buf;
-    return p1 == p2 && (p2 = (p1 = buf) + fread(buf, 1, 100000, stdin), p1 == p2) ? EOF : *p1++;
-}
-inline ll read()
-{
-    int x = 0, f = 1;
-    char ch = nc();
-    while (ch < '0' || ch > '9')
-    {
-        if (ch == '-')
-            f = -1;
-        ch = nc();
-    }
-    while (ch >= '0' && ch <= '9')
-    {
-        x = x * 10 + (ch ^ 48);
-        ch = nc();
-    }
-    return x * f;
-}
-void write(ll x)
-{
-    if (x < 0)
-        putchar('-'), x = -x;
-    if (x >= 10)
-        write(x / 10);
-    putchar(x % 10 + '0');
-}
-
 string a[N];
 
-string s3(int col)
+string _10_27(int col)
 {
     string res = "";
     int wi[10] = {0};
@@ -64,7 +33,7 @@ string s3(int col)
     return res;
 }
 
-int s4(string str)
+int _27_10(string str)
 {
     int res = 0;
     int len = str.length();
@@ -102,7 +71,7 @@ void s2(string &str)
             cc *= 10;
             cc += (*it) ^ 48;
         }
-        cout << s3(cc) << rr << endl;
+        cout << _10_27(cc) << rr << endl;
     }
     else
     {
@@ -115,7 +84,7 @@ void s2(string &str)
                 t2 = tmp.substr(i, tmp.length());
                 break;
             }
-        cout << "R" << t2 << "C" << s4(t1) << endl;
+        cout << "R" << t2 << "C" << _27_10(t1) << endl;
     }
 }
 
