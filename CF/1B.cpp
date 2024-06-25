@@ -46,11 +46,20 @@ string s3(int col)
     int i = 1;
     while (col)
     {
-        wi[i++] = col % 27;
-        col /= 27;
+        if (col % 26 == 0)
+        {
+            wi[i] = 26;
+            col = col / 26 - 1;
+        }
+        else
+        {
+            wi[i] = col % 26;
+            col /= 26;
+        }
+        i++;
     }
     i--;
-    for (int j = 1; j <= i; j++)
+    for (int j = i; j; j--)
         res.push_back(char(wi[j] + 64));
     return res;
 }
