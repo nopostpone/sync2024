@@ -1,8 +1,7 @@
+// https://www.luogu.com.cn/problem/P1451
 #include <bits/stdc++.h>
 using namespace std;
-using ll = long long;
 #define endl '\n'
-#define enter putchar('\n')
 const int N = 1e2 + 100;
 
 int n, m;
@@ -48,10 +47,6 @@ void solve()
             cin >> ch;
             mp[i][j] = (ch ^ 48) == 0 ? 0 : 1;
         }
-    // for (int i = 1; i <= n; i++)
-    // for (int j = 1; j <= m; j++)
-    //     cout<<mp[i][j]<<" \n"[j==m];
-
     int idx = 1;
     for (int i = 1; i <= n; i++)
         for (int j = 1; j <= m; j++)
