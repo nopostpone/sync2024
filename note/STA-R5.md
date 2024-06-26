@@ -1,21 +1,21 @@
-# [『STAOI』G - Round 5各题题解](https://www.luogu.com.cn/contest/156888)
+# [『STAOI』G - Round 5](https://www.luogu.com.cn/contest/156888)
 
-*T2T3T4施工中*
+*C太难，这里就不看了（）*
 
 参加的第一个比较常规(?)的IOI模拟赛，四道题只做出来送分的第一题和第四题（此题）的一个送分的任务点，喜提117分。但题目都看过一遍，感觉挺有意思的（尤其是T4），遂记录在此文档。
 
 *（希望下次能起码多做一道题= =）*
 
 
-## [T1 5k.sync.closer](https://www.luogu.com.cn/problem/P10397)
-送的
+## [A 5k.sync.closer](https://www.luogu.com.cn/problem/P10397)
+没什么好说的，太简单了。
 
-## [T2 Remove and Decrease Game](https://www.luogu.com.cn/problem/P10398)
+## [B Remove and Decrease Game](https://www.luogu.com.cn/problem/P10398)
 涉及博弈论，我完全推不出来，蒙的也全是错的（; w ;）
-## [T3 ReLyna](https://www.luogu.com.cn/problem/P10399)
-题看不懂（不学习的后果.jpg）
-## [T4 消失的计算机](https://www.luogu.com.cn/problem/P10400)
->*[[官方题解](https://www.luogu.com/article/wcb68jhu)]*
+## [C ReLyna](https://www.luogu.com.cn/problem/P10399)
+题看都看不懂，就不写题解了。
+## [D 消失的计算机](https://www.luogu.com.cn/problem/P10400)
+>*[[题解页面](https://www.luogu.com.cn/problem/solution/P10400)]*
 >*[[参考代码](/SPOJ/(luogu)P10400)]*
 ### 题意：
 
@@ -46,7 +46,7 @@
 
 **使用的语句不超过 $1000$ 条语句，程序实际语句运行次数不得超过 $10^5$ ，题目保证$5\leq n\leq 100$ 。**
 
-### 解（个人思路）：
+### 思路：
 
 一眼望过去，4肯定是最简单的，仅需要一条new操作就行。
 
@@ -80,6 +80,179 @@ if neq 5 3 goto 6
 
 因此，形似上述代码可以让n增大 $a\cdot b$ ，而 $a$ 和 $b$ 的值可以由我们操控。
 
-再扫一眼题目，第六个任务就有思路了： $2000=2^4\cdot 5^3$ ，套七个循环就能解决问题。
+掌握这一逻辑之后，就可以完成剩下的任务了。
 
-<!-- 再看看剩下的任务，好像每个都不简单 -->
+### code:
+$task1: 2n=n+n$
+```
+3
+dec 1
+new 2
+ifneq 1 3 goto 1
+```
+
+$task2: \binom n2 = \sum_{k=1}^nk = n+\sum_{k=1}^{n-2}k$
+```
+9
+dec 1
+dec 1
+dec 1
+assign 2 1
+dec 2
+new 3
+iftry 2 goto 5
+dec 1
+ifneq 1 4 goto 4
+```
+
+$task3: 600=n+(600-n)=n+(24*25-n)$
+```
+35
+dec 2
+dec 2
+dec 2
+dec 2
+dec 2
+dec 2
+dec 2
+dec 2
+dec 2
+dec 2
+dec 2
+dec 2
+dec 2
+dec 2
+dec 2
+dec 2
+dec 2
+dec 2
+dec 2
+dec 2
+dec 2
+dec 2
+dec 2
+dec 2
+assign 3 2
+dec 3
+dec 4
+assign 5 6
+dec 5
+dec 1
+ifneq 5 3 goto 29
+ifneq 4 2 goto 27
+dec 6
+new 8
+ifneq 1 6 goto 33
+```
+
+$task5: n^2-1= (n-1)(n+1)=n+(n+1)(n-2)+1$
+```
+10
+assign 2 1
+dec 2
+dec 2
+new 4
+dec 1
+assign 3 2
+dec 3
+new 4
+ifneq 3 5 goto 7
+iftry 1 goto 5
+```
+
+$task6:n+2000=n+2\cdot 10\cdot 10\cdot 10$
+```
+24
+dec 2
+dec 2
+dec 2
+dec 2
+dec 2
+dec 2
+dec 2
+dec 2
+dec 2
+dec 2
+dec 3
+dec 3
+dec 4
+assign 5 8
+dec 5
+assign 6 8
+dec 6
+assign 7 8
+dec 7
+new 9
+ifneq 7 2 goto 19
+ifneq 6 2 goto 17
+ifneq 5 2 goto 15
+ifneq 3 4 goto 13
+```
+
+$task7:$ 将 p1 一直减去2的幂次，若为非负则倍增，次数加一。
+```
+13
+assign 2 1
+dec 3
+dec 3
+dec 2
+dec 2
+new 7
+assign 4 3
+assign 5 6
+dec 5
+dec 3
+dec 2
+ifneq 5 4 goto 9
+iftry 2 goto 6
+```
+
+$task8:$
+```
+6
+dec 1
+dec 1
+iftry 1 goto 1
+dec 2
+new 3
+ifeq 1 2 goto 4
+```
+
+$task9:$
+```
+18
+dec 1
+dec 1
+dec 1
+dec 1
+assign 2 1
+dec 2
+iftry 2 goto 1
+dec 3
+dec 3
+assign 4 3
+dec 4
+dec 4
+new 5
+new 5
+dec 1
+dec 1
+ifeq 1 4 goto 14
+ifeq 1 3 goto 13
+```
+
+$task10:$
+```
+11
+assign 2 1
+dec 1
+new 4
+new 4
+new 4
+ifneq 1 3 goto 2
+dec 2
+dec 2
+dec 2
+new 4
+iftry 2 goto 7
+```
