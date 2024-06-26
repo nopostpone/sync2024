@@ -1,3 +1,5 @@
+// https://codeforces.com/contest/276/problem/B
+// 贪心 博弈论
 #include <bits/stdc++.h>
 using namespace std;
 using ll = long long;
