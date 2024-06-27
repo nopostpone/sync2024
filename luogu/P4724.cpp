@@ -47,12 +47,6 @@ face sta[100000],fc[100000];
 int n,m,cnt;
 bool vis[N][N];
 
-void db()
-{
-    for(int i=0;i<n;i++)for(int j=0;j<n;j++)
-    std::cout<<vis[i][j]<<" \n"[j==n-1];
-}
-
 void solve()
 {   
     cin>>n;
