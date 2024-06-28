@@ -2,13 +2,13 @@
 
 搜索：dfs,bfs
 
-存图方式
+存图方式：邻接表，链式前向星，（邻接矩阵复杂度太大，基本不用）
 
-# 树的遍历（邻接表）：
+## 树的遍历（邻接表）：
 ```cpp
 struct edge
 {
-    ...
+    ...//存出点和边权以及其他的东西
 };
 vector<edge> g;
 
@@ -26,10 +26,10 @@ void dfs(int u, int fa)
 ```cpp
 void dfs(int u, int fa)
 {
-    dep[u]==dep[fa]+1;
+    dep[u]=dep[fa]+1;
     for(auto &i: g[u])
     {
-        if(i.v==fa)continue;
+        if(i==fa)continue;
         dfs(i,u);
     }
 }
