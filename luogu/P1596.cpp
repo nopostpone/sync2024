@@ -64,7 +64,6 @@ void solve()
             if(mp[i][j] and id[i][j]==0)
                 bfs(i,j,++num);
     
-    // cout<<endl;
     cout<<num;
 }
 
