@@ -10,11 +10,6 @@ bool vis[N][N];
 int res[N][N];
 int sx, sy, n, m;
 
-struct point
-{
-    int x, y;
-};
-
 int dx[] = {1, -1, 1, -1, 2, 2, -2, -2};
 int dy[] = {2, 2, -2, -2, 1, -1, 1, -1};
 
@@ -23,26 +18,29 @@ bool IsOut(int x, int y)
     return x > n || x < 1 || y > m || y < 1;
 }
 
-void bfs(int x, int y)
+bool isin(int x, int y)
 {
-    queue<point> q;
-    q.push({x, y});
-    vis[x][y] = 1;
-    res[x][y] = 0;
-    while (!q.empty())
+    return x > 0 and y > 0 and x <= n and y <= m;
+}
+
+void bfs(int x0, int y0)
+{
+    queue<pair<int, int>> qe;
+    qe.push({x0, y0});
+    res[x0][y0] = 0;
+    vis[x0][y0] = 1;
+    while (!qe.empty())
     {
-        // cout << "st  " << q.front().x << ' ' << q.front().y << endl;
+        int x = qe.front().first, y = qe.front().second;
         for (int i = 0; i < 8; i++)
         {
-            int nx = q.front().x + dx[i], ny = q.front().y + dy[i];
-            if (IsOut(nx, ny) || vis[nx][ny] || (res[nx][ny] < res[q.front().x][q.front().y] + 1 && res[nx][ny] != -1))
-                continue;
-            // cout << i << ' ' << nx << ' ' << ny << endl;
-            res[nx][ny] = res[q.front().x][q.front().y] + 1;
-            q.push({nx, ny});
-            vis[nx][ny] = 1;
+            int nx = x + dx[i], ny = y + dy[i];
+            if (isin(nx, ny) and !vis[nx][ny])
+                res[nx][ny] = res[x][y] + 1,
+                qe.push({nx, ny}),
+                vis[nx][ny] = 1;
         }
-        q.pop();
+        qe.pop();
     }
 }
 
