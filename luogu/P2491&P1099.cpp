@@ -94,8 +94,6 @@ void solve()
 
 int main()
 {
-    int _ = 1;
-    while (_--)
         solve();
     return 0;
 }
