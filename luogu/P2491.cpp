@@ -42,12 +42,22 @@ struct edge
 };
 
 vector<edge> g[N];
+int n, s, c, xd, yd;
+int dep[N], pre[N], vis[N];
+int res = 0x7fffffff;
 
-int n, s;
-
-void dfs(int now,int fa)
+void dfs(int now, int fa)
 {
-
+    pre[now] = fa;
+    for (auto &[v, w] : g[now])
+    {
+        if (v == fa or vis[v])
+            continue;
+        dep[v] = dep[now] + w;
+        if (dep[v] > dep[c])
+            c = v;
+        dfs(v, now);
+    }
 }
 
 void solve()
@@ -59,11 +69,31 @@ void solve()
         g[u].push_back({v, w});
         g[v].push_back({u, w});
     }
+    dfs(1, 0);
+    dep[c] = 0, xd = c;
+    dfs(c, 0);
+    yd = c;
+    for (int i = yd, j = yd; i; i = pre[i])
+    {
+        vis[i] = 1;
+        while (dep[j] - dep[i] > s)
+            j = pre[j];
+        res = min(res, max(dep[i], dep[yd] - dep[j]));
+    }
+    for (int i = yd; i; i = pre[i])
+    {
+        dep[i] = 0;
+        dfs(i, pre[i]);
+    }
+    for (int i = 1; i <= n; i++)
+    {
+        res = max(res, dep[i]);
+    }
+    write(res);
 }
 
 int main()
 {
-    ios::sync_with_stdio(0), cin.tie(0), cout.tie(0);
     int _ = 1;
     while (_--)
         solve();
