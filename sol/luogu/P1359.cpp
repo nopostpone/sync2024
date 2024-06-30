@@ -6,18 +6,16 @@ using ll = long long;
 const int N = 250;
 
 int n;
-int r[N][N], f[N][N];
+int r[N][N], f[N];
 
 int dp()
 {
-    for (int i = 1; i < n; i++)
+    f[2] = r[1][2];
+    for (int i = 3; i <= n; i++)
     {
-        for (int j = i + 1; j <= n; j++)
-        {
-            f[i][j] = f[i - 1][j] + min(r[i][j], r[i + 1][j]);
-        }
+        f[i] = min(f[i - 1] + r[i - 1][i], r[1][i]);
     }
-    return f[1][n];
+    return f[n];
 }
 
 void solve()
