@@ -38,3 +38,28 @@ int main()
         solve();
     return 0;
 }
+
+// 数据加强版本：https://www.luogu.com.cn/problem/P2871
+// 需要将状态方程数组降维
+
+// int n, m;
+// int t[N], v[N];
+// int f[N];
+
+// void solve()
+// {
+//     cin >> n >> m;
+//     for (int i = 1; i <= n; i++)
+//         cin >> t[i] >> v[i];
+//     for (int i = 1; i <= n; i++)
+//     {
+//         for (int j = m; j; j--)
+//         {
+//             if (j >= t[i])
+//             {
+//                 f[j] = max(f[j], f[j - t[i]] + v[i]);
+//             }
+//         }
+//     }
+//     cout << f[m];
+// }
