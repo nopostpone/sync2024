@@ -8,19 +8,21 @@
 
 ## 文件夹说明
 
-### luogu, LOJ, ...
+### sol
 存放在各类OJ网站刷题的代码
 
-每份文件头部都有该题的网址，方便快速访问
+每份文件头部都有该题的网址，以便快速访问
 - [洛谷](https://www.luogu.com.cn/)
 - [LibreOJ](https://loj.ac/)
 - [CF](https://codeforces.com/)
-
-### Special
-特殊形式的提交（如提交文件）
+- [SPOJ](https://www.spoj.com/)
+- SpecialJudge: 文件等特殊形式的提交
 
 ### note
 存放笔记
 
-### emod
+### problemset
+存放题单
+
+### demo
 放一些自己做的小东西（大概没什么用）
