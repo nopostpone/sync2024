@@ -2,6 +2,8 @@
 .vs
 **/.cph
 *.exe
+*.ini
+
 __temp.cpp
 ___temp.cpp
 ____temp.py
