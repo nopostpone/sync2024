@@ -7,31 +7,55 @@ const int N = 5e6 + 10;
 
 vector<int> g[N];
 int n, root, m;
-int siz[N], dfn[N], top[N], hson[N], bot[N], pre[N], dep[N];
+int siz[N], top[N], hson[N], pre[N], dep[N];
 
 void Adfs(int now, int fa)
 {
-    int maxsiz = 0;
+    int pmax = 0;
     siz[now] = 1;
     pre[now] = fa;
+    dep[now] = dep[fa] + 1;
     for (auto &to : g[now])
     {
         if (to == fa)
             continue;
-        dfs(to, now);
-        if (siz[to] > siz[maxsiz])
-            maxsiz = to;
+        Adfs(to, now);
+        if (siz[to] > siz[pmax])
+            pmax = to;
         siz[now] += siz[to];
-        sum[now] += siz[to] * siz[to];
     }
     if (siz[now] == 1)
         return;
-    hson[now] = maxsiz;
+    hson[now] = pmax;
 }
 
 void Bdfs(int now, int tp)
 {
     top[now] = tp;
+    for (auto &to : g[now])
+    {
+        if (to == pre[now])
+            continue;
+        if (to != hson[now])
+            Bdfs(to, to);
+        else
+            Bdfs(to, tp);
+    }
+}
+
+int lca(int u, int v)
+{
+    if (u == v)
+        return u;
+    while (top[u] != top[v])
+    {
+        if (dep[top[u]] < dep[top[v]])
+            swap(u, v);
+        u = pre[top[u]];
+    }
+    if (dep[u] < dep[v])
+        return u;
+    return v;
 }
 
 void solve()
@@ -50,7 +74,7 @@ void solve()
     {
         int u, v;
         cin >> u >> v;
-        cout << lca(u, v);
+        cout << lca(u, v) << endl;
     }
 }
 
