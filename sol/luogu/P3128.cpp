@@ -64,8 +64,6 @@ void Bdfs(int now, int tp)
 
 void pushdown(ll pos)
 {
-    s[lst].sum = (s[lst].sum + (s[lst].r - s[lst].l + 1) * s[pos].add) % P;
-    s[rst].sum = (s[rst].sum + (s[rst].r - s[rst].l + 1) * s[pos].add) % P;
     s[lst].add += s[pos].add, s[rst].add += s[pos].add;
     s[pos].add = 0;
 }
