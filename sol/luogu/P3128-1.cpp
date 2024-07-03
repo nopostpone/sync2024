@@ -12,12 +12,12 @@ int n,m;
 vector<int> g[N];
 int dep[N], dfn[N], top[N], pre[N], a[N];
 
-void Adfs(int now, int fa)
+void dfs1(int now, int fa)
 {
 
 }
 
-void Bdfs(int now, int tp)
+void dfs2(int now, int tp)
 {
 
 }
