@@ -1,7 +1,7 @@
-# 搜索 题单
+# 图论 题单
 
-### [题单1](https://www.luogu.com.cn/training/535815#problems)
+### [搜索](https://www.luogu.com.cn/training/535815#problems)
 
-### [题单2]()
+### [并查集+最小生成树](https://www.luogu.com.cn/training/538119#problems)
 
     
