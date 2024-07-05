@@ -1,91 +1,59 @@
 // https://www.luogu.com.cn/problem/P1113
+// 拓扑排序
 #include <bits/stdc++.h>
 using namespace std;
 using ll = long long;
 #define endl '\n'
 #define enter putchar('\n')
 const int N = 1e4 + 100;
+const int inf = 0x7fffffff;
 
 vector<int> g[N];
 struct node
 {
-    int id, len;
-    vector<int> pre;
-    void addedge()
+    int len, id, in;
+    bool operator<(const node &o)
     {
-        for (auto &to : pre)
-        {
-            g[to].push_back(id);
-        }
+        return in < o.in;
     }
 } a[N];
 int n;
-bool vis[N];
-int res;
-
-void dfs(int now, int time)
-{
-    if (g[now].empty())
-    {
-        res = max(time, res);
-        return;
-    }
-    if (vis[now])
-        return;
-    vis[now] = 1;
-    for (auto &to : g[now])
-    {
-        dfs(to, time + a[to].len);
-    }
-    vis[now] = 0;
-}
+int f[N];
 
 void solve()
 {
     cin >> n;
     for (int i = 1; i <= n; i++)
     {
-        int id;
-        cin >> id;
-        cin >> a[id].len;
-        a[id].id = id;
-        int p;
-        cin >> p;
-        while (p != 0)
+        cin >> a[i].id >> a[i].len;
+        int to;
+        cin >> to;
+        while (to != 0)
         {
-            a[id].pre.push_back(p);
-            cin >> p;
+            a[to].in++;
+            g[i].push_back(to);
+            cin >> to;
         }
     }
+    queue<int> qu;
     for (int i = 1; i <= n; i++)
     {
-        a[i].addedge();
+        if (a[i].in == 0)
+            qu.push(i),f[i] = a[i].len;
     }
-    dfs(1, a[1].len);
-
-    // queue<int> qu;
-    // qu.push(1);
-    // vis[1] = 1;
-    // res += a[1].len;
-    // while (!qu.empty())
-    // {
-    //     int now = qu.front();
-    //     qu.pop();
-    //     priority_queue<int, vector<int>, less<int>> pq;
-    //     for (auto &to : g[now])
-    //     {
-    //         if (vis[to])
-    //             continue;
-    //         pq.push(a[to].len);
-    //         vis[to] = 1;
-    //         qu.push(to);
-    //     }
-    //     if (!pq.empty())
-    //         res += pq.top();
-    // }
-
-
-    cout << res;
+    while (!qu.empty())
+    {
+        int now = qu.front();
+        qu.pop();
+        for (auto &to : g[now])
+        {
+            f[to] = max(f[to], f[now] + a[to].len);
+            a[to].in--;
+            if (a[to].in == 0)
+                qu.push(to);
+        }
+    }
+    cout << *max_element(f + 1, f + 1 + n);
 }
 
 int main()
