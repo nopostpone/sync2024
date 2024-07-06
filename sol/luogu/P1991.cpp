@@ -22,7 +22,7 @@ struct node
 } a[N];
 
 vector<edge> g;
-queue<double> res;
+double res;
 
 int root(int x)
 {
@@ -62,7 +62,7 @@ void solve()
         pre[i] = i;
     for (auto i = g.begin(); i != g.end(); i++)
     {
-        if (cnt == n - 1)
+        if (cnt == n - ss)
         {
             break;
         }
@@ -70,13 +70,11 @@ void solve()
         if (iscon(u, v))
             continue;
         merge(u, v);
-        res.push(i->w);
+        res = max(res, i->w);
         // cout << u << ' ' << v << ' ' << i->w << endl;
         cnt++;
     }
-    for (int i = 1; i < ss; i++)
-        res.pop();
-    cout << fixed << setprecision(2) << res.front() << endl;
+    cout << fixed << setprecision(2) << res;
 }
 
 int main()
