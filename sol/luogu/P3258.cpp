@@ -1,6 +1,5 @@
 // https://www.luogu.com.cn/problem/P3258
 // 重链剖分+线段树维护路径信息
-// 正确解法是树上差分
 #include <bits/stdc++.h>
 using namespace std;
 using ll = long long;
