@@ -2,7 +2,7 @@ int a[N];
 
 struct segtree
 {
-    ll l, r, pos, sum, add;
+    ll l, r, sum, add;
 } s[N * 4];
 
 void pushdown(ll pos)
