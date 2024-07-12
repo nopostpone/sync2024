@@ -1,5 +1,5 @@
 // https://www.luogu.com.cn/problem/P3369
-// 权值线段树
+// 权值线段树+离散化 实现普通平衡树
 
 #include <bits/stdc++.h>
 using namespace std;
@@ -46,14 +46,14 @@ void upd(ll pos, ll c, int k)
     }
     ll m = s[pos].l + s[pos].r >> 1;
     if (c <= m)
-        upd(lst, c);
+        upd(lst, c, k);
     else
-        upd(rst, c);
+        upd(rst, c, k);
     pushup(pos);
     return;
 }
 
-ll query(ll pos, ll x, ll y)
+ll qrank(ll pos, ll x, ll y)
 {
     if (x <= s[pos].l and s[pos].r <= y)
     {
@@ -62,10 +62,20 @@ ll query(ll pos, ll x, ll y)
     ll m = s[pos].l + s[pos].r >> 1;
     ll ans = 0;
     if (x <= m)
-        ans += query(lst, x, y);
+        ans += qrank(lst, x, y);
     if (m < y)
-        ans += query(rst, x, y);
+        ans += qrank(rst, x, y);
     return ans;
+}
+
+ll qnum(ll pos, ll x)
+{
+    if (s[pos].l == s[pos].r)
+        return s[pos].l;
+    if (x <= s[lst].sum)
+        return qnum(lst, x);
+    else
+        return qnum(rst, x - s[lst].sum);
 }
 
 struct Q
@@ -78,7 +88,6 @@ vector<Q> q;
 void solve()
 {
     cin >> n;
-    build(1, n, 1);
     q.resize(n);
     int tot = 0;
     for (int i = 0; i < n; i++)
@@ -87,13 +96,36 @@ void solve()
         if (q[i].opt != 4)
             a[++tot] = q[i].x;
     }
-    sort(a + 1, a + n + 1);
+    sort(a + 1, a + tot + 1);
+    n = unique(a + 1, a + tot + 1) - a - 1;
+    build(1, n, 1);
     for (auto &qq : q)
     {
+        int id = 0;
+        if (qq.opt != 4)
+            id = lower_bound(a + 1, a + 1 + n, qq.x) - a;
         if (qq.opt == 1)
-            upd(1, lower_bound(a + 1, a + 1 + n, qq.x), 1);
-        if (qq.opt == 2)
-            upd(1, lower_bound(a + 1, a + 1 + n, qq.x), -1);
+            upd(1, id, 1);
+        else if (qq.opt == 2)
+            upd(1, id, -1);
+        // 查询排名，即查询这个点在权值线段树上的前缀和，因为权值线段树的叶节点从左往右是从小到大排序的。
+        else if (qq.opt == 3)
+            cout << (id > 1 ? qrank(1, 1, id - 1) + 1 : 1) << endl;
+        else if (qq.opt == 4)
+            cout << a[qnum(1, qq.x)] << endl;
+        // 查询数字，要先把给定x的排名求出来，再根据排名进去找到数字
+        else if (qq.opt == 5)
+        {
+            // 前驱：找到id-1
+            int rk = qrank(1, 1, id - 1);
+            cout << a[qnum(1, rk)] << endl;
+        }
+        else if (qq.opt == 6)
+        {
+            // 后继：找到id，输出排名(id+1)的数
+            int rk = qrank(1, 1, id) + 1;
+            cout << a[qnum(1, rk)] << endl;
+        }
     }
 }
 
