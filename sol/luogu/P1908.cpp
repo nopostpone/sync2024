@@ -1,6 +1,7 @@
-// https://www.luogu.com.cn/problem/P4588
-// 以时间为轴建立线段树
-// 每次在后方插入因子，线段树维护区间乘积
+// https://www.luogu.com.cn/problem/P1908
+// 权值线段树
+// 逆序对只关注相对大小关系，因此先做离散化
+// 然后从小到大一个一个插入线段树中，每插入一次，统计(id+1, n)中有多少个数，即有多少个值大于自己，且编号小于自己（因为按从小到大顺序），最后相加即为结果
 #include <bits/stdc++.h>
 using namespace std;
 using ll = long long;
@@ -8,9 +9,10 @@ using ll = long long;
 #define lst pos << 1
 #define rst pos << 1 | 1
 #define enter putchar('\n')
-const int N = 1e5 + 100;
+const int N = 5e5 + 100;
 
-int a[N], n;
+int n;
+int a[N], b[N];
 ll p;
 
 struct segtree
@@ -20,7 +22,7 @@ struct segtree
 
 void pushup(ll pos)
 {
-    s[pos].sum = ((s[lst].sum % p) * (s[rst].sum % p)) % p;
+    s[pos].sum = s[lst].sum + s[rst].sum;
 }
 
 void build(ll l, ll r, ll pos)
@@ -28,7 +30,7 @@ void build(ll l, ll r, ll pos)
     s[pos].l = l, s[pos].r = r;
     if (l == r)
     {
-        s[pos].sum = 1;
+        s[pos].sum = 0;
         return;
     }
     ll m = (l + r) >> 1;
@@ -37,58 +39,67 @@ void build(ll l, ll r, ll pos)
     pushup(pos);
 }
 
-void upd(ll pos, ll c, ll k)
+void upd(ll pos, ll c)
 {
     if (s[pos].l == s[pos].r)
     {
-        s[pos].sum = k % p;
+        s[pos].sum++;
         return;
     }
     ll m = s[pos].l + s[pos].r >> 1;
     if (c <= m)
-        upd(lst, c, k);
+        upd(lst, c);
     else
-        upd(rst, c, k);
+        upd(rst, c);
     pushup(pos);
     return;
 }
 
-vector<ll> res;
+ll query(ll pos, ll x, ll y)
+{
+    if (x <= s[pos].l and s[pos].r <= y)
+    {
+        return s[pos].sum;
+    }
+    ll m = s[pos].l + s[pos].r >> 1;
+    ll ans = 0;
+    if (x <= m)
+        ans += query(lst, x, y);
+    if (m < y)
+        ans += query(rst, x, y);
+    return ans;
+}
+
+ll res;
 
 void solve()
 {
-    int cnt = 0;
-    cin >> n >> p;
+    cin >> n;
+    for (int i = 1; i <= n; i++)
+    {
+        cin >> a[i];
+    }
+    for (int i = 1; i <= n; i++)
+    {
+        b[i] = a[i];
+    }
+    sort(b + 1, b + n + 1);
     build(1, n, 1);
     for (int i = 1; i <= n; i++)
     {
-        int opt;
-        ll m;
-        cin >> opt >> m;
-        cnt++;
-        if (opt == 1)
-        {
-            upd(1, cnt, m);
-        }
-        else
-        {
-            upd(1, cnt, 1);
-            upd(1, m, 1);
-        }
-        res.push_back(s[1].sum % p);
+        int id = lower_bound(b + 1, b + n + 1, a[i]) - b;
+        // cout << id << endl;
+        upd(1, id);
+        res += query(1, id + 1, n);
     }
+    cout << res;
 }
 
 int main()
 {
     ios::sync_with_stdio(0), cin.tie(0), cout.tie(0);
     int _ = 1;
-    cin >> _;
     while (_--)
         solve();
-    for (auto &i : res)
-    {
-        cout << i << endl;
-    }
     return 0;
 }
