@@ -1,6 +1,6 @@
 int a[N];
 
-struct segtree
+struct node
 {
     ll l, r, sum, add;
 } s[N * 4];
