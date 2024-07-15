@@ -3,34 +3,26 @@ using namespace std;
 using ll = long long;
 #define endl '\n'
 #define enter putchar('\n')
-const int N = 1e3 + 3;
+const int N = 1e4 + 3;
 
-int a[N];
+int a[N], t[N];
 int n, m;
-int f[N][N];
-
-// 记f[i][j]为考虑前i道菜，有m快钱时的方案数量
-// 如果j == a[i]，那么f[i][j]=f[i-1][j]+1
-// 如果j>a[i]，f[i][j] = f[i-1][j-a[i]]
+int f[N];
 
 void solve()
 {
-    cin >> n >> m;
+    cin >> m >> n;
     int cnt = 0;
     for (int i = 1; i <= n; i++)
-        cin >> a[i];
+        cin >> a[i] >> t[i];
     for (int i = 1; i <= n; i++)
     {
-        for (int j = 1; j <= m; j++)
+        for (int j = t[i]; j <= m; j++)
         {
-            if (j < a[i])
-                f[i][j] = f[i - 1][j];
-            else if (j == a[i])
-                f[i][j] = f[i - 1][j] + f[i - 1][j - a[i]];
-            else
-                f[i][j] = f[i - 1][j] + 1;
+            f[j] = max(f[j - t[i]] + a[i], f[j]);
         }
     }
+    cout << f[m];
 }
 
 int main()
