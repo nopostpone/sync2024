@@ -3,37 +3,59 @@ using namespace std;
 using ll = long long;
 #define endl '\n'
 #define enter putchar('\n')
-const int N = 6e4 + 4;
+const int N = 300 + 4;
 const int inf = 0x3f3f3f3f;
 
-int v[N], w[N];
 int n, m;
-int f[N];
+int v[N], p[N];
+ll f[N][N][N];
+int vmin, vsum;
+int cnt;
 
-// f[i] 表示买质量i的草花的最少钱数
-// 需要质量 m 的干草，买到的干草可能在 [m, m+5000] 这个区间（w[i]<=5000）
-// 所以 [f[m], f[m+5000]] 中的最小值即为所求
+// f[i][j][k] 表示考虑前 i 件物品，背包容量为 j，选取 k 件物品时最高的收益。
 
 void solve()
 {
     cin >> n >> m;
     for (int i = 1; i <= n; i++)
     {
-        cin >> w[i] >> v[i];
+        cin >> v[i] >> p[i];
     }
-    memset(f, inf, sizeof(f));
-    f[0] = 0;
+    vmin = *min_element(v + 1, v + n + 1) - 1;
+
     for (int i = 1; i <= n; i++)
     {
-        for (int j = w[i]; j <= m + 5000; j++)
-        {
-            f[j] = min(f[j], f[j - w[i]] + v[i]);
-        }
-        // for (int i = 1; i <= m; i++)
-        //     cout << i << ' ' << f[i] << endl;
-        // cout << endl;
+        v[i] -= vmin;
+        vsum += v[i];
     }
-    cout << *min_element(f + m, f + m + 5000);
+
+    for (int i = 1; i <= n; i++)
+    {
+        for (int j{0}; j <= vsum; j++)
+        {
+            for (int k{1}; k <= n; k++)
+            {
+                if (1LL * k * vmin + j <= m and j >= v[i])
+                {
+                    f[i][j][k] = max(f[i - 1][j][k], f[i - 1][j - v[i]][k - 1] + p[i]);
+                }
+                else
+                {
+                    f[i][j][k] = f[i - 1][j][k];
+                }
+            }
+        }
+    }
+    ll res = 0;
+    for (int j{0}; j <= vsum; j++)
+    {
+        for (int k{1}; k <= n; k++)
+        {
+            res = max(res, f[n][j][k]);
+        }
+    }
+
+    cout << res;
 }
 
 int main()
