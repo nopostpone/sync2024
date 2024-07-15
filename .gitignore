@@ -3,8 +3,8 @@
 **/.cph
 *.exe
 *.ini
+**akiba.cpp
 
 __temp.cpp
 ___temp.cpp
 ____temp.py
-/sol/luogu/akiba.cpp
