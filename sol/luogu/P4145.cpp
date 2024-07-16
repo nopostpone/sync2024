@@ -1,8 +1,8 @@
 // https://www.luogu.com.cn/problem/P4145
 // 区间开方 - 询问区间和
 // 维护区间最大值，若最大值为 1，则开方无意义，若不是 1，继续遍历直到叶子节点。
-#include<bits/stdc++.h>
-#define lst pos<<1
+#include <bits/stdc++.h>
+#define lst pos << 1
 #define rst pos << 1 | 1
 #define endl '\n'
 #define spc << ' ' <<
@@ -12,29 +12,24 @@ using ll = long long;
 const int N = 1e5;
 
 vector<ll> a;
-int n,m;
+int n, m;
 
-struct node
-{
+struct node {
     int l, r;
     ll sum, mx;
 } s[N * 4];
 
-void pushdown(int pos)
-{
+void pushdown(int pos) {
 }
 
-void pushup(int pos)
-{
+void pushup(int pos) {
     s[pos].mx = max(s[lst].mx, s[rst].mx);
     s[pos].sum = s[lst].sum + s[rst].sum;
 }
 
-void build(int l, int r, int pos = 1)
-{
+void build(int l, int r, int pos = 1) {
     s[pos] = {l, r, 0, 0};
-    if (l == r)
-    {
+    if (l == r) {
         s[pos].sum = s[pos].mx = a[l];
         return;
     }
@@ -45,13 +40,11 @@ void build(int l, int r, int pos = 1)
     return;
 }
 
-void upd(int x, int y, int pos = 1)
-{
+void upd(int x, int y, int pos = 1) {
     if (s[pos].mx == 1) {
         return;
     }
-    if (s[pos].l == s[pos].r)
-    {
+    if (s[pos].l == s[pos].r) {
         s[pos].mx = s[pos].sum = sqrt(s[pos].sum);
         return;
     }
@@ -64,10 +57,8 @@ void upd(int x, int y, int pos = 1)
     return;
 }
 
-ll query(int x, int y, int pos = 1)
-{
-    if (x <= s[pos].l and s[pos].r <= y)
-    {
+ll query(int x, int y, int pos = 1) {
+    if (x <= s[pos].l and s[pos].r <= y) {
         return s[pos].sum;
     }
     int m = s[pos].l + s[pos].r >> 1;
@@ -102,7 +93,7 @@ void solve() {
             res.push_back(query(x, y));
         }
     }
-    for (auto i: res) {
+    for (auto i : res) {
         cout << i << endl;
     }
 }
