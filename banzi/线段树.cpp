@@ -53,7 +53,7 @@ void upd(ll x, ll y, ll pos, ll k)
     return;
 }
 
-ll getsum(ll x, ll y, ll pos)
+ll query(ll x, ll y, ll pos)
 {
     if (x > y)
         swap(x, y);
@@ -65,8 +65,8 @@ ll getsum(ll x, ll y, ll pos)
     ll m = s[pos].l + s[pos].r >> 1;
     ll ans = 0;
     if (x <= m)
-        ans += getsum(x, y, lst);
+        ans += query(x, y, lst);
     if (m < y)
-        ans += getsum(x, y, rst);
+        ans += query(x, y, rst);
     return ans;
 }
