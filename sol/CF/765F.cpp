@@ -6,7 +6,6 @@
 #define lst pos << 1
 #define rst pos << 1 | 1
 #define endl '\n'
-#define spc << ' ' <<
 using namespace std;
 using ll = long long;
 
@@ -18,6 +17,7 @@ int n, m, lim;
 struct node {
     int l, r;
     int mnv;
+    // 存管辖区间所有数，二分查找
     vector<int> lis;
 } s[N << 2];
 
@@ -103,9 +103,11 @@ void solve() {
         cin >> qq[i].l >> qq[i].r;
         qq[i].id = i;
     }
+    // 离线，排序
     sort(qq.begin() + 1, qq.end());
     build(1, n);
     int loc = 1;
+    // 找到一个右端点 > 1 的询问
     while (qq[loc].r <= 1) {
         loc++;
     }
