@@ -1,3 +1,5 @@
+// https://www.luogu.com.cn/problem/P6492
+// 维护最长连续区间
 #include <bits/stdc++.h>
 using namespace std;
 using ll = long long;
