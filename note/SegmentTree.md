@@ -243,7 +243,7 @@ ll query(ll x, ll y, ll pos = 1)
 
 ## 势能线段树
 
-[__模板题：CF765F__](https://www.luogu.com.cn/problem/CF765F)
+[__例题：CF765F__](https://www.luogu.com.cn/problem/CF765F)
 
 题意：给出一个长为 $n$ 的序列 $a$，和 $m$ 组询问。 每个询问给出一组 $(l, r)$，对 $\forall i,j \in [l,r]$，且满足 $i\neq j$，求 $|a_i - a_j|$ 的最小值。
 
