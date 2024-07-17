@@ -241,7 +241,151 @@ ll query(ll x, ll y, ll pos = 1)
 
 </details>
 
-## 势能线段树
+### d. 区间开方
+
+[__例题：luogu P4145__](https://www.luogu.com.cn/problem/P4145)
+
+仅需维护区间最大值，当区间最大值为 1，那么开方就无意义了，若不为 1，则继续暴力遍历直到叶子节点。
+
+<details>
+
+以更新函数 `upd()` 为例。
+
+```cpp
+void upd(int x, int y, int pos = 1) {
+    if (s[pos].mx == 1) {
+        return;
+    }
+    if (s[pos].l == s[pos].r) {
+        s[pos].mx = s[pos].sum = sqrt(s[pos].sum);
+        return;
+    }
+    int m = s[pos].l + s[pos].r >> 1;
+    if (x <= m)
+        upd(x, y, lst);
+    if (m < y)
+        upd(x, y, rst);
+    pushup(pos);
+    return;
+}
+```
+[完整代码](/sol/luogu/P4145.cpp)
+
+</details>
+
+## 维护最大连续区间
+
+线段树中每个节点需要维护三个信息：最长前缀、最长后缀、最长区间。更新时暴力到叶子节点，然后一层层向上更新。
+
+以 `pushup` 为例。
+```cpp
+void pushup(int pos) {
+    // 前缀 = 左子树前缀
+    s[pos].ls = s[lst].ls;
+    // 后缀 = 右子树后缀
+    s[pos].rs = s[rst].rs;
+    // 如果左子树前缀 = 左区间长度，那么说明左子树全是连续的，要再算上右子树的前缀
+    if (s[lst].ls == s[lst].r - s[lst].l + 1) {
+        s[pos].ls += s[rst].ls;
+    }
+    // 右子树后缀同理
+    if (s[rst].rs == s[rst].r - s[rst].l + 1) {
+        s[pos].rs += s[lst].rs;
+    }
+    // 最长连续 = max{前缀，后缀，左子树最长区间，右子树最长区间，左后缀与右前缀之和}
+    s[pos].sum = max({s[pos].ls,
+                      s[pos].rs,
+                      s[lst].sum,
+                      s[rst].sum,
+                      s[lst].rs + s[rst].ls});
+}
+```
+对于类 `01` 区间，如果操作是反转某个点，则 `upd` 见下。
+```cpp
+void upd(int x, int pos = 1)
+{
+    // 暴力到每个叶子节点
+    if (s[pos].l == s[pos].r)
+    {
+        // 翻转
+        s[pos].rs ^= 1;
+        s[pos].ls ^= 1;
+        s[pos].sum ^= 1;
+        return;
+    }
+    int m = s[pos].l + s[pos].r >> 1;
+    if (x <= m)
+        upd(x, lst);
+    else
+        upd(x, rst);
+    pushup(pos);
+    return;
+}
+```
+[__例题：luogu P6492__](https://www.luogu.com.cn/problem/P6492)
+
+求 $LR$ 相间的最长连续区间，其实可以转换成求最长 $L$ 或 $R$ 区间，仅需在最开始把奇数位置的 $L$ 翻转即可。
+
+<details>
+
+预处理：设 $L$ 为 $0$，设 $R$ 为 $1$。
+```cpp
+for (int i = 1; i <= n; i += 2)
+{
+    a[i] = 1;
+}
+```
+
+在线段树中同时维护 $0$ 和 $1$ 的连续信息即可，建树操作见下。
+
+```cpp
+struct node {
+    int l, r, ls[2], sum[2], rs[2];
+} s[N * 4];
+
+void pushup(int pos) {
+    for (int i : {0, 1}) {
+        s[pos].ls[i] = s[lst].ls[i];
+        s[pos].rs[i] = s[rst].rs[i];
+        if (s[lst].ls[i] == s[lst].r - s[lst].l + 1) {
+            s[pos].ls[i] += s[rst].ls[i];
+        }
+        if (s[rst].rs[i] == s[rst].r - s[rst].l + 1) {
+            s[pos].rs[i] += s[lst].rs[i];
+        }
+        s[pos].sum[i] = max({s[pos].ls[i],
+                             s[pos].rs[i],
+                             s[lst].sum[i],
+                             s[rst].sum[i],
+                             s[lst].rs[i] + s[rst].ls[i]});
+    }
+}
+
+void build(int l, int r, int pos) {
+    s[pos] = {l, r, {0, 0}, {0, 0}, {0, 0}};
+    if (l == r) {
+        int i = a[l];
+        s[pos].ls[i] = s[pos].rs[i] = s[pos].sum[i] = 1;
+        return;
+    }
+    int m = (l + r) >> 1;
+    build(l, m, lst);
+    build(m + 1, r, rst);
+    pushup(pos);
+}
+```
+
+询问时同时找 $0$ 和 $1$ 的最大连续区间，输出两者的较大值。
+
+[完整代码](/sol/luogu/P6492.cpp)
+</details>
+<br>
+
+[__比较难的例题：luogu P2572__](https://www.luogu.com.cn/problem/P2572)
+
+## 势能线段树（吉司机线段树）
+
+## 思维题
 
 [__例题：CF765F__](https://www.luogu.com.cn/problem/CF765F)
 
