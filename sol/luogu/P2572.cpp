@@ -1,101 +1,120 @@
-// https://www.luogu.com.cn/problem/P4145
-// 区间开方 - 询问区间和
-// 维护区间最大值，若最大值为 1，则开方无意义，若不是 1，继续遍历直到叶子节点。
 #include <bits/stdc++.h>
-#define lst pos << 1
-#define rst pos << 1 | 1
-#define endl '\n'
-#define spc << ' ' <<
 using namespace std;
 using ll = long long;
+#define endl '\n'
+#define enter putchar('\n')
+const int N = 1e5 + 100;
 
-const int N = 1e5;
-
-vector<ll> a;
 int n, m;
+vector<int> a;
+vector<int> res;
+
+#define lst pos << 1
+#define rst pos << 1 | 1
 
 struct node {
-    int l, r, sum, fr, mi, bk;
-} s[N * 4];
-
-void pushdown(int pos) {
-}
+    int l, r;
+    int sum[2], ls[2], rs[2];
+    int tg01, rev;
+} s[N << 2];
 
 void pushup(int pos) {
-    s[pos].mx = max(s[lst].mx, s[rst].mx);
-    s[pos].sum = s[lst].sum + s[rst].sum;
+    for (int i : {0, 1}) {
+        s[pos].ls[i] = s[lst].ls[i];
+        s[pos].rs[i] = s[rst].rs[i];
+        if (s[lst].ls[i] == s[lst].r - s[lst].l + 1) {
+            s[pos].ls[i] += s[rst].ls[i];
+        }
+        if (s[rst].rs[i] == s[rst].r - s[rst].l + 1) {
+            s[pos].rs[i] += s[lst].rs[i];
+        }
+        s[pos].sum[i] = max({s[lst].sum[i],
+                             s[rst].sum[i],
+                             s[pos].ls[i],
+                             s[pos].rs[i],
+                             s[lst].rs[i] + s[rst].ls[i]});
+    }
 }
 
 void build(int l, int r, int pos = 1) {
-    s[pos] = {l, r, 0, 0};
+    s[pos] = {l, r, {0, 0}, {0, 0}, {0, 0}, -1, 0};
     if (l == r) {
-        s[pos].sum = s[pos].mx = a[l];
+        int i = a[l];
+        s[pos].sum[i] = s[pos].ls[i] = s[pos].rs[i] = 1;
         return;
     }
-    int m = (l + r) >> 1;
+    int m = l + r >> 1;
     build(l, m, lst);
     build(m + 1, r, rst);
     pushup(pos);
     return;
 }
 
-void upd(int x, int y, int pos = 1) {
-    if (s[pos].mx == 1) {
+void modify(int pos, int opt) {
+    if (opt == 2) {
+        for (int i: {0, 1}) {
+            s[pos].rev ^= 1;
+            swap(s[pos].ls[0], s[pos].ls[1]);
+            swap(s[pos].rs[0], s[pos].rs[1]);
+            swap(s[pos].sum[0], s[pos].sum[1]);
+            if (~s[pos].tg01) 
+                s[pos].tg01 ^= 1;
+        }
+    } else {
+        s[pos].tg01 = opt;
+        s[pos].rev = 0;
+        s[pos].sum[opt] = s[pos].ls[opt] = s[pos].rs[opt] = s[pos].r - s[pos].l + 1;
+    }
+}
+
+void pushdown(int pos) {
+    if (~tg01) {
+
+    }
+}
+
+void upd(int x, int y, int k, int pos = 1) {
+    if (y < s[pos].l or s[pos].r < x)
+        return;
+    if (x <= s[pos].l and s[pos].r <= y) {
+
         return;
     }
-    if (s[pos].l == s[pos].r) {
-        s[pos].mx = s[pos].sum = sqrt(s[pos].sum);
-        return;
-    }
-    int m = s[pos].l + s[pos].r >> 1;
-    if (x <= m)
-        upd(x, y, lst);
-    if (m < y)
-        upd(x, y, rst);
+    pushdown(pos);
+    int mid = s[pos].l + s[pos].r >> 1;
+    if (x <= mid)
+        upd(x, y, k, lst);
+    if (mid < y)
+        upd(x, y, k, rst);
     pushup(pos);
     return;
 }
 
-void assign(int x, int y, int k, int pos = 1) {
-    if (x <= s[pos].l and s[pos].r <= y) {
-        
-    }
+int query(int x, int y, int pos = 1) {
 }
-
-ll query(int x, int y, int pos = 1) {
-    if (x <= s[pos].l and s[pos].r <= y) {
-        return s[pos].sum;
-    }
-    int m = s[pos].l + s[pos].r >> 1;
-    ll ans = 0;
-    if (x <= m)
-        ans += query(x, y, lst);
-    if (m < y)
-        ans += query(x, y, rst);
-    return ans;
-}
-
-vector<ll> res;
 
 void solve() {
-    cin >> n;
+    cin >> n >> m;
     a.resize(n + 1);
     for (int i = 1; i <= n; i++) {
         cin >> a[i];
     }
-    build(1, n);
-
-    cin >> m;
     for (int i = 1; i <= m; i++) {
-        int opt, x, y;
-        cin >> opt >> x >> y;
-        if (x > y) {
-            swap(x, y);
-        }
+        int opt, l, r;
+        cin >> opt >> l >> r;
         if (opt == 0) {
-            upd(x, y);
+
+        } else if (opt == 1) {
+
+        } else if (opt == 2) {
+
+        } else if (opt == 3) {
+
+        } else if (opt == 4) {
+
         } else {
-            res.push_back(query(x, y));
+            cerr << opt << endl;
+            exit(0);
         }
     }
     for (auto i : res) {
@@ -104,8 +123,9 @@ void solve() {
 }
 
 int main() {
-    ios::sync_with_stdio(false);
-    cin.tie(nullptr);
-    solve();
+    cin.tie(nullptr) -> sync_with_stdio(false);
+    int _ = 1;
+    while (_--)
+        solve();
     return 0;
 }
