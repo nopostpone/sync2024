@@ -3,6 +3,9 @@
 **/.cph
 *.exe
 *.ini
+*.in
+*.out
+
 **akiba.cpp
 
 __temp.cpp
