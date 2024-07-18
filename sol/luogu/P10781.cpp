@@ -5,7 +5,6 @@ using ll = long long;
 int n, k;
 vector<double> a;
 vector<double> res;
-int loc;
 
 void solve() {
     int tt;
