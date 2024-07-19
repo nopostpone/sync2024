@@ -5,10 +5,6 @@ using ll = long long;
 
 string s;
 vector<string> res;
-char lt[30];
-
-void dfs() {
-}
 
 void solve() {
     int n;
