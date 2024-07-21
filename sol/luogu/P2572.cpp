@@ -57,21 +57,32 @@ void build(int l, int r, int pos = 1) {
     return;
 }
 
+void P(int pos, int o) {
+    if (o == 0 or o == 1) {
+        s[pos].tag = o;
+        s[pos].rev = 0;
+        s[pos].sum = (s[pos].r - s[pos].l + 1) * o;
+        s[pos].ls[o] = s[pos].rs[o] = s[pos].ss[o] = s[pos].r - s[pos].l + 1;
+        s[pos].ls[o ^ 1] = s[pos].rs[o ^ 1] = s[pos].ss[o ^ 1] = 0;
+    } else {
+        s[pos].rev ^= 1;
+        s[pos].sum = s[pos].r - s[pos].l + 1 - s[pos].sum;
+        swap(s[pos].ls[0], s[pos].ls[1]);
+        swap(s[pos].rs[0], s[pos].rs[1]);
+        swap(s[pos].ss[0], s[pos].ss[1]);
+    }
+}
+
 void pushdown(int pos) {
     if (~s[pos].tag) {
-        int i = s[pos].tag;
-        int j = i ^ 1;
-        s[pos].rev = s[lst].rev = s[rst].rev = 0;
-        s[lst].tag = s[rst].tag = i;
-        s[lst].ls[i] = s[lst].rs[i] = s[lst].ss[i] = s[lst].r - s[lst].l + 1;
-        s[rst].rs[i] = s[rst].ls[i] = s[rst].ss[i] = s[rst].r - s[rst].l + 1;
-        s[lst].ls[j] = s[lst].rs[j] = s[lst].ss[j] = 0;
-        s[rst].rs[j] = s[rst].ls[j] = s[rst].ss[j] = 0;
-        s[lst].sum = i == 1 ? s[lst].r - s[lst].l + 1 : 0;
-        s[rst].sum = i == 1 ? s[rst].r - s[rst].l + 1 : 0;
+        P(lst, s[pos].tag);
+        P(rst, s[pos].tag);
+        s[pos].rev = 0;
         s[pos].tag = -1;
     }
     if (s[pos].rev) {
+        P(lst, 2);
+        P(rst, 2);
         if (~s[lst].tag)
             s[lst].tag ^= 1;
         else
@@ -80,40 +91,68 @@ void pushdown(int pos) {
             s[rst].tag ^= 1;
         else
             s[rst].rev ^= 1;
-        s[lst].sum = s[lst].r - s[lst].l + 1 - s[lst].sum;
-        s[rst].sum = s[rst].r - s[rst].l + 1 - s[rst].sum;
-// 喜欢不检查？
-// 喜欢不检查？
-// 喜欢不检查？
-// 喜欢不检查？
-        swap(s[lst].ls[0], s[lst].ls[1]);
-        swap(s[rst].ls[0], s[rst].ls[1]);
-        swap(s[lst].rs[0], s[lst].rs[1]);
-        swap(s[rst].rs[0], s[rst].rs[1]);
-        swap(s[lst].ss[0], s[lst].ss[1]);
-        swap(s[rst].ss[0], s[rst].ss[1]);
-
         s[pos].rev = 0;
     }
-    return;
 }
+
+// void pushdown(int pos) {
+//     if (~s[pos].tag) {
+//         int i = s[pos].tag;
+//         int j = i ^ 1;
+//         s[pos].rev = s[lst].rev = s[rst].rev = 0;
+//         s[lst].tag = s[rst].tag = i;
+//         s[lst].ls[i] = s[lst].rs[i] = s[lst].ss[i] = s[lst].r - s[lst].l + 1;
+//         s[rst].rs[i] = s[rst].ls[i] = s[rst].ss[i] = s[rst].r - s[rst].l + 1;
+//         s[lst].ls[j] = s[lst].rs[j] = s[lst].ss[j] = 0;
+//         s[rst].rs[j] = s[rst].ls[j] = s[rst].ss[j] = 0;
+//         s[lst].sum = i == 1 ? s[lst].r - s[lst].l + 1 : 0;
+//         s[rst].sum = i == 1 ? s[rst].r - s[rst].l + 1 : 0;
+//         s[pos].tag = -1;
+//     }
+//     if (s[pos].rev) {
+//         if (~s[lst].tag)
+//             s[lst].tag ^= 1;
+//         else
+//             s[lst].rev ^= 1;
+//         if (~s[rst].tag)
+//             s[rst].tag ^= 1;
+//         else
+//             s[rst].rev ^= 1;
+//         s[lst].sum = s[lst].r - s[lst].l + 1 - s[lst].sum;
+//         s[rst].sum = s[rst].r - s[rst].l + 1 - s[rst].sum;
+//         // 喜欢不检查？
+//         // 喜欢不检查？
+//         // 喜欢不检查？
+//         // 喜欢不检查？
+//         swap(s[lst].ls[0], s[lst].ls[1]);
+//         swap(s[rst].ls[0], s[rst].ls[1]);
+//         swap(s[lst].rs[0], s[lst].rs[1]);
+//         swap(s[rst].rs[0], s[rst].rs[1]);
+//         swap(s[lst].ss[0], s[lst].ss[1]);
+//         swap(s[rst].ss[0], s[rst].ss[1]);
+
+//         s[pos].rev = 0;
+//     }
+//     return;
+// }
 
 void upd(int x, int y, int opt, int pos = 1) {
     pushdown(pos);
     if (x <= s[pos].l and s[pos].r <= y) {
-        if (opt == 0 or opt == 1) {
-            s[pos].tag = opt;
-            s[pos].rev = 0;
-            s[pos].sum = (s[pos].r - s[pos].l + 1) * opt;
-            s[pos].ls[opt] = s[pos].rs[opt] = s[pos].ss[opt] = s[pos].r - s[pos].l + 1;
-            s[pos].ls[opt ^ 1] = s[pos].rs[opt ^ 1] = s[pos].ss[opt ^ 1] = 0;
-        } else if (opt == 2) {
-            s[pos].rev ^= 1;
-            s[pos].sum = s[pos].r - s[pos].l + 1 - s[pos].sum;
-            swap(s[pos].ls[0], s[pos].ls[1]);
-            swap(s[pos].rs[0], s[pos].rs[1]);
-            swap(s[pos].ss[0], s[pos].ss[1]);
-        }
+        // if (opt == 0 or opt == 1) {
+        //     s[pos].tag = opt;
+        //     s[pos].rev = 0;
+        //     s[pos].sum = (s[pos].r - s[pos].l + 1) * opt;
+        //     s[pos].ls[opt] = s[pos].rs[opt] = s[pos].ss[opt] = s[pos].r - s[pos].l + 1;
+        //     s[pos].ls[opt ^ 1] = s[pos].rs[opt ^ 1] = s[pos].ss[opt ^ 1] = 0;
+        // } else if (opt == 2) {
+        //     s[pos].rev ^= 1;
+        //     s[pos].sum = s[pos].r - s[pos].l + 1 - s[pos].sum;
+        //     swap(s[pos].ls[0], s[pos].ls[1]);
+        //     swap(s[pos].rs[0], s[pos].rs[1]);
+        //     swap(s[pos].ss[0], s[pos].ss[1]);
+        // }
+        P(pos, opt);
         return;
     }
     int mid = s[pos].l + s[pos].r >> 1;
