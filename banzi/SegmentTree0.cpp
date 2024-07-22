@@ -2,54 +2,59 @@
 using ll = long long;
 using namespace std;
 
-struct SegmentTree {
-#define lst p << 1
-#define rst p << 1 | 1
-    int n;
-    vector<int> tag, sum;
-    SegmentTree(int n_) : n(n_), tag(n << 2, 1), sum(n << 2, 1) {}
+// struct Node {
+//     int l, r;
+//     int mx;
+//     ll sum;
+//     void apply(const Node &o) {
 
-    void pull(int p) {
-        sum[p] = (sum[lst] + sum[rst]) % P;
-    }
+//     }
+// };
 
-    void mul(int p, int v) {
-        tag[p] = 1LL * tag[p] * v % P;
-        sum[p] = 1LL * sum[p] * v % P;
-    }
+// template<class Node>
+// struct SegmentTree {
+// #define lst pos << 1
+// #define rst pos << 1 | 1
+//     int n;
+//     vector<Node> s;
+//     SegmentTree(int n_) : n(n_), s(n << 2) {}
 
-    void push(int p) {
-        mul(lst, tag[p]);
-        mul(rst, tag[p]);
-        tag[p] = 1;
-    }
+//     void pull(int pos) {
+        
+//     }
 
-    ll query(int p, int l, int r, int x, int y) {
-        if (l >= y || r <= x) {
-            return 0;
-        }
-        if (l >= x && r <= y) {
-            return sum[p];
-        }
-        int m = l + r >> 1;
-        push(p);
-        ll ans = 0;
-        ans += query(lst, l, m, x, y) % P;
-        ans += query(rst, m + 1, r, x, y) % P;
-        return ans;
-    }
+//     void build(vector<int> init_, int l, int r, int pos = 1) {
+//         s[pos].l = l, s[pos].r = r;
+//         s[pos].sum = s[pos].mx = 0;
+//         if (l == r) {
+//             s[pos].sum = s[pos].mx = init_[l];
+//             return;
+//         }
+//         int mid = l + r >> 1;
+//         build(init_, l, m, lst);
+//         build(init_, m + 1, r, rst);
+//         pull(pos);
+//         return;
+//     }
 
-    void rangeMul(int p, int l, int r, int x, int y, int v) {
-        if (l >= y || r <= x) {
+//     void build(int init_[], int l, int r, int pos = 1) {
+//         s[pos].l = l, s[pos].r = r;
+//         s[pos].sum = s[pos].mx = 0;
+//         if (l == r) {
+//             s[pos].sum = s[pos].mx = init_[l];
+//             return;
+//         }
+//         int mid = l + r >> 1;
+//         build(init_, l, m, lst);
+//         build(init_, m + 1, r, rst);
+//         pull(pos);
+//         return;
+//     }
 
-            return;
-        }
-        if (l >= x && r <= y) {
-            mul(p, v);
-            return;
-        }
-    }
-}
+//     void modify(int x, int y, int k, int pos = 1) {
+//         if ()
+//     }
+// };
 
 // int a[N];
 
