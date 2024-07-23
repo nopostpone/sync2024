@@ -1,3 +1,5 @@
+#include <algorithm>
+#include <bitset>
 #include <cassert>
 #include <cctype>
 #include <cerrno>
@@ -6,6 +8,7 @@
 #include <climits>
 #include <clocale>
 #include <cmath>
+#include <complex>
 #include <csetjmp>
 #include <csignal>
 #include <cstdarg>
@@ -14,9 +17,6 @@
 #include <cstdlib>
 #include <cstring>
 #include <ctime>
-#include <algorithm>
-#include <bitset>
-#include <complex>
 #include <deque>
 #include <exception>
 #include <fstream>
@@ -55,25 +55,43 @@ struct Pos {
 
 struct Blocks {
 
-    Blocks() {}
+    explicit Blocks() {}
     ~Blocks() {}
 };
 
-template <class Blocks, class Pos>
+struct Command {
+    explicit Command() {};
+    ~Command() {}
+};
+
+template <class Blocks, class Pos, class Command>
 struct Scene {
-    typedef Blocks blks;
-    std::vector<std::vector<char>> scene;
+    // using blocks = Blocks;
+    // using pos = Pos;
+    // using command = Command;
+
+    std::vector<std::string> sce;
 
     Scene() {
-        std::function<void(int, int, int)> init {
-
-        }
         init();
     }
     ~Scene() {}
+
+    std::function<void()> init = [&]() {
+        std::vector<std::string> tmp = &sce;
+        tmp.resize(7);
+        tmp[0] = tmp[3] = tmp[6] = "?  ?  ?\n";
+        tmp[1] = tmp[2] = tmp[4] = tmp[5] = "       \n";
+    };
 };
 
 int main(void) {
-
+    std::function<void()> preWork = []() {
+        Pos pos;
+        Blocks blocks;
+        Command command;
+        Scene<blocks, pos, command> scene;
+    }
+    preWork();
     return 0;
 }
