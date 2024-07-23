@@ -55,7 +55,15 @@ enum Who {
 enum Result {
     win,
     draw,
-    lose
+    lose,
+    none
+};
+
+enum Direction {
+    left = 0,
+    right = 1,
+    up = 2,
+    down = 3
 };
 
 struct Pos {
@@ -68,8 +76,25 @@ struct Pos {
 
     std::function<void()> init = [&]() {
         this->dx = std::vector({-1, 1, 0, 0});
-        this->dy = std::vector({0, 0, 1, -1});
+        this->dy = std::vector({0, 0, -1, 1});
+        this->x = this->y = 1;
     };
+
+    std::function<void(Direction)> move = [&](Direction dir_) {
+        int dir = dir_;
+
+    };
+
+    bool in(int x_, int y_) {
+        if (x_ > 2 or x < 0 or y < 0 or y > 2) {
+            return false;
+        }
+        return true;
+    }
+    
+    bool in(int x_, int y_, Direction dir_) {
+        return valid(x + dx[dir_], y + dy[dir_]);
+    }
 };
 
 struct Blocks {
@@ -112,17 +137,32 @@ struct Blocks {
     };
 
     std::function<bool()> draw = [&]() {
-        for (int i : blk) {
-            if (i == 0)
-                return true;
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                if (this->blk[i][j] == 0) {
+                    return false;
+                }
+            }
         }
-        return false;
+        return true;
     };
 };
 
 struct Command {
     explicit Command() {};
     ~Command() {}
+
+    
+
+
+    std::function<bool(Pos, Blocks)> valid = [&](const Pos &P, const Blocks &B) {
+        if (P.in(P.x, P.y)) {
+            return false;
+        }
+
+
+        return true;
+    };
 };
 
 struct Scene {
@@ -184,11 +224,20 @@ struct Scene {
     };
 
     std::function<void(Pos, Blocks, Command)> sceneWork = [&](const Pos &P, const Blocks &B, const Command &C) {
-
+        system("cls");
+        this->scenePrint();
     };
 
-    std::function<Result()> sceneJudge = [&]() {
-        
+    std::function<Result(Blocks)> sceneJudge = [&](const Blocks &B) {
+        if (B.win(player)) {
+            return win;
+        } else if (B.win(computer)) {
+            return lose;
+        } else if (B.draw()) {
+            return draw;
+        } else {
+            return none;
+        }
     };
 
     std::function<void(Result)> sceneEnd = [&](const Result result_) {
