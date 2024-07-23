@@ -85,8 +85,8 @@ struct Blocks {
         this->blk.resize(3, {0, 0, 0});
     };
 
-    std::function<bool(who)> win = [&](who W) {
-        if (W == player) {
+    std::function<bool(Who)> win = [&](Who who_) {
+        if (who_ == player) {
             return (blk[0][0] == 1 && blk[0][1] == 1 && blk[0][2] == 1) ||
                    (blk[1][0] == 1 && blk[1][1] == 1 && blk[1][2] == 1) ||
                    (blk[2][0] == 1 && blk[2][1] == 1 && blk[2][2] == 1) ||
@@ -97,7 +97,6 @@ struct Blocks {
 
                    (blk[2][0] == 1 && blk[1][1] == 1 && blk[0][2] == 1) ||
                    (blk[0][0] == 1 && blk[1][1] == 1 && blk[2][2] == 1);
-
         } else {
             return (blk[0][0] == -1 && blk[0][1] == -1 && blk[0][2] == -1) ||
                    (blk[1][0] == -1 && blk[1][1] == -1 && blk[1][2] == -1) ||
