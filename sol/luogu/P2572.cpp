@@ -24,7 +24,7 @@ struct node {
     int tag, rev;
 } s[N << 2];
 
-void pushup(int pos) {
+void pullup(int pos) {
     s[pos].sum = s[lst].sum + s[rst].sum;
     for (int i : {0, 1}) {
         s[pos].ls[i] = s[lst].ls[i];
@@ -53,11 +53,11 @@ void build(int l, int r, int pos = 1) {
     int m = l + r >> 1;
     build(l, m, lst);
     build(m + 1, r, rst);
-    pushup(pos);
+    pullup(pos);
     return;
 }
 
-void P(int pos, int o) {
+void modify(int pos, int o) {
     if (o == 0 or o == 1) {
         s[pos].tag = o;
         s[pos].rev = 0;
@@ -75,14 +75,14 @@ void P(int pos, int o) {
 
 void pushdown(int pos) {
     if (~s[pos].tag) {
-        P(lst, s[pos].tag);
-        P(rst, s[pos].tag);
+        modify(lst, s[pos].tag);
+        modify(rst, s[pos].tag);
         s[pos].rev = 0;
         s[pos].tag = -1;
     }
     if (s[pos].rev) {
-        P(lst, 2);
-        P(rst, 2);
+        modify(lst, 2);
+        modify(rst, 2);
         if (~s[lst].tag)
             s[lst].tag ^= 1;
         else
@@ -152,7 +152,7 @@ void upd(int x, int y, int opt, int pos = 1) {
         //     swap(s[pos].rs[0], s[pos].rs[1]);
         //     swap(s[pos].ss[0], s[pos].ss[1]);
         // }
-        P(pos, opt);
+        modify(pos, opt);
         return;
     }
     int mid = s[pos].l + s[pos].r >> 1;
@@ -160,7 +160,7 @@ void upd(int x, int y, int opt, int pos = 1) {
         upd(x, y, opt, lst);
     if (mid < y)
         upd(x, y, opt, rst);
-    pushup(pos);
+    pullup(pos);
     return;
 }
 
