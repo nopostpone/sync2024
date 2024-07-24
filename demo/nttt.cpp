@@ -9,6 +9,7 @@
 #include <clocale>
 #include <cmath>
 #include <complex>
+#include <conio.h>
 #include <csetjmp>
 #include <csignal>
 #include <cstdarg>
@@ -82,18 +83,17 @@ struct Pos {
 
     std::function<void(Direction)> move = [&](Direction dir_) {
         int dir = dir_;
-
     };
 
     bool in(int x_, int y_) {
-        if (x_ > 2 or x < 0 or y < 0 or y > 2) {
+        if (x_ > 2 or x_ < 0 or y_ < 0 or y_ > 2) {
             return false;
         }
         return true;
     }
-    
-    bool in(int x_, int y_, Direction dir_) {
-        return valid(x + dx[dir_], y + dy[dir_]);
+
+    bool in(Direction dir_) {
+        return in(this->x + dx[dir_], this->y + dy[dir_]);
     }
 };
 
@@ -152,16 +152,24 @@ struct Command {
     explicit Command() {};
     ~Command() {}
 
-    
-
-
     std::function<bool(Pos, Blocks)> valid = [&](const Pos &P, const Blocks &B) {
-        if (P.in(P.x, P.y)) {
-            return false;
-        }
-
-
+        // if (P.in(left)) {
+        //     return false;
+        // }
         return true;
+    };
+
+    std::function<int()> getKeycode = [&]() {
+        while (true) {
+            if (_kbhit()) {
+                int keycode = _getch();
+                if (keycode == 224) {
+                    return _getch();
+                } else {
+                    return keycode;
+                }
+            }
+        }
     };
 };
 
@@ -227,8 +235,6 @@ struct Scene {
         system("cls");
         this->scenePrint();
 
-
-
         this->sceneEnd(this->sceneJudge(B));
     };
 
@@ -248,14 +254,13 @@ struct Scene {
         if (result_ == none) {
             return;
         } else if (result_ == win) {
-            std::cout << "you win!\n"
+            std::cout << "you win!\n";
         } else if (result_ == lose) {
-            std::cout << "you lose\n"
+            std::cout << "you lose\n";
         } else {
             std::cout << "draw-v-\n";
         }
     };
-
 };
 
 int main(void) {
@@ -263,6 +268,9 @@ int main(void) {
     Blocks blocks;
     Command command;
     Scene scene;
-    scene.scenePrint();
+    // scene.scenePrint();
+    while (1) {
+        command.getKeycode();
+    }
     return 0;
 }
