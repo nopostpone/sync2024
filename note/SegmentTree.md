@@ -1,6 +1,6 @@
 # 线段树
 
-线段树是一种区间二叉搜索树，能维护和询问区间上的一些性质，采用分治的思想，复杂度 $O(\log{n})$，原理见 [oiwiki 上的线段树部分](https://oiwiki.com/ds/seg/#%E7%BA%BF%E6%AE%B5%E6%A0%91)。
+线段树是一种区间二叉搜索树，能维护和询问区间上的一些性质，采用分治的思想，复杂度 $O(\log{n})$，原理见 [oiwiki 的线段树部分](https://oiwiki.com/ds/seg/#%E7%BA%BF%E6%AE%B5%E6%A0%91)。
 
 ## 维护区间和
 
@@ -32,7 +32,7 @@ struct node {
     long long sum; // 区间和
 } s[N << 2]; // 开四倍 N 的空间
 
-void pushup(int pos) {
+void pullup(int pos) {
     s[pos].sum = s[lst].sum + s[rst].sum;
 }
 
@@ -48,7 +48,7 @@ void build(int l, int r, int pos) {
     build(l, mid, lst);
     build(mid + 1, r, rst);
     // 回收标记（向上更新）
-    pushup(pos);
+    pullup(pos);
 }
 
 void pushdown(int pos) {
@@ -82,7 +82,7 @@ void upd(int x, int y, int k, int pos = 1) {
         upd(x, y, k, rst);
     }
     // 标记回收
-    pushup(pos);
+    pullup(pos);
 }
 
 long long query(int x, int y, int pos = 1) {
@@ -188,7 +188,7 @@ void build(ll l, ll r, ll pos)
     ll m = (l + r) >> 1;
     build(l, m, lst);
     build(m + 1, r, rst);
-    pushup(pos);
+    pullup(pos);
 }
 ```
 
@@ -265,7 +265,7 @@ void upd(int x, int y, int pos = 1) {
         upd(x, y, lst);
     if (m < y)
         upd(x, y, rst);
-    pushup(pos);
+    pullup(pos);
     return;
 }
 ```
@@ -277,9 +277,9 @@ void upd(int x, int y, int pos = 1) {
 
 线段树中每个节点需要维护三个信息：最长前缀、最长后缀、最长区间。更新时暴力到叶子节点，然后一层层向上更新。
 
-以 `pushup` 为例。
+以 `pullup` 为例。
 ```cpp
-void pushup(int pos) {
+void pullup(int pos) {
     // 前缀 = 左子树前缀
     s[pos].ls = s[lst].ls;
     // 后缀 = 右子树后缀
@@ -318,7 +318,7 @@ void upd(int x, int pos = 1)
         upd(x, lst);
     else
         upd(x, rst);
-    pushup(pos);
+    pullup(pos);
     return;
 }
 ```
@@ -343,7 +343,7 @@ struct node {
     int l, r, ls[2], sum[2], rs[2];
 } s[N * 4];
 
-void pushup(int pos) {
+void pullup(int pos) {
     for (int i : {0, 1}) {
         s[pos].ls[i] = s[lst].ls[i];
         s[pos].rs[i] = s[rst].rs[i];
@@ -371,7 +371,7 @@ void build(int l, int r, int pos) {
     int m = (l + r) >> 1;
     build(l, m, lst);
     build(m + 1, r, rst);
-    pushup(pos);
+    pullup(pos);
 }
 ```
 
@@ -383,29 +383,34 @@ void build(int l, int r, int pos) {
 
 [__比较难的例题：luogu P2572__](https://www.luogu.com.cn/problem/P2572)
 
-这题需要实现区间赋值和区间翻转，在更新中要维护“1 的个数”和“最大连续 1 区间”。
+这题需要实现区间赋值和区间翻转，在更新中要维护“$1$ 的个数”和“最大连续 $1$ 区间”。
 
 上一题只有翻转，而且是点修，在更改的过程中肯定是递归到最深层再拉上来的，所以无需下放操作。
 
 但对于此题的区间操作，就需要下放操作了。
 
-我们考虑在线段树每个节点维护 $9$ 个信息：
+考虑在线段树每个节点维护 $9$ 个信息：
 
-1. 是否有赋值
-1. 是否有翻转
-1. $0$ 的前缀连续个数
-1. $1$ 的前缀连续个数
-1. $0$ 的后缀连续个数
-1. $1$ 的后缀连续个数
-1. $0$ 的最多连续个数
-1. $1$ 的最多连续个数
-1. $1$ 的总个数
+- 是否有赋值
+- 是否有翻转
+- $0$ 的前缀连续个数
+- $1$ 的前缀连续个数
+- $0$ 的后缀连续个数
+- $1$ 的后缀连续个数
+- $0$ 的最多连续个数
+- $1$ 的最多连续个数
+- $1$ 的总个数
 
 ```cpp
 struct node {
     int l, r;
+    // ss：最多连续个数 
+    // ls：前缀连续个数
+    // rs：后缀连续个数
+    // sum：1 的个数
     int ss[2], ls[2], rs[2], sum;
-    int tag, rev; // tag 表示是否有赋值：-1表示没有赋值，0和1分别表示区间赋值0和1
+    // tag 表示是否有赋值：-1表示没有赋值，0和1分别表示区间赋值0和1
+    int tag, rev; 
 } s[N << 2];
 ```
 
