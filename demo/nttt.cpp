@@ -226,6 +226,10 @@ struct Scene {
     std::function<void(Pos, Blocks, Command)> sceneWork = [&](const Pos &P, const Blocks &B, const Command &C) {
         system("cls");
         this->scenePrint();
+
+
+
+        this->sceneEnd(this->sceneJudge(B));
     };
 
     std::function<Result(Blocks)> sceneJudge = [&](const Blocks &B) {
@@ -241,7 +245,15 @@ struct Scene {
     };
 
     std::function<void(Result)> sceneEnd = [&](const Result result_) {
-
+        if (result_ == none) {
+            return;
+        } else if (result_ == win) {
+            std::cout << "you win!\n"
+        } else if (result_ == lose) {
+            std::cout << "you lose\n"
+        } else {
+            std::cout << "draw-v-\n";
+        }
     };
 
 };
