@@ -1,3 +1,5 @@
+// https://www.luogu.com.cn/problem/P4069
+//
 #include <bits/stdc++.h>
 using namespace std;
 using ll = long long;
