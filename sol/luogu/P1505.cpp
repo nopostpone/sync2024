@@ -204,7 +204,7 @@ struct HLD {
     }
 
     void dfs2(int u) {
-        in[u] = cur++;
+        in[u] = ++cur;
         seq[in[u]] = u;
         for (auto v : adj[u]) {
             top[v] = (v == adj[u][0] ? top[u] : v);
@@ -248,7 +248,7 @@ struct HLD {
                 l.rangeApply(in[top[u]], in[u], t);
                 u = parent[top[u]];
             } else {
-                l.rangeQuery(in[top[v]], in[v], t);
+                l.rangeApply(in[top[v]], in[v], t);
                 v = parent[top[v]];
             }
         }
@@ -281,9 +281,9 @@ void solve() {
         hld.addEdge(x, y);
         e.push_back({x, y, z, i});
     }
-    hld.work(1);
+    hld.work(0);
 
-    vector<int> a(n + 1);
+    vector<int> a(n);
     for (auto &&[x, y, z, id] : e) {
         if (hld.parent[y] == x) {
             swap(x, y);
@@ -292,30 +292,33 @@ void solve() {
     }
 
     vector<Info> info(n + 1);
-    for (int i = 2; i <= n; i++) {
+    info[hld.in[1]].act = 1;
+    for (int i = 1; i < n; i++) {
         info[hld.in[i]].max = a[i];
+        info[hld.in[i]].sum = a[i];
+        info[hld.in[i]].min = a[i];
+        info[hld.in[i]].act = 1;
     }
     l.init(info);
 
-    while (true) {
+    cin >> m;
+    while (m--) {
         string opt;
-        int x;
-        ll y;
-        cin >> opt;
-        if (opt == "DONE") {
-            break;
-        } else if (opt == "QUERY") {
-            cin >> x >> y;
-            if (x == y) {
-                cout << 0 << endl;
-            } else {
-                cout << (hld.query_path(x, y)).max << endl;
-            }
-        } else {
-            cin >> x >> y;
-            hld.modify_node(e[x - 1].x, {y});
+        int x, y;
+        cin >> opt >> x >> y;
+        if (opt == "C") {
+            hld.modify_node(e[x - 1].x, y);
+        } else if (opt == "N") {
+            hld.update_path(x, y);
+        } else if (opt == "SUM") {
+            cout << hld.query_path(x, y).sum << endl;
+        } else if (opt == "MAX") {
+            cout << hld.query_path(x, y).max << endl;
+        } else if (opt == "MIN") {
+            cout << hld.query_path(x, y).min << endl;
         }
     }
+    return;
 }
 
 int main() {
