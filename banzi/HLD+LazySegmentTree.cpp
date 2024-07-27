@@ -89,7 +89,7 @@ struct LazySegmentTree {
         }
         int m = (l + r) / 2;
         push(p);
-        if (x < m) {
+        if (x <= m) {
             modify(2 * p, l, m, x, v);
         }
         else {
@@ -161,7 +161,7 @@ struct HLD {
         in.resize(n);
         out.resize(n);
         seq.resize(n);
-        cur = 0;
+        cur = 1;
         adj.assign(n, {});
     }
 
@@ -215,21 +215,21 @@ struct HLD {
         return (dep[u] < dep[v]) ? u : v;
     }
 
-    ll query_path(int u, int v) {
-        ll ans = 0;
+    Info query_path(int u, int v) {
+        Info ret;
         while (top[u] != top[v]) {
             if (dep[top[u]] > dep[top[v]]) {
-                ans += l.rangeQuery(in[top[u]], in[u] + 1).sum;
+                ret = ret + l.rangeQuery(in[top[u]], in[u]);
                 u = parent[top[u]];
             } else {
-                ans += l.rangeQuery(in[top[v]], in[v] + 1).sum;
+                ret = ret + l.rangeQuery(in[top[v]], in[v]);
                 v = parent[top[v]];
             }
         }
         if (dep[u] < dep[v])
             std::swap(u, v);
-        ans += l.rangeQuery(in[v], in[u] + 1).sum;
-        return ans;
+        ret = ret + l.rangeQuery(in[v] + 1, in[u]);
+        return ret;
     }
 
     void update_path(int u, int v, int k) {
@@ -252,10 +252,10 @@ struct HLD {
     void update_tree(int u, int k) {
         Tag t;
         t.add = k;
-        l.rangeApply(in[u], in[u] + siz[u], t);
+        l.rangeApply(in[u], out[u], t);
     }
 
-    ll query_tree(int u) {
-        return l.rangeQuery(in[u], in[u] + siz[u]).sum;
+    Info query_tree(int u) {
+        return l.rangeQuery(in[u], out[u]);
     }
 };
