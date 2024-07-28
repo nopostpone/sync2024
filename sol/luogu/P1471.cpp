@@ -4,15 +4,15 @@ using ll = long long;
 
 constexpr ll inf = 1e18;
 
-template<class T>
+template <class T>
 inline double seq(const T &x) {
     return x * x;
 }
 
 struct Tag {
     double add = 0;
- 
-    void apply(const Tag& t) {
+
+    void apply(const Tag &t) {
         add += t.add;
     }
 };
@@ -21,8 +21,8 @@ struct Info {
     double sum = 0;
     double sqr = 0;
     int act = 0;
- 
-    void apply(const Tag& t) {
+
+    void apply(const Tag &t) {
         sqr += 2 * t.add * sum + act * seq(t.add);
         sum += act * t.add;
     }
@@ -152,7 +152,7 @@ void solve() {
 
     vector<double> res;
 
-    while(m--) {
+    while (m--) {
         int opt;
         double x, y;
         cin >> opt >> x >> y;
@@ -173,7 +173,7 @@ void solve() {
 }
 
 int main() {
-    cin.tie(nullptr) -> sync_with_stdio(false);
+    cin.tie(nullptr)->sync_with_stdio(false);
     int _ = 1;
     while (_--)
         solve();
