@@ -3,11 +3,11 @@
 using namespace std;
 using ll = long long;
 
-constexpr ll inf = 1e10;
+constexpr ll inf = 1e18;
 
 struct Line {
     double k = 0;
-    double b = 0;
+    ll b = inf;
 };
 
 template <class Line>
@@ -22,11 +22,15 @@ struct LiChaoTree {
     
     LiChaoTree() {}
 
-    void init(int n_) {
+    LiChaoTree(int n_, int m_) {
+        this->init(n_, m_);
+    }
+
+    void init(int n_, int m_) {
         this->n = n_;
         this->cnt = 0;
         s.resize(n << 2, 0);
-        l.resize(n << 2, {});
+        l.resize(m_ + 1, {});
     }
 
     template <class T>
@@ -62,12 +66,12 @@ struct LiChaoTree {
     void insert(int p, int l, int r, int u) {
         int &v = s[p];
         int m = l + r >> 1;
-        if (cmp(f(u, m) - f(v, m)) == 1 or (cmp(f(u, m) == f(v, m)) == 0 and u < v)) {
+        if (cmp(f(u, m), f(v, m)) == 1 or (cmp(f(u, m), f(v, m)) == 0 and u < v)) {
             swap(u, v);
         }
-        if (cmp(f(u, l) > f(v, l)) == 1 or (cmp(f(u, l) == f(v, l)) == 0 and (u < v))) {
+        if (cmp(f(u, l), f(v, l)) == 1 or (cmp(f(u, l), f(v, l)) == 0 and u < v)) {
             insert(lst, l, m, u);
-        } else if (cmp(f(u, r) > f(v, r)) == 1 or cmp((f(u, r) == f(v, r)) == 0 and (u < v))) {
+        } else if (cmp(f(u, r), f(v, r)) == 1 or (cmp(f(u, r), f(v, r)) == 0 and u < v)) {
             insert(rst, m + 1, r, u);
         }
         return;
@@ -76,20 +80,36 @@ struct LiChaoTree {
     void upd(int p, int l, int r, int x, int y, int u) {
         if (x <= l and r <= y) {
             insert(p, l, r, u);
+            return;
         }
         int m = l + r >> 1;
-        if (l <= m)
+        if (x <= m)
             upd(lst, l, m, x, y, u);
-        if (m < r)
+        if (m < y)
             upd(rst, m + 1, r, x, y, u);
         return;
     }
 
+    void upd(int x, int y) {
+        upd(1, 1, n, x, y, cnt);
+    }
+
     pair<double, int> pmax(const pair<double, int> &A, const pair<double, int> &B) {
-        if (A.first > B.first)
+        int tmp = cmp(A.first, B.first);
+        if (tmp == 1)
             return A;
-        else if (A.first < B.first)
+        else if (tmp == -1)
             return B;
+        else
+            return A.second < B.second ? A : B;
+    }
+
+    pair<double, int> pmin(const pair<double, int> &A, const pair<double, int> &B) {
+        int tmp = cmp(A.first, B.first);
+        if (tmp == 1)
+            return B;
+        else if (tmp == -1)
+            return A;
         else
             return A.second < B.second ? A : B;
     }
@@ -101,9 +121,11 @@ struct LiChaoTree {
         double res = f(s[p], now);
         if (l == r)
             return {res, s[p]};
-        return pmax({res, s[p]}, pmax(query(lst, l, m, now), query(rst, m + 1, r, now)));
+        return pmin({res, s[p]}, pmin(query(lst, l, m, now), query(rst, m + 1, r, now)));
     }
 };
+
+LiChaoTree<Line> lct;
 
 struct HLD {
     int n;
@@ -126,7 +148,7 @@ struct HLD {
         in.resize(n);
         out.resize(n);
         seq.resize(n);
-        cur = 0;
+        cur = 1;
         adj.assign(n, {});
     }
 
@@ -160,7 +182,7 @@ struct HLD {
     }
 
     void dfs2(int u) {
-        in[u] = ++cur;
+        in[u] = cur++;
         seq[in[u]] = u;
         for (auto v : adj[u]) {
             top[v] = (v == adj[u][0] ? top[u] : v);
@@ -180,49 +202,40 @@ struct HLD {
         return (dep[u] < dep[v]) ? u : v;
     }
 
-    // Info query_path(int u, int v) {
-    //     Info ret;
-    //     while (top[u] != top[v]) {
-    //         if (dep[top[u]] > dep[top[v]]) {
-    //             ret = ret + l.rangeQuery(in[top[u]], in[u]);
-    //             u = parent[top[u]];
-    //         } else {
-    //             ret = ret + l.rangeQuery(in[top[v]], in[v]);
-    //             v = parent[top[v]];
-    //         }
-    //     }
-    //     if (dep[u] < dep[v])
-    //         std::swap(u, v);
-    //     ret = ret + l.rangeQuery(in[v] + 1, in[u]);
-    //     return ret;
-    // }
+    double query_path(int u, int v) {
+        pair<double, int> pr;
+        while (top[u] != top[v]) {
+            if (dep[top[u]] > dep[top[v]]) {
+                pr = lct.pmin(pr, lct.query(in[top[u]], in[u]));
+                u = parent[top[u]];
+            } else {
+                pr = lct.pmin(pr, lct.query(in[top[v]], in[v]));
+                v = parent[top[v]];
+            }
+        }
+        if (dep[u] < dep[v])
+            std::swap(u, v);
+        return lct.pmin(pr, lct.query(in[u], in[v]));
+    }
 
-    // void update_path(int u, int v) {
-    //     Tag t = {true};
-    //     while (top[u] != top[v]) {
-    //         if (dep[top[u]] > dep[top[v]]) {
-    //             l.rangeApply(in[top[u]], in[u], t);
-    //             u = parent[top[u]];
-    //         } else {
-    //             l.rangeApply(in[top[v]], in[v], t);
-    //             v = parent[top[v]];
-    //         }
-    //     }
-    //     if (dep[u] < dep[v])
-    //         std::swap(u, v);
-    //     l.rangeApply(in[v] + 1, in[u], t);
-    // }
-
-    // void modify_node(int u, int k) {
-    //     Info t;
-    //     t.act = 1;
-    //     t.max = t.min = t.sum = k;
-    //     l.modify(in[u], t);
-    // }
+    void update_path(int u, int v, int id) {
+        while (top[u] != top[v]) {
+            if (dep[top[u]] > dep[top[v]]) {
+                lct.addLine(l);
+                u = parent[top[u]];
+            } else {
+                l.rangeApply(in[top[v]], in[v] + 1, t);
+                v = parent[top[v]];
+            }
+        }
+        if (dep[u] < dep[v])
+            std::swap(u, v);
+        l.rangeApply(in[v], in[u] + 1, t);
+    }
 };
 
 void solve() {
-    
+
 }
 
 int main() {
