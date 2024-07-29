@@ -5,149 +5,62 @@ using ll = long long;
 
 constexpr ll inf = 1e10;
 
-struct Tag {
-    bool rev = 0;
-
-    void apply(const Tag &t) {
-        rev ^= t.rev;
-    }
+struct Line {
+    double k = 0;
+    double b = 0;
 };
 
-struct Info {
-    ll min = inf;
-    ll max = -inf;
-    ll sum = 0;
-    int act = 0;
-
-    void apply(const Tag &t) {
-        if (t.rev) {
-            min = -min;
-            max = -max;
-            swap(min, max);
-            sum = -sum;
-        }
-    }
-};
-
-Info operator+(const Info &a, const Info &b) {
-    Info c;
-    c.max = std::max(a.max, b.max);
-    c.min = std::min(a.min, b.min);
-    c.sum = a.sum + b.sum;
-    c.act = a.act + b.act;
-    return c;
-}
-
-template <class Info, class Tag>
-struct LazySegmentTree {
+template <class Line>
+struct LiChaoTree {
+#define lst p << 1
+#define rst p << 1 | 1
     int n;
-    std::vector<Info> info;
-    std::vector<Tag> tag;
+    int cnt;
+    vector<int> s;
+    vector<Line> l;
+    
+    LiChaoTree() {}
 
-    LazySegmentTree() : n(0) {}
-
-    LazySegmentTree(int n_, Info v_ = Info()) {
-        init(n_, v_);
+    void init(int n_) {
+        this->n = n_;
+        this->cnt = 0;
+        s.resize(n << 2, 0);
+        l.resize(n << 2, {});
     }
 
     template <class T>
-    LazySegmentTree(const std::vector<T> &init_) {
-        init(init_);
+    inline double f(int id, T now) {
+        return 1. * l[id].k * now + l[id].b;
     }
 
-    void init(int n_, Info v_ = Info()) {
-        init(std::vector<Info>(n_, v_));
-    }
-
-    template <class T>
-    void init(const std::vector<T> &init_) {
-        n = init_.size();
-        info.assign(4 << (int)std::log2(n), Info());
-        tag.assign(4 << (int)std::log2(n), Tag());
-        std::function<void(int, int, int)> build = [&](int p, int l, int r) {
-            if (r == l) {
-                info[p] = init_[l];
-                return;
-            }
-            int m = (l + r) / 2;
-            build(2 * p, l, m);
-            build(2 * p + 1, m + 1, r);
-            pull(p);
-        };
-        build(1, 1, n);
-    }
-
-    void pull(int p) {
-        info[p] = info[2 * p] + info[2 * p + 1];
-    }
-
-    void apply(int p, const Tag &v) {
-        info[p].apply(v);
-        tag[p].apply(v);
-    }
-
-    void push(int p) {
-        apply(2 * p, tag[p]);
-        apply(2 * p + 1, tag[p]);
-        tag[p] = Tag();
-    }
-
-    void modify(int p, int l, int r, int x, const Info &v) {
-        if (r == l) {
-            info[p] = v;
-            return;
-        }
-        int m = (l + r) / 2;
-        push(p);
-        if (x <= m) {
-            modify(2 * p, l, m, x, v);
+    template<class T>
+    void addLine(T x0, T y0, T x1, T y1) {
+        if (x0 > x1)
+            swap(x0, x1), swap(y0, y1);
+        cnt++;
+        double k, b;
+        if (x0 == x1) {
+            k = 0;
+            b = max(y0, y1);
         } else {
-            modify(2 * p + 1, m + 1, r, x, v);
+            k = 1. * (y1 - y0) / (1. * (x1 - x0));
+            b = 1. * y0 - 1. * x0 * k;
         }
-        pull(p);
+        l[cnt] = {k, b};
     }
 
-    void modify(int p, const Info &v) {
-        modify(1, 1, n, p, v);
+    void insert(int p, int l, int r, int u) {
+        int &v = s[p];
     }
 
-    Info rangeQuery(int p, int l, int r, int x, int y) {
-        if (l > y || r < x) {
-            return Info();
-        }
-        if (l >= x && r <= y) {
-            return info[p];
-        }
-        int m = (l + r) / 2;
-        push(p);
-        return rangeQuery(2 * p, l, m, x, y) + rangeQuery(2 * p + 1, m + 1, r, x, y);
+    void upd(int p, int l, int r, int x, int y, int u) {
+
     }
 
-    Info rangeQuery(int l, int r) {
-        return rangeQuery(1, 1, n, l, r);
-    }
+    pair<double, int> pmax() {return {};}
 
-    void rangeApply(int p, int l, int r, int x, int y, const Tag &v) {
-        if (l > y || r < x) {
-            return;
-        }
-        if (l >= x && r <= y) {
-            apply(p, v);
-            return;
-        }
-        int m = (l + r) / 2;
-        push(p);
-        rangeApply(2 * p, l, m, x, y, v);
-        rangeApply(2 * p + 1, m + 1, r, x, y, v);
-        pull(p);
-    }
-
-    void rangeApply(int l, int r, const Tag &v) {
-        return rangeApply(1, 1, n, l, r, v);
-    }
+    pair<double, int> query() {return {};}
 };
-
-LazySegmentTree<Info, Tag> l;
 
 struct HLD {
     int n;
@@ -224,45 +137,45 @@ struct HLD {
         return (dep[u] < dep[v]) ? u : v;
     }
 
-    Info query_path(int u, int v) {
-        Info ret;
-        while (top[u] != top[v]) {
-            if (dep[top[u]] > dep[top[v]]) {
-                ret = ret + l.rangeQuery(in[top[u]], in[u]);
-                u = parent[top[u]];
-            } else {
-                ret = ret + l.rangeQuery(in[top[v]], in[v]);
-                v = parent[top[v]];
-            }
-        }
-        if (dep[u] < dep[v])
-            std::swap(u, v);
-        ret = ret + l.rangeQuery(in[v] + 1, in[u]);
-        return ret;
-    }
+    // Info query_path(int u, int v) {
+    //     Info ret;
+    //     while (top[u] != top[v]) {
+    //         if (dep[top[u]] > dep[top[v]]) {
+    //             ret = ret + l.rangeQuery(in[top[u]], in[u]);
+    //             u = parent[top[u]];
+    //         } else {
+    //             ret = ret + l.rangeQuery(in[top[v]], in[v]);
+    //             v = parent[top[v]];
+    //         }
+    //     }
+    //     if (dep[u] < dep[v])
+    //         std::swap(u, v);
+    //     ret = ret + l.rangeQuery(in[v] + 1, in[u]);
+    //     return ret;
+    // }
 
-    void update_path(int u, int v) {
-        Tag t = {true};
-        while (top[u] != top[v]) {
-            if (dep[top[u]] > dep[top[v]]) {
-                l.rangeApply(in[top[u]], in[u], t);
-                u = parent[top[u]];
-            } else {
-                l.rangeApply(in[top[v]], in[v], t);
-                v = parent[top[v]];
-            }
-        }
-        if (dep[u] < dep[v])
-            std::swap(u, v);
-        l.rangeApply(in[v] + 1, in[u], t);
-    }
+    // void update_path(int u, int v) {
+    //     Tag t = {true};
+    //     while (top[u] != top[v]) {
+    //         if (dep[top[u]] > dep[top[v]]) {
+    //             l.rangeApply(in[top[u]], in[u], t);
+    //             u = parent[top[u]];
+    //         } else {
+    //             l.rangeApply(in[top[v]], in[v], t);
+    //             v = parent[top[v]];
+    //         }
+    //     }
+    //     if (dep[u] < dep[v])
+    //         std::swap(u, v);
+    //     l.rangeApply(in[v] + 1, in[u], t);
+    // }
 
-    void modify_node(int u, int k) {
-        Info t;
-        t.act = 1;
-        t.max = t.min = t.sum = k;
-        l.modify(in[u], t);
-    }
+    // void modify_node(int u, int k) {
+    //     Info t;
+    //     t.act = 1;
+    //     t.max = t.min = t.sum = k;
+    //     l.modify(in[u], t);
+    // }
 };
 
 struct edge {
@@ -270,55 +183,6 @@ struct edge {
 };
 
 void solve() {
-    int n, m;
-    cin >> n;
-
-    HLD hld(n);
-    vector<edge> e;
-    for (int i = 0; i < n - 1; i++) {
-        int x, y, z;
-        cin >> x >> y >> z;
-        hld.addEdge(x, y);
-        e.push_back({x, y, z, i});
-    }
-    hld.work(0);
-
-    vector<int> a(n);
-    for (auto &&[x, y, z, id] : e) {
-        if (hld.parent[y] == x) {
-            swap(x, y);
-        }
-        a[x] = z;
-    }
-
-    vector<Info> info(n + 1);
-    info[hld.in[1]].act = 1;
-    for (int i = 1; i < n; i++) {
-        info[hld.in[i]].max = a[i];
-        info[hld.in[i]].sum = a[i];
-        info[hld.in[i]].min = a[i];
-        info[hld.in[i]].act = 1;
-    }
-    l.init(info);
-
-    cin >> m;
-    while (m--) {
-        string opt;
-        int x, y;
-        cin >> opt >> x >> y;
-        if (opt == "C") {
-            hld.modify_node(e[x - 1].x, y);
-        } else if (opt == "N") {
-            hld.update_path(x, y);
-        } else if (opt == "SUM") {
-            cout << hld.query_path(x, y).sum << endl;
-        } else if (opt == "MAX") {
-            cout << hld.query_path(x, y).max << endl;
-        } else if (opt == "MIN") {
-            cout << hld.query_path(x, y).min << endl;
-        }
-    }
-    return;
 }
 
 int main() {
