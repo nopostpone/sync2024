@@ -40,14 +40,14 @@ void inst(int p, int l, int r, int u) {
     int &v = s[p];
     int m = l + r >> 1;
     int bm = cmp(t[u].f(m), t[v].f(m));
-    if (bm == 1 or (bm != 0 and u < v)) {
+    if (bm == 1 or (bm == 0 and u < v)) {
         swap(u, v);
     }
     int bl = cmp(t[u].f(l), t[v].f(l));
     int br = cmp(t[u].f(r), t[v].f(r));
-    if (bl == 1 or (bl != 0 and u < v)) {
+    if (bl == 1 or (bl == 0 and u < v)) {
         inst(2 * p, l, m, u);
-    } else if (br == 1 or (br != 0 and u < v)) {
+    } else if (br == 1 or (br == 0 and u < v)) {
         inst(2 * p + 1, m + 1, r, u);
     }
 }

@@ -14,6 +14,7 @@ template <class Line>
 struct LiChaoTree {
 #define lst p << 1
 #define rst p << 1 | 1
+    const double eps = 1e-9;
     int n;
     int cnt;
     vector<int> s;
@@ -31,6 +32,15 @@ struct LiChaoTree {
     template <class T>
     inline double f(int id, T now) {
         return 1. * l[id].k * now + l[id].b;
+    }
+
+    template <class T>
+    inline int cmp(const T &x, const T &y) {
+        if (x - y > eps)
+            return 1;
+        if (y - x > eps)
+            return -1;
+        return 0;
     }
 
     template<class T>
@@ -51,15 +61,48 @@ struct LiChaoTree {
 
     void insert(int p, int l, int r, int u) {
         int &v = s[p];
+        int m = l + r >> 1;
+        if (cmp(f(u, m) - f(v, m)) == 1 or (cmp(f(u, m) == f(v, m)) == 0 and u < v)) {
+            swap(u, v);
+        }
+        if (cmp(f(u, l) > f(v, l)) == 1 or (cmp(f(u, l) == f(v, l)) == 0 and (u < v))) {
+            insert(lst, l, m, u);
+        } else if (cmp(f(u, r) > f(v, r)) == 1 or cmp((f(u, r) == f(v, r)) == 0 and (u < v))) {
+            insert(rst, m + 1, r, u);
+        }
+        return;
     }
 
     void upd(int p, int l, int r, int x, int y, int u) {
-
+        if (x <= l and r <= y) {
+            insert(p, l, r, u);
+        }
+        int m = l + r >> 1;
+        if (l <= m)
+            upd(lst, l, m, x, y, u);
+        if (m < r)
+            upd(rst, m + 1, r, x, y, u);
+        return;
     }
 
-    pair<double, int> pmax() {return {};}
+    pair<double, int> pmax(const pair<double, int> &A, const pair<double, int> &B) {
+        if (A.first > B.first)
+            return A;
+        else if (A.first < B.first)
+            return B;
+        else
+            return A.second < B.second ? A : B;
+    }
 
-    pair<double, int> query() {return {};}
+    pair<double, int> query(int p, int l, int r, int now) {
+        if (r < now or now < l)
+            return {0, 0};
+        int m = l + r >> 1;
+        double res = f(s[p], now);
+        if (l == r)
+            return {res, s[p]};
+        return pmax({res, s[p]}, pmax(query(lst, l, m, now), query(rst, m + 1, r, now)));
+    }
 };
 
 struct HLD {
@@ -178,11 +221,8 @@ struct HLD {
     // }
 };
 
-struct edge {
-    int x, y, z, id;
-};
-
 void solve() {
+    
 }
 
 int main() {
