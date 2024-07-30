@@ -23,6 +23,6 @@ namespace QuickRead {
         if (x > 9) write(x / 10);
         putchar(x % 10 + '0');
     }
-} // namespace QuickRead
+}
 
 using namespace QuickRead;
