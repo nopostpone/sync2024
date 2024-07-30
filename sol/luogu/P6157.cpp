@@ -7,6 +7,7 @@ constexpr ll inf = 1e18;
 
 multiset<int> s;
 
+
 struct Tag {
     ll add = 0;
  
@@ -18,19 +19,18 @@ struct Tag {
 struct Info {
     ll max = -inf;
     ll sec = -inf;
+    ll act = 0;
 
     void apply(const Tag& t) {
-        min += t.add;
         max += t.add;
-        sum += act * t.add;
+        sec += t.add;
     }
 };
  
 Info operator+(const Info& a, const Info& b) {
     Info c;
-    c.min = std::min(a.min, b.min);
+    c.seq = std::max(a.min, b.min);
     c.max = std::max(a.max, b.max);
-    c.sum = a.sum + b.sum;
     c.act = a.act + b.act;
     return c;
 }
@@ -89,13 +89,14 @@ struct LazySegmentTree {
         tag[p] = Tag();
     }
  
-    void modify(int p, int l, int r, int x, const Info& v) {
+    void modify(int p, int l, int r, int x, const Tag& v) {
         if (r == l) {
-            info[p] = v;
+            s.erase(info[p].max);
+            info[p].apply(v);
+            s.insert(info[p].max);
             return;
         }
         int m = (l + r) / 2;
-        push(p);
         if (x <= m) {
             modify(2 * p, l, m, x, v);
         }
@@ -105,7 +106,7 @@ struct LazySegmentTree {
         pull(p);
     }
  
-    void modify(int p, const Info& v) {
+    void modify(int p, const Tag& v) {
         modify(1, 1, n, p, v);
     }
  
@@ -123,25 +124,6 @@ struct LazySegmentTree {
  
     Info rangeQuery(int l, int r) {
         return rangeQuery(1, 1, n, l, r);
-    }
- 
-    void rangeApply(int p, int l, int r, int x, int y, const Tag& v) {
-        if (l > y || r < x) {
-            return;
-        }
-        if (l >= x && r <= y) {
-            apply(p, v);
-            return;
-        }
-        int m = (l + r) / 2;
-        push(p);
-        rangeApply(2 * p, l, m, x, y, v);
-        rangeApply(2 * p + 1, m + 1, r, x, y, v);
-        pull(p);
-    }
- 
-    void rangeApply(int l, int r, const Tag& v) {
-        return rangeApply(1, 1, n, l, r, v);
     }
 };
 
@@ -306,7 +288,7 @@ int main() {
             s.insert(t.max);
             s.insert(t.sec);
         } else {
-            l.modify(hld.in[x], {-inf, y});
+            
         }
 
     }
