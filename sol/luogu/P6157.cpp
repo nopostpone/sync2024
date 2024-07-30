@@ -7,7 +7,6 @@ constexpr ll inf = 1e18;
 
 multiset<int> s;
 
-
 struct Tag {
     ll add = 0;
  
