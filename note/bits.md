@@ -1,14 +1,8 @@
 # 位运算 入门
 
-整理不是很难，但做不出的位运算题目
+本人完全没位运算基础，因此整理一些不难，但（赛时）做不出的位运算题目
 
-## [CF1988C](https://codeforces.com/contest/1988/problem/C)
-
-You are given a positive integer $n$. Find the **longest** sequence of positive integers $a=[a_1,a_2,\ldots,a_k]$ that satisfies the following conditions, and print the sequence:
-
--   $a_i\le n$ for all $1\le i\le k$.
--   $a$ is strictly increasing. That is, $a_i>a_{i-1}$ for all $2\le i\le k$.
--   $a_i\,|\,a_{i-1}=n$ for all $2\le i\le k$, where $|$ denotes the [bitwise OR operation](https://en.wikipedia.org/wiki/Bitwise_operation#OR).
+## [CF1988C Increasing Sequence with Fixed OR](https://codeforces.com/contest/1988/problem/C)
 
 给你一个正整数 $n$，需要构造最长的序列满足：
 
@@ -31,7 +25,7 @@ You are given a positive integer $n$. Find the **longest** sequence of positive 
 0 1 1 1 1
 ```
 
-先得到 $n$ 的二进制，对于每一位 $1$ 就可以推一个除了这一位是 $0$，其余都是 $1$ 的二进制数进入答案。
+先得到 $n$ 的二进制，对于每一位 $1$ 就可以推一个除了这一位是 $0$，其余都与 $n$ 相同的二进制数进入答案。
 
 由于还可以塞一个 $n$，因此数量就是 `size + 1`。
 
@@ -65,6 +59,36 @@ void solve() {
         cout << sum << ' ';
     }
     cout << n << "\n";
+}
+```
+
+</details>
+
+## [CF1994B Fun Game](https://codeforces.com/contest/1994/problem/B)
+
+给出两个序列 $s$ 和 $t$，问能不能通过任意次操作把 $s$ 变成 $t$，操作内容如下：
+
+选一组 $(l, r)$ 满足 $1 \leq l \leq r \leq n$，对于 $[l, r]$ 中的每一个元素 $s_i$，将其替换为 $s_i \oplus s_{i - l + 1}$。
+
+解：
+<details>
+
+$1\oplus 1 = 0$，$0\oplus 1 = 1$。
+
+核心代码：
+```cpp
+void solve() {
+    int n;
+    cin >> n;
+    string s, t;
+    cin >> s >> t;
+    for (int i = 0; i < s.size() && s[i] == '0'; i++) {
+        if (t[i] != '0') {
+            cout << "NO\n";
+            return;
+        }
+    }
+    cout << "YES\n";
 }
 ```
 
