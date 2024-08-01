@@ -5,7 +5,7 @@ using ll = long long;
 
 constexpr ll inf = 1e10;
 
-multiset<int> s;
+multiset<ll> s;
 
 struct Tag {
     ll add = 0;
@@ -27,17 +27,14 @@ struct Info {
 
 Info operator+(const Info &a, const Info &b) {
     Info c;
-    priority_queue<ll, vector<ll>> tmp;
-    tmp.push(a.max);
-    tmp.push(a.sec);
-    tmp.push(b.max);
-    tmp.push(b.sec);
-    c.act = a.act + b.act;
-    c.max = tmp.top();
-    while (tmp.top() == c.max and !tmp.empty())
-        tmp.pop();
-    if (!tmp.empty()) {
-        c.sec = tmp.top();
+    c.max = max<ll>(a.max, b.max);
+    ll tmp[] = {a.max, b.max, a.sec, b.sec};
+    sort(tmp, tmp + 4, greater<>());
+    for (auto i : tmp) {
+        if (i != c.max) {
+            c.sec = i;
+            break;
+        }
     }
     return c;
 }
@@ -87,13 +84,6 @@ struct LazySegmentTree {
 
     void apply(int p, const Tag &v) {
         info[p].apply(v);
-        tag[p].apply(v);
-    }
-
-    void push(int p) {
-        apply(2 * p, tag[p]);
-        apply(2 * p + 1, tag[p]);
-        tag[p] = Tag();
     }
 
     void modify(int p, int l, int r, int x, const Tag &v) {
@@ -122,7 +112,6 @@ struct LazySegmentTree {
             return info[p];
         }
         int m = (l + r) / 2;
-        push(p);
         return rangeQuery(2 * p, l, m, x, y) + rangeQuery(2 * p + 1, m + 1, r, x, y);
     }
 
