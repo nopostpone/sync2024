@@ -3,14 +3,14 @@
 using namespace std;
 using ll = long long;
 
-constexpr ll inf = 1e18;
+constexpr ll inf = 1e10;
 
 multiset<int> s;
 
 struct Tag {
     ll add = 0;
- 
-    void apply(const Tag& t) {
+
+    void apply(const Tag &t) {
         add += t.add;
     }
 };
@@ -20,46 +20,54 @@ struct Info {
     ll sec = -inf;
     ll act = 0;
 
-    void apply(const Tag& t) {
+    void apply(const Tag &t) {
         max += t.add;
-        sec += t.add;
     }
 };
- 
-Info operator+(const Info& a, const Info& b) {
+
+Info operator+(const Info &a, const Info &b) {
     Info c;
-    c.seq = std::max(a.min, b.min);
-    c.max = std::max(a.max, b.max);
+    priority_queue<ll, vector<ll>> tmp;
+    tmp.push(a.max);
+    tmp.push(a.sec);
+    tmp.push(b.max);
+    tmp.push(b.sec);
     c.act = a.act + b.act;
+    c.max = tmp.top();
+    while (tmp.top() == c.max and !tmp.empty())
+        tmp.pop();
+    if (!tmp.empty()) {
+        c.sec = tmp.top();
+    }
     return c;
 }
- 
-template<class Info, class Tag>
+
+template <class Info, class Tag>
 struct LazySegmentTree {
     int n;
     std::vector<Info> info;
     std::vector<Tag> tag;
- 
+
     LazySegmentTree() : n(0) {}
- 
+
     LazySegmentTree(int n_, Info v_ = Info()) {
         init(n_, v_);
     }
- 
-    template<class T>
-    LazySegmentTree(const std::vector<T>& init_) {
+
+    template <class T>
+    LazySegmentTree(const std::vector<T> &init_) {
         init(init_);
     }
- 
+
     void init(int n_, Info v_ = Info()) {
         init(std::vector<Info>(n_, v_));
     }
- 
-    template<class T>
-    void init(const std::vector<T>& init_) {
-        n = init_.size();
-        info.assign(4 << (int)std::log2(n), Info());
-        tag.assign(4 << (int)std::log2(n), Tag());
+
+    template <class T>
+    void init(const std::vector<T> &init_) {
+        n = init_.size() - 1;
+        info.assign(n << 2, Info());
+        tag.assign(n << 2, Tag());
         std::function<void(int, int, int)> build = [&](int p, int l, int r) {
             if (r == l) {
                 info[p] = init_[l];
@@ -72,43 +80,40 @@ struct LazySegmentTree {
         };
         build(1, 1, n);
     }
- 
+
     void pull(int p) {
         info[p] = info[2 * p] + info[2 * p + 1];
     }
- 
-    void apply(int p, const Tag& v) {
+
+    void apply(int p, const Tag &v) {
         info[p].apply(v);
         tag[p].apply(v);
     }
- 
+
     void push(int p) {
         apply(2 * p, tag[p]);
         apply(2 * p + 1, tag[p]);
         tag[p] = Tag();
     }
- 
-    void modify(int p, int l, int r, int x, const Tag& v) {
+
+    void modify(int p, int l, int r, int x, const Tag &v) {
         if (r == l) {
-            s.erase(info[p].max);
             info[p].apply(v);
-            s.insert(info[p].max);
             return;
         }
         int m = (l + r) / 2;
         if (x <= m) {
             modify(2 * p, l, m, x, v);
-        }
-        else {
+        } else {
             modify(2 * p + 1, m + 1, r, x, v);
         }
         pull(p);
     }
- 
-    void modify(int p, const Tag& v) {
+
+    void modify(int p, const Tag &v) {
         modify(1, 1, n, p, v);
     }
- 
+
     Info rangeQuery(int p, int l, int r, int x, int y) {
         if (l > y || r < x) {
             return Info();
@@ -120,7 +125,7 @@ struct LazySegmentTree {
         push(p);
         return rangeQuery(2 * p, l, m, x, y) + rangeQuery(2 * p + 1, m + 1, r, x, y);
     }
- 
+
     Info rangeQuery(int l, int r) {
         return rangeQuery(1, 1, n, l, r);
     }
@@ -192,17 +197,6 @@ struct HLD {
         out[u] = cur;
     }
 
-    int lca(int u, int v) {
-        while (top[u] != top[v]) {
-            if (dep[top[u]] > dep[top[v]]) {
-                u = parent[top[u]];
-            } else {
-                v = parent[top[v]];
-            }
-        }
-        return (dep[u] < dep[v]) ? u : v;
-    }
-
     Info query_path(int u, int v) {
         Info ret;
         while (top[u] != top[v]) {
@@ -216,42 +210,15 @@ struct HLD {
         }
         if (dep[u] < dep[v])
             std::swap(u, v);
-        ret = ret + l.rangeQuery(in[v] + 1, in[u]);
+        ret = ret + l.rangeQuery(in[v], in[u]);
         return ret;
-    }
-
-    void update_path(int u, int v, int k) {
-        Tag t;
-        t.add = k;
-        while (top[u] != top[v]) {
-            if (dep[top[u]] > dep[top[v]]) {
-                l.rangeApply(in[top[u]], in[u] + 1, t);
-                u = parent[top[u]];
-            } else {
-                l.rangeApply(in[top[v]], in[v] + 1, t);
-                v = parent[top[v]];
-            }
-        }
-        if (dep[u] < dep[v])
-            std::swap(u, v);
-        l.rangeApply(in[v], in[u] + 1, t);
-    }
-
-    void update_tree(int u, int k) {
-        Tag t;
-        t.add = k;
-        l.rangeApply(in[u], out[u], t);
-    }
-
-    Info query_tree(int u) {
-        return l.rangeQuery(in[u], out[u]);
     }
 };
 
 #define endl "\n"
 
 int main() {
-    cin.tie(nullptr) -> sync_with_stdio(false);
+    cin.tie(nullptr)->sync_with_stdio(false);
     int n;
     cin >> n;
     HLD hld(n + 1);
@@ -262,12 +229,19 @@ int main() {
     }
     hld.work(1);
 
-    vector<Info> a(n + 1);
+    vector<int> a(n + 1);
     for (int i = 1; i <= n; i++) {
-        cin >> a[hld.in[i]].max;
-        s.insert(a[hld.in[i]].max);
+        cin >> a[i];
+        s.insert(a[i]);
     }
-    l.init(a);
+
+    vector<Info> info(n + 1);
+    for (int i = 1; i <= n; i++) {
+        info[hld.in[i]].max = a[i];
+        info[hld.in[i]].sec = -inf;
+        info[hld.in[i]].act = 1;
+    }
+    l.init(info);
 
     int m;
     cin >> m;
@@ -278,18 +252,20 @@ int main() {
         if (opt) {
             Info t = hld.query_path(x, y);
             if (t.sec == -inf) {
-                cout << -1;
+                cout << -1 << endl;
                 continue;
             }
-            cout << t.sec  << " ";
-            s.erase(s.find(t.max), s.find(t.sec));
+            cout << t.sec << " ";
+            s.erase(s.find(t.max));
+            s.erase(s.find(t.sec));
             cout << (*(--s.lower_bound(*--s.end()))) << endl;
             s.insert(t.max);
             s.insert(t.sec);
         } else {
-            
+            s.erase(s.find(a[x]));
+            s.insert(a[x] + y);
+            l.modify(hld.in[x], {y});
         }
-
     }
 
     return 0;
