@@ -51,7 +51,7 @@ struct LazySegmentTree {
  
     template<class T>
     void init(const std::vector<T>& init_) {
-        n = init_.size();
+        n = init_.size() - 1;
         info.assign(4 << (int)std::log2(n), Info());
         tag.assign(4 << (int)std::log2(n), Tag());
         std::function<void(int, int, int)> build = [&](int p, int l, int r) {
@@ -228,8 +228,7 @@ struct HLD {
         }
         if (dep[u] < dep[v])
             std::swap(u, v);
-        ret = ret + l.rangeQuery(in[v] + 1, in[u]);
-        return ret;
+        return ret + l.rangeQuery(in[v] + 1, in[u]);
     }
 
     void update_path(int u, int v, int k) {
