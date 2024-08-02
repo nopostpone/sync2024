@@ -1,14 +1,18 @@
 // https://www.luogu.com.cn/problem/P6157
+
+// 当你 RE 的时候
+// 自己造点简单数据都测试一下
+
 #include <bits/stdc++.h>
 using namespace std;
 using ll = long long;
 
-constexpr ll inf = 1e10;
+constexpr int inf = 1;
 
-multiset<ll> s;
+multiset<int> s;
 
 struct Tag {
-    ll add = 0;
+    int add = 0;
 
     void apply(const Tag &t) {
         add += t.add;
@@ -16,10 +20,10 @@ struct Tag {
 };
 
 struct Info {
-    ll max = -inf;
-    ll sec = -inf;
-    ll act = 0;
+    int max = -inf;
+    int sec = -inf;
 
+    // apply 调用时必定为单个点的区间
     void apply(const Tag &t) {
         max += t.add;
     }
@@ -27,14 +31,16 @@ struct Info {
 
 Info operator+(const Info &a, const Info &b) {
     Info c;
-    c.max = max<ll>(a.max, b.max);
-    ll tmp[] = {a.max, b.max, a.sec, b.sec};
-    sort(tmp, tmp + 4, greater<>());
-    for (auto i : tmp) {
-        if (i != c.max) {
-            c.sec = i;
-            break;
-        }
+    c.max = max<int>(a.max, b.max);
+    if (a.max == c.max) {
+        c.sec = a.sec;
+    } else {
+        c.sec = a.max;
+    }
+    if (b.max == c.max) {
+        c.sec = max(c.sec, b.sec);
+    } else {
+        c.sec = max(c.sec, b.max);
     }
     return c;
 }
@@ -82,13 +88,11 @@ struct LazySegmentTree {
         info[p] = info[2 * p] + info[2 * p + 1];
     }
 
-    void apply(int p, const Tag &v) {
-        info[p].apply(v);
-    }
-
     void modify(int p, int l, int r, int x, const Tag &v) {
         if (r == l) {
+            s.erase(s.find(info[p].max));
             info[p].apply(v);
+            s.insert(info[p].max);
             return;
         }
         int m = (l + r) / 2;
@@ -105,14 +109,16 @@ struct LazySegmentTree {
     }
 
     Info rangeQuery(int p, int l, int r, int x, int y) {
-        if (l > y || r < x) {
-            return Info();
-        }
         if (l >= x && r <= y) {
             return info[p];
         }
         int m = (l + r) / 2;
-        return rangeQuery(2 * p, l, m, x, y) + rangeQuery(2 * p + 1, m + 1, r, x, y);
+        Info ret;
+        if (x <= m)
+            ret = ret + rangeQuery(p * 2, l, m, x, y);
+        if (m < y)
+            ret = ret + rangeQuery(p * 2 + 1, m + 1, r, x, y);
+        return ret;
     }
 
     Info rangeQuery(int l, int r) {
@@ -199,12 +205,12 @@ struct HLD {
         }
         if (dep[u] < dep[v])
             std::swap(u, v);
-        ret = ret + l.rangeQuery(in[v], in[u]);
-        return ret;
+        return ret + l.rangeQuery(in[v], in[u]);
     }
 };
 
 #define endl "\n"
+vector<pair<int, bool>> res;
 
 int main() {
     cin.tie(nullptr)->sync_with_stdio(false);
@@ -221,6 +227,8 @@ int main() {
     vector<int> a(n + 1);
     for (int i = 1; i <= n; i++) {
         cin >> a[i];
+    }
+    for (int i = 1; i <= n; i++) {
         s.insert(a[i]);
     }
 
@@ -228,7 +236,6 @@ int main() {
     for (int i = 1; i <= n; i++) {
         info[hld.in[i]].max = a[i];
         info[hld.in[i]].sec = -inf;
-        info[hld.in[i]].act = 1;
     }
     l.init(info);
 
@@ -241,21 +248,22 @@ int main() {
         if (opt) {
             Info t = hld.query_path(x, y);
             if (t.sec == -inf) {
-                cout << -1 << endl;
+                res.push_back({-1, true});
                 continue;
             }
-            cout << t.sec << " ";
+            res.push_back({t.sec, false});
             s.erase(s.find(t.max));
             s.erase(s.find(t.sec));
-            cout << (*(--s.lower_bound(*--s.end()))) << endl;
+            res.push_back({*(--s.lower_bound(*s.rbegin())), true});
             s.insert(t.max);
             s.insert(t.sec);
         } else {
-            s.erase(s.find(a[x]));
-            s.insert(a[x] + y);
             l.modify(hld.in[x], {y});
         }
     }
 
+    for (auto &&[u, v] : res) {
+        cout << u << " \n"[v];
+    }
     return 0;
 }
