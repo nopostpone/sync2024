@@ -1,5 +1,5 @@
 // P1080
-// https://www.luogu.com.cn/problem/1080
+// https://www.luogu.com.cn/problem/P1080
 // 国王游戏
 // 从相邻两项交换前后的不同 推导贪心的条件
 // 题目给的数据很大，需要用高精度，这里没有用，所以只能拿一半的分

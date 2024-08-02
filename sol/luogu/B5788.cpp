@@ -1,5 +1,5 @@
-// luogu P5788
 // https://www.luogu.com.cn/problem/P5788
+// 单调栈模板
 #include <iostream>
 #include <stack>
 using namespace std;

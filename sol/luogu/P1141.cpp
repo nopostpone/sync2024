@@ -16,16 +16,6 @@ int dy[5] = {0, 0, 0, 1, -1};
 int n, m;
 pair<int, int> query[M];
 
-void pfdb(int swt)
-{
-    if (swt == 1)
-        for (int i = 1; i <= n; i++)
-            for (int j = 1; j <= n; j++)
-                cout << mp[i][j] << " \n"[j == n];
-    else if (swt == 2)
-        ;
-}
-
 bool isout(int x, int y)
 {
     if (x < 1 or x > n or y < 1 or y > n)
