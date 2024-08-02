@@ -1,7 +1,7 @@
 // https://www.luogu.com.cn/problem/P6157
 
 // 当你 RE 的时候
-// 自己造点简单数据都测试一下
+// 自己造点简单数据测试一下
 
 #include <bits/stdc++.h>
 using namespace std;
