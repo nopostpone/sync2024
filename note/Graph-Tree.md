@@ -1,155 +1,38 @@
-图论
+# 记录不会做的树题
 
-搜索：dfs,bfs
+## [洛谷【MX-J2-T3】Piggy and Trees](https://www.luogu.com.cn/problem/P10842)
 
-存图方式：邻接表，链式前向星，（邻接矩阵复杂度太大，基本不用）
+给你一棵 $n$ 个结点的树。
 
-## 树的遍历（邻接表）：
-```cpp
-struct edge
-{
-    ...//存出点和边权以及其他的东西
-};
-vector<edge> g;
+定义 $f(u, v, i)$ 为，在所有满足 $^\dagger\text{dis}(u, x) + \text{dis}(v, x) = \text{dis}(u, v)$ 的点 $x$ 中，$\text{dis}(x, i)$ 的最小值。
 
-void dfs(int u, int fa)
-{
-    for(auto &i: g[u])
-    {
-        if(i==fa)continue;
-        dfs(i,u);
-    }
-}
-```
+求 $\sum\limits_{u = 1}^n \sum\limits_{v = u + 1}^n \sum\limits_{i = 1}^n f(u, v, i)$ 对 $10^9 + 7$ 取模的值。
 
-## 求树的每个节点深度：
-```cpp
-void dfs(int u, int fa)
-{
-    dep[u]=dep[fa]+1;
-    for(auto &i: g[u])
-    {
-        if(i==fa)continue;
-        dfs(i,u);
-    }
-}
+$^\dagger\text{dis}(u, v)$ 为树上 $u, v$ 两点的路径长度。特别地，$\text{dis}(u, u) = 0$。
 
-int main()
-{
-    //存边
-    ...
-    //初始化
-    dep[0]=-1;
-    //dfs
-    dfs(1,0);
-}
-```
+$ 2 \leq n \leq 2 \cdot 10 ^ 5$
 
-## 求树的每个节点的子树大小：
-```cpp
-void dfs(int u, int fa)
-{
-    for(auto &i: g[u])
-    {
-        if(i.v==fa)continue;
-        dfs(i.v,u);
-        sz[u]+=sz[i.v];
-    }
-    sz[u]=1;
-}   
+_赛时没什么头绪，只想出了对每组 $(u, v)$ 暴力求解，仅拿了第一个任务点。_
 
-int main()
-{
-    //存边
-    ...
-    //初始化
-    //dfs
-    dfs(1,0);
-}
-```
+解：
 
-## 求每个子树的点权和
-```cpp
+<!-- <details> -->
 
-void dfs(int u, int fa)
-{
-    for(auto &i: g[u])
-    {
-        if(i.v==fa)continue;
-        dfs(i.v,u);
-        sum[u]+=sum[i.v];
-    }
-}   
+不妨在每条边上设置一个计数器 $c_{x, y}$，统计遍历到这条边的次数，那么答案就是 $\sum\limits_{(x, y) \in E}c_{x,y}$。
 
-int sum[N];
+尝试计算每条边的贡献：对任意一条边 $x→y$ ，当且仅当 $(u, v)$ 的路径不经过该边，且 $i$ 到 $(u, v)$ 必经过该边，$c_{x, y}$ 增加 $1$。
 
-int main()
-{
-    //存边
-    // c[]为点权
-    //初始化
-    for(auto &u)
-    sum[u]=c[u];
-    
-    dfs(...);
-}
-```
+设断开这条边后形成的两棵树大小为 $\text{siz}_A$ 和 $\text{siz}_B $，则有：
 
-## 求每个子树中点权的最大值
-```cpp
+$$
+c_{x,y} = \binom {2}{\text{siz}_A} \cdot \binom {1}{\text{siz}_B} + \binom {2}{\text{siz}_B} \cdot \binom {1}{\text{siz}_A}
+$$
 
-void dfs(int u, int fa)
-{
-    for(auto &i: g[u])
-    {
-        if(i.v==fa)continue;
-        dfs(i.v,u);
-        mx[u]=max(mx[u],mx[i.v]);
-    }
-}   
+即
+$$
+c_{x,y} = \frac{\text{siz}_A\text{siz}_B(\text{siz}_A - 1)(\text{siz}_B - 1)}{2}
+$$
 
-int mx[N];
+枚举答案即可。
 
-int main()
-{
-    //存边
-    // c[]为点权
-    //初始化
-    mx[u]=c[u]
-}
-```
-
-## 树的重心
-重心？
-
-去掉重心后，__树中所有连通块的最大尺寸最小__。
-
-```cpp
-void dfs(int u, int fa)
-{
-    // 求 siz[u]
-    // 求 n-siz[u] 为删去该点后剩下一大坨的大小
-    for(auto &i: g[u])
-    {
-        if(i.v==fa)continue;
-        dfs(i.v,u);
-        mx[u]=max(mx[u],mx[i.v]);
-    }
-}   
-
-int siz[N], mx[u];
-
-int main()
-{
-    //存边
-    // c[]为点权
-    //初始化
-
-    dfs(1,0);
-}
-```
-
-## 每个点到其他节点的距离和
-```cpp
-
-```
+</details>
