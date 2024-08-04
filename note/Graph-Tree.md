@@ -29,10 +29,11 @@ c_{x,y} = \binom {2}{\text{siz}_A} \cdot \binom {1}{\text{siz}_B} + \binom {2}{\
 $$
 
 即
+
 $$
 c_{x,y} = \frac{\text{siz}_A\text{siz}_B(\text{siz}_A - 1)(\text{siz}_B - 1)}{2}
 $$
 
-枚举答案即可。
+求出每条边断开后形成的两棵子树大小，然后枚举答案即可。
 
 </details>
