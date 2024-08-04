@@ -8,15 +8,15 @@
 
 求 $\sum\limits_{u = 1}^n \sum\limits_{v = u + 1}^n \sum\limits_{i = 1}^n f(u, v, i)$ 对 $10^9 + 7$ 取模的值。
 
-$^\dagger\text{dis}(u, v)$ 为树上 $u, v$ 两点的路径长度。特别地，$\text{dis}(u, u) = 0$。
+$^\dagger\text{dis}(u, v)$ 为树上 $u, v$ 两点的路径长度。特别地， $\text{dis}(u, u) = 0$ 。
 
-$ 2 \leq n \leq 2 \cdot 10 ^ 5$
+ $2 \leq n \leq 2 \cdot 10 ^ 5$
 
-_赛时没什么头绪，只想出了对每组 $(u, v)$ 暴力求解，仅拿了第一个任务点。_
+_赛时没什么头绪，只想出了对每条边暴力求解，仅拿了第一个任务点。_
 
 解：
 
-<!-- <details> -->
+<details>
 
 不妨在每条边上设置一个计数器 $c_{x, y}$，统计遍历到这条边的次数，那么答案就是 $\sum\limits_{(x, y) \in E}c_{x,y}$。
 
