@@ -73,7 +73,7 @@ void solve() {
 解：
 <details>
 
-$1\oplus 1 = 0$，$0\oplus 1 = 1$。
+$1\oplus 1 = 0$， $0\oplus 1 = 1$。
 
 核心代码：
 ```cpp
