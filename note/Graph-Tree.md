@@ -4,7 +4,7 @@
 
 给你一棵 $n$ 个结点的树。
 
-定义 $f(u, v, i)$ 为，在所有满足 $^\dagger\text{dis}(u, x) + \text{dis}(v, x) = \text{dis}(u, v)$ 的点 $x$ 中，$\text{dis}(x, i)$ 的最小值。
+定义 $f(u, v, i)$ 为，在所有满足 $^\dagger\text{dis}(u, x) + \text{dis}(v, x) = \text{dis}(u, v)$ 的点 $x$ 中， $\text{dis}(x, i)$ 的最小值。
 
 求 $\sum\limits_{u = 1}^n \sum\limits_{v = u + 1}^n \sum\limits_{i = 1}^n f(u, v, i)$ 对 $10^9 + 7$ 取模的值。
 
