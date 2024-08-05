@@ -17,7 +17,7 @@ void solve() {
 
     vector<int> dep(num);
     for (int i = 1; i < dep.size(); i++) {
-        dep[i] = log2(i);
+        dep[i] = dep[i / 2] + 1;
     }
 
     function<void(int)> dfs1 = [&](int x) {
@@ -56,20 +56,23 @@ void solve() {
     dfs1(1);
     dfs2(1);
 
-    auto lca = [&](int u, int v) {
+    auto getlca = [&](int u, int v) {
+        if (u == 1 or v == 1) {
+            return 1;
+        }
         while (u / 2 != v / 2) {
             if (u > v) {
                 u /= 2;
             } else {
                 v /= 2;
             }
+            if (u == v) {
+                return u;
+            }
         }
         return u / 2;
     };
 
-    auto dist = [&](int u, int v) {
-        return dep[u] + dep[v] - 2 * dep[lca(u, v)];
-    };
 
     vector<ll> res;
     while (m--) {
@@ -79,26 +82,34 @@ void solve() {
             res.push_back(sum);
             continue;
         }
-        int d = dist(x, y) / 2;
-        if (x == y) {
-            res.push_back(f[lca(x, y)][k - d] + g[lca(x, y)][k - d]);
-            continue;
-        }
-        if (x < y)
-            swap(x, y);
-        if ((dep[x] - dep[y]) & 1) {
-            int mid1 = x, mid2 = y;
-            for (int i = 1; i <= d; i++) {
-                mid1 /= 2;
+        int xx = x, yy = y;
+        int lca = getlca(x, y);
+        int mx, my, lasx = 0, lasy = 0;
+        ll tmp = 0;
+        while (xx != yy) {
+            if (dep[xx] < dep[yy]) {
+                swap(x, y);
+                swap(xx, yy);
+                swap(lasx, lasy);
             }
-            mid2 = mid1 / 2;
-        } else {
-            int mid = x;
-            for (int i = 1; i <= d; i++) {
-                mid /= 2;
+            mx = max(dep[x] - dep[xx], dep[y] + dep[xx] - dep[lca] * 2);
+            if (mx <= k) {
+                tmp += f[xx][k - mx];
+                if (k > mx) {
+                    tmp -= f[lasx][k - mx - 1];
+                }
             }
-            res.push_back(f[mid][k - d] + g[mid][k - d]);
+            lasx = xx;
+            xx /= 2;
         }
+        mx = max(dep[x] - dep[lca], dep[y] - dep[lca]);
+        if (mx <= k) {
+            tmp += f[lca][k - mx] + g[lca][k - mx] - f[lca][0];
+            if (k > mx) {
+                tmp -= f[lasx][k - mx - 1] + f[lasy][k - mx - 1];
+            }
+        }
+        res.push_back(tmp);        
     }
     for (auto i : res)
         cout << i << endl;
