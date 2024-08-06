@@ -7,7 +7,7 @@ int main() {
     cin.tie(nullptr)->sync_with_stdio(false);
     int n;
     cin >> n;
-    vector<ll> a(n);
+    vector<ll> a(n + 1);
     for (int i = 0; i < n; i++)
         cin >> a[i];
     int len = sqrt(n);
@@ -25,7 +25,7 @@ int main() {
     for (int i = 0; i < n; i++) {
         b[id[i]].push_back(i);
     }
-    for (auto x : b) {
+    for (auto &x : b) {
         sort(x.begin(), x.end(), cmp);
     }
 
@@ -53,7 +53,9 @@ int main() {
                     cnt += a[i] < c - tag[eid];
                 }
                 for (int i = sid + 1; i < eid; i++) {
-                    cnt += lower_bound(b[i].begin(), b[i].end(), c - tag[i]) - b[i].begin();
+                    a[n] = c - tag[i];
+                    cnt += lower_bound(b[i].begin(), b[i].end(), n, cmp) -
+                           b[i].begin();
                 }
             }
             res.push_back(cnt);
