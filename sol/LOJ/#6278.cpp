@@ -1,3 +1,6 @@
+// https://loj.ac/p/6278
+// 记得加引用！ 记得加引用！ 记得加引用！ 记得加引用！ 记得加引用！
+
 #include <bits/stdc++.h>
 #define endl "\n"
 using namespace std;
