@@ -1,108 +1,91 @@
 // https://loj.ac/p/6280
-// 分块例题：区间修改、区间和查询
-// 用数组s存放每个块的和
+// 2024.8.6 重新写了一下，整洁一点
 #include <bits/stdc++.h>
+#define endl "\n"
 using namespace std;
-#define endl '\n'
 using ll = long long;
-const int N = 1e7 + 7;
-inline ll read()
-{
-    int x = 0, f = 1;
-    char ch = getchar();
-    while (ch < '0' || ch > '9')
-    {
-        if (ch == '-')
-            f = -1;
-        ch = getchar();
-    }
-    while (ch >= '0' && ch <= '9')
-    {
-        x = x * 10 + (ch ^ 48);
-        ch = getchar();
-    }
-    return x * f;
-}
-void write(ll x)
-{
-    if (x < 0)
-        putchar('-'), x = -x;
-    if (x >= 10)
-        write(x / 10);
-    putchar(x % 10 + '0');
-}
 
-int n, len;
-int id[N];
-ll a[N], b[N], s[N];
-struct caozuo
-{
-    int isq, l, r;
-    ll c;
-};
-vector<caozuo> co;
-
-ll addd(ll a, ll b, ll p)
-{
-    return (a + b) % p;
-}
-
-void update(int l, int r, ll c)
-{
-    int sid = id[l], eid = id[r];
-    if (sid == eid)
-    {
-        for (int i = l; i <= r; i++)
-            a[i] += c, s[sid] += c;
-        return;
-    }
-    for (int i = l; id[i] == sid; i++)
-        a[i] += c, s[sid] += c;
-    for (int i = sid + 1; i < eid; i++)
-        b[i] += c, s[i] += len * c;
-    for (int i = r; id[i] == eid; i--)
-        a[i] += c, s[eid] += c;
-}
-
-ll query(int l, int r, ll p)
-{
+struct Info {
     ll sum = 0;
-    int sid = id[l], eid = id[r];
-    if (sid == eid)
-    {
-        for (int i = l; i <= r; i++)
-            sum = addd(sum, a[i] + b[sid], p);
-        return sum;
+    ll add = 0;
+    int act = 0;
+};
+
+int main() {
+    cin.tie(nullptr)->sync_with_stdio(false);
+    int n;
+    cin >> n;
+    vector<ll> a(n);
+    for (int i = 0; i < n; i++) {
+        cin >> a[i];
     }
-    for (int i = l; id[i] == sid; i++)
-        sum = addd(sum, a[i] + b[sid], p);
-    for (int i = sid + 1; i != eid; i++)
-        sum = addd(sum, s[i], p);
-    for (int i = r; id[i] == eid; i--)
-        sum = addd(sum, a[i] + b[eid], p);
-    return sum;
-}
+    int len = sqrt(n);
 
-void solve()
-{
-    n = read(), len = sqrt(n);
-    for (int i = 1; i <= n; i++)
-        a[i] = read(), id[i] = (i - 1) / len + 1, s[id[i]] += a[i];
-    for (int i = 1; i <= n; i++)
-        co.push_back(caozuo{read(), read(), read(), read()});
-    for (vector<caozuo>::iterator i = co.begin(); i != co.end(); i++)
-        if (i->isq)
-            write(query(i->l, i->r, i->c + 1)), putchar('\n');
-        else
-            update(i->l, i->r, i->c);
-}
+    vector<int> id(n);
+    for (int i = 0; i < n; i++) {
+        id[i] = i / len;
+    }
 
-int main()
-{
-    ios::sync_with_stdio(0), cin.tie(0), cout.tie(0);
-    int _ = 1;
-    // cin >> _;
-    while (_--)
-        solve();
+    vector<Info> info(id.back() + 1);
+    for (int i = 0; i < n; i++) {
+        info[id[i]].act++;
+        info[id[i]].sum += a[i];
+    }
+    vector<ll> res;
+
+    for (int zz = 0; zz < n; zz++) {
+        bool opt;
+        int l, r;
+        ll c;
+        cin >> opt >> l >> r >> c;
+        l--, r--;
+        int sid = id[l], eid = id[r];
+
+        if (opt) {
+            c++;
+            ll ans = 0;
+            if (sid == eid) {
+                for (int i = l; i <= r; i++) {
+                    ans = (ans + a[i] % c + info[sid].add % c) % c;
+                }
+            } else {
+                for (int i = l; id[i] == sid; i++) {
+                    ans = (ans + a[i] % c + info[sid].add % c) % c;
+                }
+                for (int i = r; id[i] == eid; i--) {
+                    ans = (ans + a[i] % c + info[eid].add % c) % c;
+                }
+                for (int i = sid + 1; i != eid; i++) {
+                    ans = (ans + info[i].sum % c) % c;
+                }
+            }
+            res.push_back(ans);
+        } else {
+            if (sid == eid) {
+                for (int i = l; i <= r; i++) {
+                    a[i] += c;
+                    info[sid].sum += c;
+                }
+            } else {
+                for (int i = l; id[i] == sid; i++) {
+                    a[i] += c;
+                    info[sid].sum += c;
+                }
+                for (int i = r; id[i] == eid; i--) {
+                    a[i] += c;
+                    info[eid].sum += c;
+                }
+                for (int i = sid + 1; i != eid; i++) {
+                    info[i].sum += 1LL * c * info[i].act;
+                    info[i].add += c;
+                }
+            }
+        }
+    }
+
+    for (auto &i : res) {
+        cout << i << endl;
+    }
+
     return 0;
 }
