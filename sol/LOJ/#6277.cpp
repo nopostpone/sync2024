@@ -1,89 +1,59 @@
 // https://loj.ac/p/6277
-// 数据分块1：区间修改、单点查询
+// 2024.8.6 重新写了一下，整洁一点
 #include <bits/stdc++.h>
+#define endl "\n"
 using namespace std;
-#define endl '\n'
 using ll = long long;
-const int N = 1e6 + 7;
-inline ll read()
-{
-    int x = 0, f = 1;
-    char ch = getchar();
-    while (ch < '0' || ch > '9')
-    {
-        if (ch == '-')
-            f = -1;
-        ch = getchar();
+
+int main() {
+    cin.tie(nullptr)->sync_with_stdio(false);
+    int n;
+    cin >> n;
+    vector<ll> a(n);
+    for (int i = 0; i < n; i++) {
+        cin >> a[i];
     }
-    while (ch >= '0' && ch <= '9')
-    {
-        x = x * 10 + (ch ^ 48);
-        ch = getchar();
+    int len = sqrt(n);
+
+    vector<int> id(n);
+    for (int i = 0; i < n; i++) {
+        id[i] = i / len;
     }
-    return x * f;
-}
-void write(ll x)
-{
-    if (x < 0)
-        putchar('-'), x = -x;
-    if (x >= 10)
-        write(x / 10);
-    putchar(x % 10 + '0');
-}
 
-int n, len;
-int id[N];
-ll a[N], b[N];
-struct caozuo
-{
-    int isq, l, r, c;
-};
-vector<caozuo> co;
+    vector<ll> tag(id.back() + 1);
+    vector<ll> res;
 
-void update(int l, int r, ll c)
-{
-    int sid = id[l], eid = id[r];
-    if (sid == eid)
-    {
-        for (int i = l; i <= r; i++)
-            a[i] += c;
-        return;
+    for (int zz = 0; zz < n; zz++) {
+        bool opt;
+        int l, r;
+        ll c;
+        cin >> opt >> l >> r >> c;
+        l--, r--;
+        if (opt) {
+            res.push_back(a[r] + tag[id[r]]);
+        } else {
+            int sid = id[l], eid = id[r];
+            if (sid == eid) {
+                for (int i = l; i <= r; i++) {
+                    a[i] += c;
+                }
+            } else {
+                for (int i = l; id[i] == sid; i++) {
+                    a[i] += c;
+                }
+                for (int i = r; id[i] == eid; i--) {
+                    a[i] += c;
+                }
+                for (int i = sid + 1; i != eid; i++) {
+                    tag[i] += c;
+                }
+            }
+        }
     }
-    for (int i = l; id[i] == sid; i++)
-        a[i] += c;
-    for (int i = sid + 1; i < eid; i++)
-        b[i] += c;
-    for (int i = r; id[i] == eid; i--)
-        a[i] += c;
-}
 
-ll query(int x)
-{
-    return a[x] + b[id[x]];
-}
-
-void solve()
-{
-    n = read(), len = sqrt(n);
-    for (int i = 1; i <= n; i++)
-        a[i] = read(), id[i] = (i - 1) / len + 1;
-    for (int i = 1; i <= n; i++)
-        co.push_back(caozuo{read(), read(), read(), read()});
-    for (vector<caozuo>::iterator i = co.begin(); i != co.end(); i++)
-    {
-        if ((*i).isq)
-            write(query(i->r)), putchar('\n');
-        else
-            update(i->l, i->r, i->c);
+    for (auto &i : res) {
+        cout << i << endl;
     }
-}
 
-int main()
-{
-    ios::sync_with_stdio(0), cin.tie(0), cout.tie(0);
-    int _ = 1;
-    // cin >> _;
-    while (_--)
-        solve();
     return 0;
 }
