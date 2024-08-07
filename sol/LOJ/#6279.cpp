@@ -31,7 +31,7 @@ int main() {
         sort(x.begin(), x.end(), cmp);
     }
 
-    vector<int> res;
+    vector<ll> res;
     for (int zz = 0; zz < n; zz++) {
         bool opt;
         int l, r;
@@ -70,7 +70,7 @@ int main() {
                     a[n] = c - tag[i];
                     auto loc = lower_bound(b[i].begin(), b[i].end(), n, cmp);
                     ok = true;
-                    tmp = max(tmp, a[*(loc - 1)]);
+                    tmp = max(tmp, a[*(loc - 1)] + tag[i]);
                 }
             }
             res.push_back(ok ? tmp : -1);
@@ -96,7 +96,7 @@ int main() {
         }
     }
 
-    for (auto i : res)
+    for (auto &i : res)
         cout << i << endl;
 
     return 0;
