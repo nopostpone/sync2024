@@ -1,73 +1,84 @@
 // https://www.luogu.com.cn/problem/P3366
-// 最小生成树模板
+// 24.8.8 重写了一下
 #include <bits/stdc++.h>
-using namespace std;
 #define endl "\n"
+using namespace std;
 using ll = long long;
 
-const int N = 1e5 + 10;
-int pre[N];
-struct edge
-{
-    int u, v, w;
-    bool operator<(const edge &o) const
-    {
-        return w < o.w;
+struct DSU {
+    std::vector<int> f, siz;
+
+    DSU() {}
+    DSU(int n) {
+        init(n);
+    }
+
+    void init(int n) {
+        f.resize(n);
+        std::iota(f.begin(), f.end(), 0);
+        siz.assign(n, 1);
+    }
+
+    int find(int x) {
+        while (x != f[x]) {
+            x = f[x] = f[f[x]];
+        }
+        return x;
+    }
+
+    bool same(int x, int y) {
+        return find(x) == find(y);
+    }
+
+    bool merge(int x, int y) {
+        x = find(x);
+        y = find(y);
+        if (x == y) {
+            return false;
+        }
+        siz[x] += siz[y];
+        f[y] = x;
+        return true;
+    }
+
+    int size(int x) {
+        return siz[find(x)];
     }
 };
-vector<edge> g;
-ll res;
 
-int root(int x)
-{
-    return pre[x] = (pre[x] == x ? x : root(pre[x]));
-}
+struct Edge {
+    int u, v, w;
+};
 
-void merge(int x, int y)
-{
-    pre[root(x)] = root(y);
-}
+int main() {
+    cin.tie(nullptr)->sync_with_stdio(false);
 
-bool iscon(int x, int y)
-{
-    return root(x) == root(y);
-}
-
-void solve()
-{
-    int n, m, cnt = 0;
+    int n, m;
     cin >> n >> m;
-    for (int i = 1; i <= m; i++)
-    {
+
+    vector<Edge> e;
+    for (int i = 0; i < m; i++) {
         int u, v, w;
         cin >> u >> v >> w;
-        g.push_back({u, v, w});
+        u--, v--;
+        e.push_back({u, v, w});
     }
-    sort(g.begin(), g.end());
-    for (int i = 1; i <= n; i++)
-        pre[i] = i;
-    for (auto i = g.begin(); i != g.end(); i++)
-    {
-        if (cnt == n - 1)
-            break;
-        int u = i->u, v = i->v;
-        if (iscon(u, v))
+    sort(e.begin(), e.end(), [&](Edge A, Edge B) { return A.w < B.w; });
+
+    DSU dsu(n);
+    int res = 0;
+    int cnt = 0;
+    for (auto &&[u, v, w] : e) {
+        if (dsu.same(u, v))
             continue;
-        merge(u, v);
-        res += i->w;
+        dsu.merge(u, v);
+        res += w;
         cnt++;
     }
-    if (cnt == n - 1)
-        cout << res;
+    if (cnt < n - 1)
+        cout << "orz" << endl;
     else
-        cout << "orz";
-}
+        cout << res << endl;
 
-int main()
-{
-    ios::sync_with_stdio(0), cin.tie(0), cout.tie(0);
-    int _ = 1;
-    while (_--)
-        solve();
     return 0;
 }
