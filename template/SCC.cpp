@@ -1,59 +1,55 @@
 struct SCC {
-    int n;
-    std::vector<std::vector<int>> adj;
-    std::vector<int> stk;
-    std::vector<int> dfn, low, bel;
-    int cur, cnt;
-    
-    SCC() {}
-    SCC(int n) {
-        init(n);
+    int n, now, cnt;
+    vector<vector<int>> ver;
+    vector<int> dfn, low, col, S;
+
+    SCC(int n) : n(n), ver(n + 1), low(n + 1) {
+        dfn.resize(n + 1, -1);
+        col.resize(n + 1, -1);
+        now = cnt = 0;
     }
-    
-    void init(int n) {
-        this->n = n;
-        adj.assign(n, {});
-        dfn.assign(n, -1);
-        low.resize(n);
-        bel.assign(n, -1);
-        stk.clear();
-        cur = cnt = 0;
+    void add(int x, int y) {
+        ver[x].push_back(y);
     }
-    
-    void addEdge(int u, int v) {
-        adj[u].push_back(v);
-    }
-    
-    void dfs(int x) {
-        dfn[x] = low[x] = cur++;
-        stk.push_back(x);
-        
-        for (auto y : adj[x]) {
+    void tarjan(int x) {
+        dfn[x] = low[x] = now++;
+        S.push_back(x);
+        for (auto y : ver[x]) {
             if (dfn[y] == -1) {
-                dfs(y);
-                low[x] = std::min(low[x], low[y]);
-            } else if (bel[y] == -1) {
-                low[x] = std::min(low[x], dfn[y]);
+                tarjan(y);
+                low[x] = min(low[x], low[y]);
+            } else if (col[y] == -1) {
+                low[x] = min(low[x], dfn[y]);
             }
         }
-        
         if (dfn[x] == low[x]) {
-            int y;
-            do {
-                y = stk.back();
-                bel[y] = cnt;
-                stk.pop_back();
-            } while (y != x);
+            int pre;
             cnt++;
+            do {
+                pre = S.back();
+                col[pre] = cnt;
+                S.pop_back();
+            } while (pre != x);
         }
     }
-    
-    std::vector<int> work() {
-        for (int i = 0; i < n; i++) {
+    auto work() { // [cnt 新图的顶点数量]
+        for (int i = 1; i <= n; i++) { // 避免图不连通
             if (dfn[i] == -1) {
-                dfs(i);
+                tarjan(i);
             }
         }
-        return bel;
+
+        vector<int> siz(cnt + 1); // siz 每个 scc 中点的数量
+        vector<vector<int>> adj(cnt + 1);
+        for (int i = 1; i <= n; i++) {
+            siz[col[i]]++;
+            for (auto j : ver[i]) {
+                int x = col[i], y = col[j];
+                if (x != y) {
+                    adj[x].push_back(y);
+                }
+            }
+        }
+        return {cnt, adj, col, siz};
     }
 };
