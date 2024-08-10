@@ -1,13 +1,14 @@
 .vscode
 .vs
 **/.cph
+
+**akiba.cpp
+
 *.exe
 *.ini
 *.in
 *.out
+*.cpp
+*.py
 
-**akiba.cpp
-
-__temp.cpp
-___temp.cpp
-____temp.py
+/demo/test.cpp
