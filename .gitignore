@@ -8,7 +8,8 @@
 *.ini
 *.in
 *.out
-*.cpp
-*.py
 
 /demo/test.cpp
+__temp.cpp
+___temp.cpp
+____temp.py
