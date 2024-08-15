@@ -3,6 +3,16 @@
 
 int main() {
  
-    std::cout << __cplusplus << std::endl;
+    std::vector<int> a;
+
+    Function<int(int)> test = [&](int x) {
+        a.push_back(x);
+    };
+
+    for (auto &i : a) {
+        std::cout << i << " ";
+    }
+    std::cout << std::endl;
+    
     return 0;
 }
