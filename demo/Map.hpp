@@ -1,6 +1,6 @@
+// map
 
-
-// #include <cassert>
+#include <cassert>
 
 enum Color {
     BLACK,
@@ -72,6 +72,7 @@ struct Set {
                 return;
             }
             Node *uncle;
+            Node *grandpa = node->parent->parent;
             Direction parent_dir = node->parent->parent->left == node->parent ? LEFT : RIGHT;
             if (parent_dir) {
                 uncle = node->parent->parent->right;
