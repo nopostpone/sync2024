@@ -6,8 +6,8 @@
 
 *.exe
 *.ini
-*.in
-*.out
+oo.in
+oo.out
 
 /demo/test.cpp
 __temp.cpp
