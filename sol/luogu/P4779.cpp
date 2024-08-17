@@ -42,7 +42,7 @@ int main() {
         }
         vis[u] = true;
         for (auto &&[v, w] : adj[u]) {
-            if (!vis[v] and (dis[u] + w < dis[v])) {
+            if (dis[u] + w < dis[v]) {
                 dis[v] = dis[u] + w;
                 q.push({dis[v], v});
             }
