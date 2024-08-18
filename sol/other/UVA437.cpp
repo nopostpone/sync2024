@@ -1,3 +1,5 @@
+// https://vjudge.net/problem/UVA-437
+// vjudge 交 uva 只能选 c++11，难崩
 #include <bits/stdc++.h>
 #define endl "\n"
 using namespace std;
@@ -18,9 +20,9 @@ void solve(int T) {
     for (int i = 0; i < n; i++)
         cin >> x[i] >> y[i] >> z[i];
     
-    vector dp(n, vector<int>(3, -1));
+    vector<vector<int>> dp(n, vector<int>(3, -1));
 
-    auto f = [&](int c, int rot) {
+    function<int(int, int)> f = [&](int c, int rot){
         if (dp[c][rot] != -1) {
             return dp[c][rot];
         }
@@ -35,15 +37,27 @@ void solve(int T) {
         }
         
         for (int i = 0; i < n; i++) {
-            if (x[i] < b1 and y[i] < b2)
+            if ((x[i] < b1 and y[i] < b2) or (y[i] < b1 and x[i] < b2)) {
+                dp[c][rot] = max(dp[c][rot], f(i, 0) + z[i]);
+            }
+            if ((y[i] < b1 and z[i] < b2) or (z[i] < b1 and y[i] < b2)) {
+                dp[c][rot] = max(dp[c][rot], f(i, 1) + x[i]);
+            }
+            if ((x[i] < b1 and z[i] < b2) or (z[i] < b1 and x[i] < b2)) {
+                dp[c][rot] = max(dp[c][rot], f(i, 2) + y[i]);
+            }
         }
+
+        return dp[c][rot];
     };
 
-    int r = 0;
+    int r = -1;
     for (int i = 0; i < n; i++) {
-        
+        r = max(r, f(i, 0) + z[i]);
+        r = max(r, f(i, 1) + x[i]);
+        r = max(r, f(i, 2) + y[i]);
     }
-
+    answer(T, r);
 }
 
 int main() {
