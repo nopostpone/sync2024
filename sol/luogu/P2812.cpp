@@ -13,7 +13,7 @@ int main() {
     vector<int> dfn(n, -1), low(n), bel(n, -1), stk;
     int cur = 0;
     int cnt = 0;
-    
+
     for (int i = 0; i < n; i++) {
         int j;
         cin >> j;
@@ -71,11 +71,7 @@ int main() {
         A += in[i] == 0;
         B += out[i] == 0;
     }
-    cout << A << endl;
-    if (cnt == 1) {
-        cout << 0 << endl;
-    } else {
-        cout << max(A, B) << endl;
-    }
+    cout << A << endl
+         << (cnt == 1 ? 0 : std::max(A, B)) << endl;
     return 0;
 }
