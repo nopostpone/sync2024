@@ -93,3 +93,51 @@ void solve() {
 ```
 
 </details>
+
+## [abc365_e](https://atcoder.jp/contests/abc365/tasks/abc365_e)
+
+给定长为 $N$ 的整数数组 $A=(A_1,\ldots,A_N)$，求：
+
+$$\displaystyle \sum_{i=1}^{N-1}\sum_{j=i+1}^N (A_i \oplus A_{i+1}\oplus \ldots \oplus A_j)$$
+
+-   $2 \leq N \leq 2 \times 10^5$
+-   $1 \leq A_i \leq 10^8$
+
+解：
+<details>
+
+以 $\text{pre}_i$ 表示 $i$ 的**异或前缀和**，那么有
+
+$$A_l \oplus A_{l+1}\oplus \ldots \oplus A_r = \text{pre}_r \oplus \text{pre}_{l - 1}$$
+
+则原式可化为
+
+$$\displaystyle \begin{align*} \sum_{i=1}^{N-1}\sum_{j=i+1}^N (A_i \oplus A_{i+1}\oplus \ldots \oplus A_j) &= \sum_{i = 0}^{n - 2}\sum_{j = i + 2}^{n}(\text{pre}_i \oplus \text{pre}_j)\\ &= \sum_{0\leq i \leq n - 2 \atop i + 2 \leq j \leq n}(\text{pre}_i \oplus \text{pre}_j)\end{align*} $$
+
+由于异或的特性，对于 $\text{pre}_i$ 中的每一个数位：
+
+- 若为 $1$，则对答案的贡献为 $[i + 2, n]$ 中每个异或前缀和，在该数位上 $0$ 的个数。
+
+- 若为 $0$，同理，为上述区间中 $1$ 的个数。
+
+不妨再开一个数组 `s`，记录 `pre` 中每一数位的前缀和，易得答案，核心代码如下。
+
+```cpp
+ll res = 0;
+for (int i = 0; i <= n - 2; i++) {
+    for (int j = 0; j < 28; j++) {
+        if (a[i] & (1 << j)) {
+            // 统计 0 的个数：区间长度 - 1 的个数
+            res += 1ll * (n - i - 1 - (s[n][j] - s[i + 1][j])) * (1 << j);
+        } else {
+            res += 1ll * (s[n][j] - s[i + 1][j]) * (1 << j);
+        }
+    }
+}
+
+cout << res << endl;
+```
+
+[完整代码](https://atcoder.jp/contests/abc365/submissions/56961585)
+
+</details>
