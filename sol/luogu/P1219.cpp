@@ -15,31 +15,10 @@ int main() {
     vector<int> a;
 
     auto check = [&](int ln, int col) {
-        if (find(a.begin(), a.end(), col) != a.end()) {
-            return false;
-        }
-        if (vis1[n + ln - col]) {
-            return false;
-        }
-        if (vis2[ln + col]) {
-            return false;
-        }
-        return true;
+        return find(a.begin(), a.end(), col) == a.end() and !vis1[n + ln - col] and !vis2[ln + col];
     };
 
-    auto up = [&](int ln, int col) {
-        a.push_back(col);
-        vis1[n + ln - col] = true;
-        vis2[ln + col] = true;
-    };
-
-    auto down = [&](int ln, int col) {
-        a.pop_back();
-        vis1[n + ln - col] = false;
-        vis2[ln + col] = false;
-    };
-
-    auto dfs = [&](auto self, int dep) -> void {
+    auto dfs = [&](auto &&self, int dep) -> void {
         if (dep == n - 1) {
             if (cnt++ < 3) {
                 for (int i = 0; i < n; i++) {
@@ -50,9 +29,15 @@ int main() {
         }
         for (int i = 0; i < n; i++) {
             if (check(dep, i)) {
-                up(dep, i);
+                a.push_back(i);
+                vis1[n + dep - i] = true;
+                vis2[dep + i] = true;
+
                 self(self, dep + 1);
-                down(dep, i);
+
+                a.pop_back();
+                vis1[n + dep - i] = false;
+                vis2[dep + i] = false;
             }
         }
     };
