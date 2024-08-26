@@ -1,8 +1,8 @@
 # 位运算 入门
 
-本人完全没位运算基础，因此整理一些不难，但（赛时）做不出的位运算题目
+整理一些不难，但（赛时）做不出的位运算题目
 
-## [CF1988C Increasing Sequence with Fixed OR](https://codeforces.com/contest/1988/problem/C)
+## [CF1988C](https://codeforces.com/contest/1988/problem/C)
 
 给你一个正整数 $n$，需要构造最长的序列满足：
 
@@ -64,7 +64,7 @@ void solve() {
 
 </details>
 
-## [CF1994B Fun Game](https://codeforces.com/contest/1994/problem/B)
+## [CF1994B](https://codeforces.com/contest/1994/problem/B)
 
 给出两个序列 $s$ 和 $t$，问能不能通过任意次操作把 $s$ 变成 $t$，操作内容如下：
 
@@ -73,7 +73,19 @@ void solve() {
 解：
 <details>
 
-$1\oplus 1 = 0$， $0\oplus 1 = 1$。
+观察一下异或的性质，不同的数异或之后为 1，相同的数异或为 0，打表观察一下：
+
+$1\oplus 1 = 0$，$0\oplus 1 = 1$，
+
+$0\oplus 0 = 0$，$1\oplus 0 = 1$。
+
+可以发现，与 1 进行异或，就相当于取反；与 0 进行异或，就相当于不变，这个性质相当重要。
+
+那么对于这道题，题意的意思是，每次操作可以任取区间 $[l, r]$，将这个区间里的元素与 $[1, r - l]$ 里一一对应的元素做异或，更直接地说，对每个数位，可以与它自身或者它之前的任意数位进行异或。
+
+如果 $s$ 和 $t$ 在某一位置不同，要把 $s$ 变成 $t$，这个位置就必须取反，即要和 $1$ 异或。
+
+因此，若 $t$ 出现第一个 $1$，但 $s$ 在这个位置以及之前全是 $0$，则 $s$ 不可能变为 $t$，否则 $s$ 一定能变成 $t$。
 
 核心代码：
 ```cpp
@@ -141,3 +153,49 @@ cout << res << endl;
 [完整代码](https://atcoder.jp/contests/abc365/submissions/56961585)
 
 </details>
+
+## [牛客小白月赛98 E](https://ac.nowcoder.com/acm/contest/85598/E)
+
+给定一个长度为 $n$ 的序列 $a$，求出有多少个区间 $[l,r]$ 满足
+
+$$ {2^{k_1}\leq (a_l\ \&\ a_{l+1}\ \&...\&\ a_r)\oplus(a_l\ |\ a_{l+1}\ |...|\ a_r)< 2^{k_2}}$$
+
+- $n\ (1\leq n\leq 5\times 10^5)$
+
+解：
+
+把这个式子拆开看，左边是和运算，对任意一位，全 1 出 1，有 0 出 0；右边是或运算，全 0 出 0，有 1 出 1。
+
+中间是个异或，对任意一位，两边若不同则出 1，也就是说，如果要这个数位最后结果是 1，对于我们选的区间，既要有 1 又要有 0，即 1 的个数 $\text{num}_{1, l, r} \in (0, r - l + 1)$。
+
+题目要我们求的是，在 k1 和 k2 之间（左闭右开），存在至少一个位置满足要求，且大于等于 k2 的数位都不满足要求，这样的区间个数，我们可以转换成 $\text{res}_{0, k_2} - \text{res}_{0, k1}$，这么做方便许多。
+
+核心代码如下。
+
+```cpp
+auto work = [&](int x) {
+    ll ans = 0, cnt = 1;
+    for (int i = 1; i < n; i++) {
+        bool ok = true;
+        for (int j = x; j < 64; j++) {
+            bool u = a[i] >> j & 1;
+            bool v = a[i - 1] >> j & 1;
+            if (u != v) {
+                ok = false;
+                break;
+            }
+        }
+        if (ok) {
+            cnt++;
+        } else {
+            ans += cnt * (cnt + 1) / 2;
+            cnt = 1;
+        }
+    }
+    ans += cnt * (cnt + 1) / 2;
+    return ans;
+};
+
+cout << work(k2) - work(k1) << endl;
+```
+
