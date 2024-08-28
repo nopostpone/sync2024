@@ -53,7 +53,7 @@ struct LinkedList {
 
         Node<T> *t = new Node<T>;
         for (int i = 0; i < siz; i++) {
-
+            t = t->next;
         }
         siz++;
     }
