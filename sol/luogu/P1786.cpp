@@ -35,10 +35,10 @@ int main() {
         if (i >= 0)
             g[i] = str;
     }
-    sort(a.begin(), a.end(), [](Node &x, Node &y) { return x.money == y.money ? x.id < y.id : x.money > y.money;});
+    sort(a.begin(), a.end(), [&](auto x, auto y) { return x.money == y.money ? x.id < y.id : x.money > y.money;});
 
     int cnt[] = {2, 4, 7, 25, inf};
-    int pos = 0;
+    int pos = 0;    
     for (auto &I : a) {
         int JOB = f[I.job];
         if (JOB < 0) {
