@@ -13,7 +13,9 @@ struct LinkedList {
     Node<T> *head;
     Node<T> *tail;
 
-    LinkedList() {}
+    LinkedList() {
+        init();
+    }
     
     LinkedList(const T _init[], const int _siz) {
         init(_init, _siz);
