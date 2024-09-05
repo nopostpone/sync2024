@@ -28,7 +28,6 @@ int main() {
         if (leave == 0) {
             late[v] = max(late[v], ans[id] + time);
         } else {
-            // if (id == 0) continue;
             ans[id] = max(ans[id], late[u] - time);
         }
     }
