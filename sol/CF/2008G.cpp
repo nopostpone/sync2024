@@ -1,38 +1,39 @@
 #include <bits/stdc++.h>
+#define endl "\n"
 using namespace std;
 using ll = long long;
 
-int query(int a, int b) {
-    cout << "? " << a << " " << b << endl;
-    int res;
-    cin >> res;
-    return res;
-}
-
 void solve() {
-    int lo = 1, hi = 999;
-    while (hi - lo > 1) {
-        int x = lo + (hi - lo) / 3;
-        int y = lo + (hi - lo) * 2 / 3;
-        int res = query(x, y);
-        if (res == x * y) {
-            lo = y;
-        } else if (res == x * (y + 1)) {
-            lo = x;
-            hi = y;
-        } else {
-            assert(res == (x + 1) * (y + 1));
-            hi = x;
-        }
+    int n, k;
+    cin >> n >> k;
+    k--;
+
+    int g = 0;
+    for (int i = 0; i < n; i++) {
+        int x;
+        cin >> x;
+        g = std::gcd(g, x);
     }
-    cout << "! " << hi << endl;
+
+    if (n == 1) {
+        cout << k + (k >= g) << endl;
+    } else if (1ll * (g - 1) * n <= k) {
+        cout << n + k << endl;
+    } else {
+        cout << k / (g - 1) * g + k % (g - 1) + 1 << endl;
+    }
+
 }
 
 int main() {
     cin.tie(nullptr)->sync_with_stdio(false);
-    int _;
-    cin >> _;
-    while (_--)
+
+    int T;
+    cin >> T;
+
+    while (T--) {
         solve();
+    }
+
     return 0;
 }
