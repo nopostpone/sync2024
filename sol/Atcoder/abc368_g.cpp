@@ -84,7 +84,10 @@ int main() {
             
             auto itS = upper_bound(B.begin(), B.end(), l);
             auto itE = upper_bound(B.begin(), B.end(), r);
-            if (*itS > r) {
+            if (itS == B.end()) {
+                cout << A.rangeSum(l, r + 1) << endl;
+                continue;
+            } else if (*itS > r) {
                 cout << A.rangeSum(l, r + 1) << endl;
                 continue;
             }
@@ -97,6 +100,7 @@ int main() {
                 ans = max<ll>(ans + a[y], ans * b[y]);
                 x = y + 1;
             }
+            ans += A.rangeSum(x, r + 1);
             cout << ans << endl;
 
         } else {
