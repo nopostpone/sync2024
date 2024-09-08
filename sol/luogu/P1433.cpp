@@ -11,8 +11,8 @@ int main() {
     int n;
     cin >> n;
 
-    using pii = pair<double, double>;
-    vector<pii> a(n);
+    using pdd = pair<double, double>;
+    vector<pdd> a(n);
     for (int i = 0; i < n; i++) {
         cin >> a[i].first >> a[i].second;
     }
@@ -45,6 +45,7 @@ int main() {
     }
 
     cout << fixed << setprecision(2);
+    // 一定要想好是求最大还是最小= =
     cout << *min_element(dp[(1 << n) - 1].begin(), dp[(1 << n) - 1].end()) << endl;
 
     return 0;
