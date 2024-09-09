@@ -80,7 +80,6 @@ int main() {
                 }
             }
             if (not ans.contains(nxt)) {
-                // dbg(nxt);
                 ans[nxt] = cost + 1;
                 q.push({nxt, cost + 1});
             }
