@@ -236,6 +236,9 @@ int main() {
         cin >> a[i];
     }
 
+    // dp[i][j][k] 表示：长度为 i，最后两个数分别为 a_j, a_k 时满足要求的序列数量。
+    // O(n ^ 4)
+    // 有离散化 O(n ^ 3 log n) 的做法
     vector dp(n + 1, vector(n, vector<Z>(n)));
     vector<Z> ans(n);
 
