@@ -3,70 +3,265 @@
 using namespace std;
 using ll = long long;
 
-struct Node {
-    int v, x, y;
-    constexpr bool operator<(const Node &o) const {
-        return v > o.v;
+template<class T>
+constexpr T power(T a, ll b) {
+    T res = 1;
+    for (; b; b /= 2, a *= a) {
+        if (b % 2) {
+            res *= a;
+        }
+    }
+    return res;
+}
+
+constexpr ll mul(ll a, ll b, ll p) {
+    ll res = a * b - ll(1.L * a * b / p) * p;
+    res %= p;
+    if (res < 0) {
+        res += p;
+    }
+    return res;
+}
+template<ll P>
+struct MLong {
+    ll x;
+    constexpr MLong() : x{} {}
+    constexpr MLong(ll x) : x{norm(x % getMod())} {}
+    
+    static ll Mod;
+    constexpr static ll getMod() {
+        if (P > 0) {
+            return P;
+        } else {
+            return Mod;
+        }
+    }
+    constexpr static void setMod(ll Mod_) {
+        Mod = Mod_;
+    }
+    constexpr ll norm(ll x) const {
+        if (x < 0) {
+            x += getMod();
+        }
+        if (x >= getMod()) {
+            x -= getMod();
+        }
+        return x;
+    }
+    constexpr ll val() const {
+        return x;
+    }
+    explicit constexpr operator ll() const {
+        return x;
+    }
+    constexpr MLong operator-() const {
+        MLong res;
+        res.x = norm(getMod() - x);
+        return res;
+    }
+    constexpr MLong inv() const {
+        assert(x != 0);
+        return power(*this, getMod() - 2);
+    }
+    constexpr MLong &operator*=(MLong rhs) & {
+        x = mul(x, rhs.x, getMod());
+        return *this;
+    }
+    constexpr MLong &operator+=(MLong rhs) & {
+        x = norm(x + rhs.x);
+        return *this;
+    }
+    constexpr MLong &operator-=(MLong rhs) & {
+        x = norm(x - rhs.x);
+        return *this;
+    }
+    constexpr MLong &operator/=(MLong rhs) & {
+        return *this *= rhs.inv();
+    }
+    friend constexpr MLong operator*(MLong lhs, MLong rhs) {
+        MLong res = lhs;
+        res *= rhs;
+        return res;
+    }
+    friend constexpr MLong operator+(MLong lhs, MLong rhs) {
+        MLong res = lhs;
+        res += rhs;
+        return res;
+    }
+    friend constexpr MLong operator-(MLong lhs, MLong rhs) {
+        MLong res = lhs;
+        res -= rhs;
+        return res;
+    }
+    friend constexpr MLong operator/(MLong lhs, MLong rhs) {
+        MLong res = lhs;
+        res /= rhs;
+        return res;
+    }
+    friend constexpr std::istream &operator>>(std::istream &is, MLong &a) {
+        ll v;
+        is >> v;
+        a = MLong(v);
+        return is;
+    }
+    friend constexpr std::ostream &operator<<(std::ostream &os, const MLong &a) {
+        return os << a.val();
+    }
+    friend constexpr bool operator==(MLong lhs, MLong rhs) {
+        return lhs.val() == rhs.val();
+    }
+    friend constexpr bool operator!=(MLong lhs, MLong rhs) {
+        return lhs.val() != rhs.val();
     }
 };
 
-constexpr int dx[] = {1, -1, 0, 0};
-constexpr int dy[] = {0, 0, 1, -1};
+template<>
+ll MLong<0LL>::Mod = ll(1E18) + 9;
+
+template<int P>
+struct MInt {
+    int x;
+    constexpr MInt() : x{} {}
+    constexpr MInt(ll x) : x{norm(x % getMod())} {}
+    
+    static int Mod;
+    constexpr static int getMod() {
+        if (P > 0) {
+            return P;
+        } else {
+            return Mod;
+        }
+    }
+    constexpr static void setMod(int Mod_) {
+        Mod = Mod_;
+    }
+    constexpr int norm(int x) const {
+        if (x < 0) {
+            x += getMod();
+        }
+        if (x >= getMod()) {
+            x -= getMod();
+        }
+        return x;
+    }
+    constexpr int val() const {
+        return x;
+    }
+    explicit constexpr operator int() const {
+        return x;
+    }
+    constexpr MInt operator-() const {
+        MInt res;
+        res.x = norm(getMod() - x);
+        return res;
+    }
+    constexpr MInt inv() const {
+        assert(x != 0);
+        return power(*this, getMod() - 2);
+    }
+    constexpr MInt &operator*=(MInt rhs) & {
+        x = 1LL * x * rhs.x % getMod();
+        return *this;
+    }
+    constexpr MInt &operator+=(MInt rhs) & {
+        x = norm(x + rhs.x);
+        return *this;
+    }
+    constexpr MInt &operator-=(MInt rhs) & {
+        x = norm(x - rhs.x);
+        return *this;
+    }
+    constexpr MInt &operator/=(MInt rhs) & {
+        return *this *= rhs.inv();
+    }
+    friend constexpr MInt operator*(MInt lhs, MInt rhs) {
+        MInt res = lhs;
+        res *= rhs;
+        return res;
+    }
+    friend constexpr MInt operator+(MInt lhs, MInt rhs) {
+        MInt res = lhs;
+        res += rhs;
+        return res;
+    }
+    friend constexpr MInt operator-(MInt lhs, MInt rhs) {
+        MInt res = lhs;
+        res -= rhs;
+        return res;
+    }
+    friend constexpr MInt operator/(MInt lhs, MInt rhs) {
+        MInt res = lhs;
+        res /= rhs;
+        return res;
+    }
+    friend constexpr std::istream &operator>>(std::istream &is, MInt &a) {
+        ll v;
+        is >> v;
+        a = MInt(v);
+        return is;
+    }
+    friend constexpr std::ostream &operator<<(std::ostream &os, const MInt &a) {
+        return os << a.val();
+    }
+    friend constexpr bool operator==(MInt lhs, MInt rhs) {
+        return lhs.val() == rhs.val();
+    }
+    friend constexpr bool operator!=(MInt lhs, MInt rhs) {
+        return lhs.val() != rhs.val();
+    }
+};
+
+template<>
+int MInt<0>::Mod = 998244353;
+
+template<int V, int P>
+constexpr MInt<P> CInv = MInt<P>(V).inv();
+
+using Z = MInt<0>;
+
 
 int main() {
     cin.tie(nullptr)->sync_with_stdio(false);
     
-    int h, w, y;
-    cin >> h >> w >> y;
+    int n;
+    cin >> n;
 
-    vector a(h, vector<int>(w));
-    for (int i = 0; i < h; i++) {
-        for (int j = 0; j < w; j++) {
-            cin >> a[i][j];
-        }
+    if (n == 1) {
+        cout << 1 << endl;
+        return 0;
     }
 
-    vector vis(h, vector<bool>(w));
-
-    priority_queue<Node> q;
-    for (int i = 0; i < h; i++) {
-        for (int j = 0; j < w; j++) {
-            if (i == 0 or j == 0 or i == h - 1 or j == w - 1) {
-                q.push({a[i][j], i, j});
-                vis[i][j] = true;
-            }
-        }
+    vector<int> a(n);
+    for (int i = 0; i < n; i++) {
+        cin >> a[i];
     }
 
-    auto check = [&](int x, int y) {
-        if (x < 0 or x >= h or y < 0 or y >= w) {
-            return false;
+    vector dp(n + 1, vector(n, vector<Z>(n)));
+    vector<Z> ans(n);
+
+    for (int i = 0; i < n; i++) {
+        for (int j = i + 1; j < n; j++) {
+            dp[2][i][j] = 1;
         }
-        return not vis[x][y];
-    };
+    }
+    for (int i = 3; i <= n; i++) {
+        for (int j = i - 2; j < n - 1; j++) {
+            for (int k = j + 1; k < n; k++) {
 
-    int ans = h * w;
-    for (int now = 1; now <= y; now++) {
-        while (!q.empty()) {
-            auto [v, x, y] = q.top();
-            if (v > now) {
-                break;
-            }
-
-            q.pop();
-            ans--;
-
-            for (int i = 0; i < 4; i++) {
-                int nx = x + dx[i];
-                int ny = y + dy[i];
-                if (check(nx, ny)) {
-                    q.push({a[nx][ny], nx, ny});
-                    vis[nx][ny] = true;
+                for (int l = i - 3; l < j; l++) {
+                    if (a[j] - a[l] == a[k] - a[j]) {
+                        dp[i][j][k] += dp[i - 1][l][j];
+                    }
                 }
+                ans[i - 1] += dp[i][j][k];
             }
         }
-        cout << ans << endl;
     }
-
+    
+    cout << n << " " << n * (n - 1) / 2 << " ";
+    for (int i = 2; i < n; i++) {
+        cout << ans[i] << " \n"[i == n - 1];
+    }
+    
     return 0;
 }
