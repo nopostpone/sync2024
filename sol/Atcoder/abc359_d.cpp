@@ -3,7 +3,7 @@
 using namespace std;
 using ll = long long;
 
-template<class T>
+template <class T>
 constexpr T power(T a, ll b) {
     T res = 1;
     for (; b; b /= 2, a *= a) {
@@ -22,12 +22,12 @@ constexpr ll mul(ll a, ll b, ll p) {
     }
     return res;
 }
-template<ll P>
+template <ll P>
 struct MLong {
     ll x;
     constexpr MLong() : x{} {}
     constexpr MLong(ll x) : x{norm(x % getMod())} {}
-    
+
     static ll Mod;
     constexpr static ll getMod() {
         if (P > 0) {
@@ -115,15 +115,15 @@ struct MLong {
     }
 };
 
-template<>
+template <>
 ll MLong<0LL>::Mod = ll(1E18) + 9;
 
-template<int P>
+template <int P>
 struct MInt {
     int x;
     constexpr MInt() : x{} {}
     constexpr MInt(ll x) : x{norm(x % getMod())} {}
-    
+
     static int Mod;
     constexpr static int getMod() {
         if (P > 0) {
@@ -211,19 +211,18 @@ struct MInt {
     }
 };
 
-template<>
+template <>
 int MInt<0>::Mod = 998244353;
 
-template<int V, int P>
+template <int V, int P>
 constexpr MInt<P> CInv = MInt<P>(V).inv();
 
 using Z = MInt<0>;
 
-
 int main() {
     cin.tie(nullptr)->sync_with_stdio(false);
     // A -> 0, B -> 1
-    
+
     int n, k;
     cin >> n >> k;
     string s;
@@ -231,7 +230,7 @@ int main() {
 
     auto check = [&](int p) {
         for (int i = 0, j = k - 1; i < j; i++, j--) {
-            if ((p >> i) & 1 != (p >> j) & 1) {
+            if (((p >> i) & 1) != ((p >> j) & 1)) {
                 return true;
             }
         }
@@ -239,15 +238,23 @@ int main() {
     };
 
     vector dp(n, vector<Z>(1 << k));
-    for (int i = 0; i < n; i++) {
-        for (int S = 0; S < (1 << k) + 1; S++) {
+    if (s[0] == '?') {
+        dp[0][1 << (k - 1)] = dp[0][0] = 1;
+    } else {
+        dp[0][(s[0] - 'A') << (k - 1)] = 1;
+    }
+
+    for (int i = 1; i < n; i++) {
+        for (int S = 0; S < (1 << k); S++) {
             for (int now : {0, 1}) {
-                if (s[i] != '?' and s[i] != 'A' + now) {
+                if (s[i] == 'A' + (now ^ 1)) {
                     continue;
                 }
-                
 
-
+                int T = (S >> 1) | ((1 << (k - 1)) * now);
+                if (i + 1 < k or check(T)) {
+                    dp[i][T] += dp[i - 1][S];
+                }
             }
         }
     }
