@@ -75,15 +75,15 @@ struct Pos {
     }
     ~Pos() {}
 
-    std::function<void()> init = [&]() {
+    void init() {
         this->dx = std::vector({-1, 1, 0, 0});
         this->dy = std::vector({0, 0, -1, 1});
         this->x = this->y = 1;
-    };
+    }
 
-    std::function<void(Direction)> move = [&](Direction dir_) {
+    void move(Direction dir_) {
         int dir = dir_;
-    };
+    }
 
     bool in(int x_, int y_) {
         if (x_ > 2 or x_ < 0 or y_ < 0 or y_ > 2) {
@@ -106,11 +106,11 @@ struct Blocks {
     }
     ~Blocks() {}
 
-    std::function<void()> init = [&]() {
+    void init() {
         this->blk.resize(3, {0, 0, 0});
-    };
+    }
 
-    std::function<bool(Who)> win = [&](Who who_) {
+    bool win(Who who_) {
         if (who_ == player) {
             return (blk[0][0] == 1 && blk[0][1] == 1 && blk[0][2] == 1) ||
                    (blk[1][0] == 1 && blk[1][1] == 1 && blk[1][2] == 1) ||
@@ -134,9 +134,9 @@ struct Blocks {
                    (blk[2][0] == -1 && blk[1][1] == -1 && blk[0][2] == -1) ||
                    (blk[0][0] == -1 && blk[1][1] == -1 && blk[2][2] == -1);
         }
-    };
+    }
 
-    std::function<bool()> draw = [&]() {
+    bool draw() {
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
                 if (this->blk[i][j] == 0) {
@@ -145,21 +145,21 @@ struct Blocks {
             }
         }
         return true;
-    };
+    }
 };
 
 struct Command {
     explicit Command() {};
     ~Command() {}
 
-    std::function<bool(Pos, Blocks)> valid = [&](const Pos &P, const Blocks &B) {
+    bool valid(const Pos &P, const Blocks &B) {
         // if (P.in(left)) {
         //     return false;
         // }
         return true;
-    };
+    }
 
-    std::function<int()> getKeycode = [&]() {
+    int getKeycode() {
         while (true) {
             if (_kbhit()) {
                 int keycode = _getch();
@@ -170,7 +170,7 @@ struct Command {
                 }
             }
         }
-    };
+    }
 };
 
 struct Scene {
@@ -182,14 +182,14 @@ struct Scene {
     }
     ~Scene() {}
 
-    std::function<void()> init = [&]() {
+    void init(){
         std::vector<std::string> &tmp = this->sce;
         tmp.resize(5);
         tmp[0] = tmp[2] = tmp[4] = "?  ?  ?\n";
         tmp[1] = tmp[3] = "       \n";
-    };
+    }
 
-    std::function<std::vector<std::string>(Blocks)> sceneTransform = [&](const Blocks &B) {
+    auto sceneTransform(const Blocks &B) {
         std::vector<std::string> ret;
         ret.resize(3, {"???"});
         for (int i = 0; i < 3; i++) {
@@ -210,16 +210,16 @@ struct Scene {
             }
         }
         return ret;
-    };
+    }
 
-    std::function<void()> scenePrint = [&]() {
+    void scenePrint() {
         system("cls");
         for (std::string &i : this->sce) {
             std::cout << i;
         }
-    };
+    }
 
-    std::function<void(std::vector<std::string>)> sceneUpdate = [&](const std::vector<std::string> &t) {
+    void sceneUpdate(const std::vector<std::string> &t) {
         sce[0][0] = t[0][0];
         sce[0][3] = t[0][1];
         sce[0][6] = t[0][2];
@@ -229,16 +229,16 @@ struct Scene {
         sce[4][0] = t[2][0];
         sce[4][3] = t[2][1];
         sce[4][6] = t[2][2];
-    };
+    }
 
-    std::function<void(Pos, Blocks, Command)> sceneWork = [&](const Pos &P, const Blocks &B, const Command &C) {
+    void sceneWork(const Pos &P, const Blocks &B, const Command &C) {
         system("cls");
         this->scenePrint();
 
         this->sceneEnd(this->sceneJudge(B));
-    };
+    }
 
-    std::function<Result(Blocks)> sceneJudge = [&](const Blocks &B) {
+    Result sceneJudge(const Blocks &B) {
         if (B.win(player)) {
             return win;
         } else if (B.win(computer)) {
@@ -248,9 +248,9 @@ struct Scene {
         } else {
             return none;
         }
-    };
+    }
 
-    std::function<void(Result)> sceneEnd = [&](const Result result_) {
+    void sceneEnd(const Result result_) {
         if (result_ == none) {
             return;
         } else if (result_ == win) {
@@ -260,7 +260,7 @@ struct Scene {
         } else {
             std::cout << "draw-v-\n";
         }
-    };
+    }
 };
 
 int main(void) {
