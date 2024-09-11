@@ -96,34 +96,22 @@ struct LazySegmentTree {
     }
 };
 
-constexpr ll inf = 1E18;
-
 struct Tag {
-    ll add = 0;
     
     void apply(Tag t) {
-        add += t.add;
+
     }
 };
 
 struct Info {
-    ll min = inf;
-    ll max = -inf;
-    ll sum = 0;
-    ll act = 0;
     
     void apply(Tag t) {
-        min += t.add;
-        max += t.add;
-        sum += act * t.add;
+        
     }
 };
 
 Info operator+(Info a, Info b) {
     Info c;
-    c.min = std::min(a.min, b.min);
-    c.max = std::max(a.max, b.max);
-    c.sum = a.sum + b.sum;
-    c.act = a.act + b.act;
+    
     return c;
 }
