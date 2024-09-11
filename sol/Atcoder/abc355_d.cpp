@@ -3,10 +3,9 @@
 using namespace std;
 using ll = long long;
 
-// todo 355_d
-
 int main() {
     cin.tie(nullptr)->sync_with_stdio(false);
+    // 比较典的区间问题
     
     int n;
     cin >> n;
@@ -15,30 +14,15 @@ int main() {
     for (int i = 0; i < n; i++) {
         cin >> a[i] >> b[i];
     }
-    vector<int> id(n);
-    iota(id.begin(), id.end(), 0);
 
-    auto cmp = [&](int x, int y) {
-        return a[x] == a[y] ? b[x] < b[y] : a[x] < a[y];
-    };
-
-    sort(id.begin(), id.end(), cmp);
+    ranges::sort(a);
 
     ll res = 0;
-    for (auto i : id) {
-        int lo = 0, hi = n;
-        while (lo < hi) {
-            int m = (lo + hi) / 2;
-            if (a[i] >= b[m]) {
-                lo = m + 1;
-            } else {
-                hi = m;
-            }
-        }
-        res += lo;
+    for (int i : b) {
+        res += n - (upper_bound(a.begin(), a.end(), i) - a.begin());
     }
-    
-    cout << 1ll * n * (n - 1) / 2 - res << endl;
 
+    cout << 1ll * n * (n - 1) / 2 - res << endl;
+    
     return 0;
 }
