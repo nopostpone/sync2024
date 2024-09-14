@@ -12,13 +12,12 @@ ColorCompare check(const string &L, const string &R) {
     if (L == R) {
         return same;
     }
-    bool ok = false;
     for (auto i : L) {
         if (R.find(i) != string::npos) {
-            ok = true;
+            return part;
         }
     }
-    return ok ? part : diff;
+    return diff;
 }
 
 map<string, int> f;
