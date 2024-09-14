@@ -67,6 +67,19 @@ enum Direction {
     down = 3
 };
 
+int getKeycode() {
+    while (true) {
+        if (_kbhit()) {
+            int keycode = _getch();
+            if (keycode == 224) {
+                return _getch();
+            } else {
+                return keycode;
+            }
+        }
+    }
+}
+
 struct Pos {
     std::vector<int> dx, dy;
     int x, y;
@@ -159,18 +172,6 @@ struct Command {
         return true;
     }
 
-    int getKeycode() {
-        while (true) {
-            if (_kbhit()) {
-                int keycode = _getch();
-                if (keycode == 224) {
-                    return _getch();
-                } else {
-                    return keycode;
-                }
-            }
-        }
-    }
 };
 
 struct Scene {
@@ -269,8 +270,9 @@ int main(void) {
     Command command;
     Scene scene;
     // scene.scenePrint();
-    while (1) {
-        command.getKeycode();
+    while (true) {
+        int keycode = command.getKeycode();
+        scene.sceneWork(keycode);
     }
     return 0;
 }
