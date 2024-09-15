@@ -11,15 +11,13 @@ void solve() {
     vector<int> a(l);
     for (int i = 0; i < l; i++) {
         cin >> a[i];
-        if (f.contains(a[i])) {
-            l = i;
-            break;
+        if (not f.contains(a[i])) {
+            f[a[i]] = i;
         }
-        f[a[i]] = i;
         a[i] = f[a[i]];
     }
 
-    vector r(l, vector<int>(n));
+    vector r(l, vector<int>(n, -1));
     for (int i = 0; i < n; i++) {
         for (int j = 0; j < m; j++) {
             int x;
@@ -33,7 +31,7 @@ void solve() {
     bool res = 0;
     vector g(l, vector<bool>(n));
     for (int i = l - 1; ~i; i--) {
-        int t = 1;
+        int t = 0;
         for (int j = n - 1; ~j; j--) {
             if (r[a[i]][j] >= t) {
                 g[i][j] = true;
