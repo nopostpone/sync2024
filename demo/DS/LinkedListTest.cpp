@@ -3,17 +3,39 @@
 
 using namespace std;
 
+struct Test {
+    int u = 10;
+    double v = 123.123;
+    short w = 2;
+};
+
 int main() {
 
-    int a[] = {1, 2, 3, 4, 5};
+// Node test
+    string a = "This is A.";
+    Node<string> A(a);
 
-    LinkedList<int> l(a, 5);
+    cout << A.val << endl;
 
-    l.push_back(1);
+    Node<Test> bzd;
+    cout << bzd.val.u << " " << bzd.val.v << " " << bzd.val.w << endl;
 
-    cerr << l[0];
+    Node<string> B("This is B.");
+    A.next = &B;
+    cout << (A.next)->val << endl;
 
-    
+    B.prev = &A;
+    cout << (B.prev)->val << endl;
+    cout << (B.prev->next)->val << " " << B.val << endl;
+
+// LinkedList test
+
+    Node<string> C("This is C.");
+
+    LinkedList<string> Z;
+    Z.push_back(C);
+    cout << Z.size() << endl;
+
 
     return 0;
 }
