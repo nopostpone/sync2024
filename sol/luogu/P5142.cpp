@@ -243,9 +243,10 @@ int main() {
         init[i].sqr = init[i].sum * init[i].sum;
     }
 
-    auto D = [&](const Info &v) -> Z {
+    auto D = [](const Info &v) -> Z {
         Z act = v.act;
-        return v.sqr - v.sum * v.sum * act.inv();
+        Z avg = v.sum * act.inv();
+        return v.sqr * act.inv() - avg * avg;
     };
 
     L l(init);
