@@ -124,16 +124,28 @@ constexpr MInt<P> CInv = MInt<P>(V).inv();
 constexpr int P = 1000000007;
 using Z = MInt<P>;
 
-template<class Info, class Tag>
-struct LazySegmentTree {
-    const int n;
+template<class Info>
+struct SegmentTree {
+    int n;
     std::vector<Info> info;
-    std::vector<Tag> tag;
-    LazySegmentTree(int n) : n(n), info(4 << std::__lg(n)), tag(4 << std::__lg(n)) {}
-    LazySegmentTree(std::vector<Info> init) : LazySegmentTree(init.size()) {
+    SegmentTree() : n(0) {}
+    SegmentTree(int n_, Info v_ = Info()) {
+        init(n_, v_);
+    }
+    template<class T>
+    SegmentTree(std::vector<T> init_) {
+        init(init_);
+    }
+    void init(int n_, Info v_ = Info()) {
+        init(std::vector(n_, v_));
+    }
+    template<class T>
+    void init(std::vector<T> init_) {
+        n = init_.size();
+        info.assign(4 << std::__lg(n), Info());
         std::function<void(int, int, int)> build = [&](int p, int l, int r) {
             if (r - l == 1) {
-                info[p] = init[l];
+                info[p] = init_[l];
                 return;
             }
             int m = (l + r) / 2;
@@ -146,22 +158,12 @@ struct LazySegmentTree {
     void pull(int p) {
         info[p] = info[2 * p] + info[2 * p + 1];
     }
-    void apply(int p, const Tag &v) {
-        info[p].apply(v);
-        tag[p].apply(v);
-    }
-    void push(int p) {
-        apply(2 * p, tag[p]);
-        apply(2 * p + 1, tag[p]);
-        tag[p] = Tag();
-    }
     void modify(int p, int l, int r, int x, const Info &v) {
         if (r - l == 1) {
             info[p] = v;
             return;
         }
         int m = (l + r) / 2;
-        push(p);
         if (x < m) {
             modify(2 * p, l, m, x, v);
         } else {
@@ -180,34 +182,10 @@ struct LazySegmentTree {
             return info[p];
         }
         int m = (l + r) / 2;
-        push(p);
         return rangeQuery(2 * p, l, m, x, y) + rangeQuery(2 * p + 1, m, r, x, y);
     }
     Info rangeQuery(int l, int r) {
         return rangeQuery(1, 0, n, l, r);
-    }
-    void rangeApply(int p, int l, int r, int x, int y, const Tag &v) {
-        if (l >= y || r <= x) {
-            return;
-        }
-        if (l >= x && r <= y) {
-            apply(p, v);
-            return;
-        }
-        int m = (l + r) / 2;
-        push(p);
-        rangeApply(2 * p, l, m, x, y, v);
-        rangeApply(2 * p + 1, m, r, x, y, v);
-        pull(p);
-    }
-    void rangeApply(int l, int r, const Tag &v) {
-        return rangeApply(1, 0, n, l, r, v);
-    }
-};
-
-struct Tag {
-    void apply(const Tag &t) {
-
     }
 };
 
@@ -215,9 +193,6 @@ struct Info {
     Z sum = 0;
     Z sqr = 0;
     int act = 0;
-    void apply(const Tag &t) {
-        
-    }
 };
 
 Info operator+(const Info &a, const Info &b) {
@@ -228,7 +203,7 @@ Info operator+(const Info &a, const Info &b) {
     return c;
 }
 
-using L = LazySegmentTree<Info, Tag>;
+using L = SegmentTree<Info>;
 
 int main() {
     cin.tie(nullptr)->sync_with_stdio(false);
