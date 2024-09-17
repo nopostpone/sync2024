@@ -81,19 +81,19 @@ struct LazySegmentTree {
 
 struct Tag {
     
-    void apply(Tag t) {
+    void apply(const Tag &t) {
 
     }
 };
 
 struct Info {
     
-    void apply(Tag t) {
+    void apply(const Tag &t) {
         
     }
 };
 
-Info operator+(Info a, Info b) {
+Info operator+(const Info &a, const Info &b) {
     Info c;
     
     return c;
