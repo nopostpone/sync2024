@@ -65,7 +65,7 @@ int main() {
             L.add(x, 1);
             R.add(y, 1);
         } else {
-            cout << L.rangeSum(0, y + 1) - R.rangeSum(0, x) << "\n";
+            cout << L.sum(y + 1) - R.sum(x) << "\n";
         }
     }
 
