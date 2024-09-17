@@ -6,30 +6,37 @@ void solve() {
     int n;
     cin >> n;
 
-    vector<int> a(n);
-    for (int i = 0; i < n; i++) {
-        cin >> a[i];
+    const int m = 2 * n;
+
+    vector<int> p(m);
+    for (int i = 0; i < m; i++) {
+        cin >> p[i];
     }
 
-    int res = 0;
-    vector<int> tag(n, -1);
-    for (int i = 0; i < n; i++) {
-        if ((tag[i] == 0 and a[i] <= 2) or a[i] == 0) {
-            continue;
+    vector<int> id;
+    int mx = -1;
+    for (int i = 0; i < m; i++) {
+        if (p[i] > mx) {
+            mx = p[i];
+            id.push_back(i);
         }
-        bool ok = (tag[i] != -1 and a[i] <= 4) or a[i] <= 2;
-        res++;
-        if (i == n - 1 or not ok) {
-            continue;
-        }
-        if (tag[i] == -1) {
-            tag[i + 1] = 0;
-        } else {
-            tag[i + 1] = not tag[i];
+    }
+    id.push_back(m);
+
+    vector<int> siz;
+    for (int i = 1; i < id.size(); i++) {
+        siz.push_back(id[i] - id[i - 1]);
+    }
+
+    vector<bool> dp(m + 1);
+    dp[0] = true;
+    for (auto i : siz) {
+        for (int j = m; j >= i; j--) {
+            dp[j] = dp[j] | dp[j - i];
         }
     }
 
-    cout << res << "\n";
+    cout << (dp[n] ? "YES" : "NO") << "\n";
 }
 
 int main() {
