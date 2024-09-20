@@ -19,12 +19,12 @@ void solve() {
 
     vector<bool> a(n / 3);
     int g1, b1;
-    for (int i = 0; i < n / 3; i++) {
-        a[i] = ask(3 * i, 3 * i + 1, 3 * i + 2);
-        if (a[i]) {
-            g1 = i * 3;
+    for (int i = 0; i < n; i += 3) {
+        a[i / 3] = ask(i, i + 1, i + 2);
+        if (a[i / 3]) {
+            g1 = i;
         } else {
-            b1 = i * 3;
+            b1 = i;
         }
     }
 
@@ -41,6 +41,16 @@ void solve() {
         }
     };
 
+    auto work2 = [&](int x, int y) -> void {
+        if (judge(x)) {
+            good.push_back(x);
+            bad.push_back(y);
+        } else {
+            good.push_back(y);
+            bad.push_back(x);
+        }
+    };
+
     int g2 = g1 + 1;
     int g3 = g1 + 2;
     int b2 = b1 + 1;
@@ -51,13 +61,7 @@ void solve() {
         good = {g1, g2};
         if (ask(g1, b1, b2)) {
             bad.push_back(b3);
-            if (judge(b1)) {
-                good.push_back(b1);
-                bad.push_back(b2);
-            } else {
-                good.push_back(b2);
-                bad.push_back(b1);
-            }
+            work2(b1, b2);
         } else {
             bad = {b1, b2};
             work(b3);
@@ -66,66 +70,30 @@ void solve() {
     } else if (not A[0] and not A[1]) {
         bad = {b1, b2};
         good.push_back(g3);
-        if (judge(g1)) {
-            good.push_back(g1);
-            bad.push_back(g2);
-        } else {
-            good.push_back(g2);
-            bad.push_back(g1);
-        }
+        work2(g1, g2);
         work(b3);
     } else if (A[0]) {
-        good.push_back(g3);
-        good.push_back(b1);
-        bad.push_back(b2);
-        if (judge(g1)) {
-            good.push_back(g1);
-            bad.push_back(g2);
-        } else {
-            good.push_back(g2);
-            bad.push_back(g1);
-        }
-        work(b3);
+        good = {g3, b1};
+        bad = {b2, b3};
+        work2(g1, g2);
     } else {
-        good.push_back(g3);
-        good.push_back(b2);
-        bad.push_back(b1);
-        if (judge(g1)) {
-            good.push_back(g1);
-            bad.push_back(g2);
-        } else {
-            good.push_back(g2);
-            bad.push_back(g1);
-        }
-        work(b3);
+        good = {g3, b2};
+        bad = {b1, b3};
+        work2(g1, g2);
     }
-    assert(bad.size() + good.size() == 6);
-
-    // for (int i : good) {
-    //     cerr << i + 1 << " \n"[i == good.back()];
-    // }
-    // for (int i : bad) {
-    //     cerr << i + 1 << " \n"[i == bad.back()];
-    // }
 
     for (int i = 0; i < n; i += 3) {
         if (i == g1 or i == b1) {
             continue;
         }
-        if (a[i]) {
+        if (a[i / 3]) {
             if (ask(bad.front(), i + 1, i + 2)) {
                 good.push_back(i + 1);
                 good.push_back(i + 2);
                 work(i);
             } else {
                 good.push_back(i);
-                if (judge(i + 2)) {
-                    good.push_back(i + 2);
-                    bad.push_back(i + 1);
-                } else {
-                    good.push_back(i + 1);
-                    bad.push_back(i + 2);
-                }
+                work2(i + 1, i + 2);
             }
         } else {
             if (not ask(good.front(), i + 1, i + 2)) {
@@ -134,24 +102,16 @@ void solve() {
                 work(i);
             } else {
                 bad.push_back(i);
-                if (judge(i + 2)) {
-                    good.push_back(i + 2);
-                    bad.push_back(i + 1);
-                } else {
-                    good.push_back(i + 1);
-                    bad.push_back(i + 2);
-                }
+                work2(i + 1, i + 2);
             }
         }
     }
-    assert(bad.size() + good.size() == n);
 
     cout << "! " << bad.size() << " ";
     for (int i : bad) {
         cout << i + 1 << " ";
     }
     endl(cout);
-    
 }
 
 int main() {
