@@ -17,17 +17,20 @@ void solve() {
     }
 
     int res = 0;
+    ranges::sort(a);
     for (auto i : a) {
         if (S.contains(i)) {
             S.erase(i);
             continue;
         }
         res++;
-        
-        auto it = S.upper_bound(i);
-        if (it == S.end()) {
-            
+        int t = min(i / 2 - (i % 2 == 0), n);
+
+        auto it = S.upper_bound(t);
+        if (it == S.begin()) {
+            break;
         }
+        S.erase(--it);
     }
 
     cout << (S.empty() ? res : -1) << "\n";
