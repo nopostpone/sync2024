@@ -2,6 +2,8 @@
 using namespace std;
 using ll = long long;
 
+// todo
+
 void solve() {
     int n;
     cin >> n;
