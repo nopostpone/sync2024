@@ -238,7 +238,6 @@ int main() {
 
     vector<Z> dp(k);
 
-
     cout << dp[k - 1] << endl;
     
     return 0;
