@@ -78,7 +78,12 @@ struct Node {
 constexpr Node operator+(const Node &a, const Node &b) {
     // cerr << a.l << " " << a.r << " " << b.l << " " << b.r << endl;
     assert(a.r == b.l or a.l == b.r);
-    return Node{a.val + b.val, min(a.l, b.l), max(a.r, b.r)};
+    Node c;
+    c.val = a.val + b.val;
+    c.l = min(a.l, b.l);
+    c.r = max(a.r, b.r);
+    
+    return c;
 }
 
 bool check(const Node &x) {
