@@ -2,7 +2,7 @@
 using namespace std;
 using ll = long long;
 
-template<class Info>
+template <class Info>
 struct SegmentTree {
     int n;
     std::vector<Info> info;
@@ -10,14 +10,14 @@ struct SegmentTree {
     SegmentTree(int n_, Info v_ = Info()) {
         init(n_, v_);
     }
-    template<class T>
+    template <class T>
     SegmentTree(std::vector<T> init_) {
         init(init_);
     }
     void init(int n_, Info v_ = Info()) {
         init(std::vector(n_, v_));
     }
-    template<class T>
+    template <class T>
     void init(std::vector<T> init_) {
         n = init_.size();
         info.assign(4 << std::__lg(n), Info());
@@ -71,30 +71,29 @@ constexpr ll inf = 1e13;
 
 struct Node {
     ll val = -inf;
-    int l = 0;
-    int r = 0;
+    int l = -1;
+    int r = -1;
 };
 
-constexpr Node operator+(const Node &a, const Node &b) {
-    // cerr << a.l << " " << a.r << " " << b.l << " " << b.r << endl;
+Node operator+(const Node &a, const Node &b) {
     assert(a.r == b.l or a.l == b.r);
-    Node c;
+    Node c = Node();
     c.val = a.val + b.val;
     c.l = min(a.l, b.l);
     c.r = max(a.r, b.r);
-    
+
     return c;
 }
 
 bool check(const Node &x) {
-    return x.r == 0;
-}
-
-bool cmp2(const Node &a, const Node &b) {
-    return a.val == b.val ? (a.r - a.l) < (b.r - b.l) : a.val < b.val;
+    return x.r == -1;
 }
 
 bool cmp1(const Node &a, const Node &b) {
+    return a.val == b.val ? (a.r - a.l) < (b.r - b.l) : a.val < b.val;
+}
+
+bool cmp2(const Node &a, const Node &b) {
     return a.val == b.val ? (a.r - a.l) > (b.r - b.l) : a.val < b.val;
 }
 
@@ -117,7 +116,7 @@ minInfo operator+(const minInfo &a, const minInfo &b) {
     c.suf = max(b.suf, b.sum + a.suf, cmp1);
     c.sum = a.sum + b.sum;
     c.ans = max({a.ans, b.ans, a.suf + b.pre}, cmp1);
-    
+
     return c;
 }
 
@@ -140,13 +139,15 @@ maxInfo operator+(const maxInfo &a, const maxInfo &b) {
     c.suf = max(b.suf, b.sum + a.suf, cmp2);
     c.sum = a.sum + b.sum;
     c.ans = max({a.ans, b.ans, a.suf + b.pre}, cmp2);
-    
+
     return c;
 }
 
 void solve() {
     int n;
     cin >> n;
+
+    ll res = 0;
 
     vector<int> a(n);
     for (int i = 0; i < n; i++) {
@@ -158,16 +159,17 @@ void solve() {
         c[i].ans = c[i].pre = c[i].suf = c[i].sum = Node{a[i], i, i + 1};
     }
 
-    cerr << 1 << endl;
     SegmentTree<maxInfo> Max(c);
-    cerr << 1 << endl;
     for (int i = 0; i < n; i++) {
         auto t = Max.rangeQuery(0, n).ans;
-        cout << t.val << " \n"[i == n - 1];
-
-        for (int j = t.l; j < t.r; j++) {
-            Max.modify(j, maxInfo());
+        if (t.val > 0) {
+            res += t.val;
+            for (int j = t.l; j < t.r; j++) {
+                maxInfo w = maxInfo{{-inf, j, j + 1}, {-inf, j, j + 1}, {-inf, j, j + 1}, {-inf, j, j + 1}};
+                Max.modify(j, w);
+            }
         }
+        cout << res << " \n"[i == n - 1];
     }
 
     vector<minInfo> b(n);
@@ -175,14 +177,19 @@ void solve() {
         b[i].ans = b[i].pre = b[i].suf = b[i].sum = Node{a[i], i, i + 1};
     }
 
+    res = 0;
+
     SegmentTree<minInfo> Min(b);
     for (int i = 0; i < n; i++) {
         auto t = Min.rangeQuery(0, n).ans;
-        cout << t.val << " \n"[i == n - 1];
-
-        for (int j = t.l; j < t.r; j++) {
-            Max.modify(j, maxInfo());
+        if (t.val > 0) {
+            res += t.val;
+            for (int j = t.l; j < t.r; j++) {
+                minInfo w = minInfo{{-inf, j, j + 1}, {-inf, j, j + 1}, {-inf, j, j + 1}, {-inf, j, j + 1}};
+                Min.modify(j, w);
+            }
         }
+        cout << res << " \n"[i == n - 1];
     }
 }
 
