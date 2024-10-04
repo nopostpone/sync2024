@@ -1,19 +1,15 @@
-template<class Info>
+template <class Info>
 struct SegmentTree {
     int n;
     std::vector<Info> info;
     SegmentTree() : n(0) {}
-    SegmentTree(int n_, Info v_ = Info()) {
-        init(n_, v_);
-    }
-    template<class T>
+
+    template <class T>
     SegmentTree(std::vector<T> init_) {
         init(init_);
     }
-    void init(int n_, Info v_ = Info()) {
-        init(std::vector(n_, v_));
-    }
-    template<class T>
+
+    template <class T>
     void init(std::vector<T> init_) {
         n = init_.size();
         info.assign(4 << std::__lg(n), Info());
@@ -61,12 +57,56 @@ struct SegmentTree {
     Info rangeQuery(int l, int r) {
         return rangeQuery(1, 0, n, l, r);
     }
+    template <class F>
+    int findFirst(int p, int l, int r, int x, int y, F &&pred) {
+        if (l >= y || r <= x) {
+            return -1;
+        }
+        if (l >= x && r <= y && !pred(info[p])) {
+            return -1;
+        }
+        if (r - l == 1) {
+            return l;
+        }
+        int m = (l + r) / 2;
+        int res = findFirst(2 * p, l, m, x, y, pred);
+        if (res == -1) {
+            res = findFirst(2 * p + 1, m, r, x, y, pred);
+        }
+        return res;
+    }
+    template <class F>
+    int findFirst(int l, int r, F &&pred) {
+        return findFirst(1, 0, n, l, r, pred);
+    }
+    template <class F>
+    int findLast(int p, int l, int r, int x, int y, F &&pred) {
+        if (l >= y || r <= x) {
+            return -1;
+        }
+        if (l >= x && r <= y && !pred(info[p])) {
+            return -1;
+        }
+        if (r - l == 1) {
+            return l;
+        }
+        int m = (l + r) / 2;
+        int res = findLast(2 * p + 1, m, r, x, y, pred);
+        if (res == -1) {
+            res = findLast(2 * p, l, m, x, y, pred);
+        }
+        return res;
+    }
+    template <class F>
+    int findLast(int l, int r, F &&pred) {
+        return findLast(1, 0, n, l, r, pred);
+    }
 };
+
 struct Info {
-    
 };
-Info operator+(Info a, Info b) {
-    Info c;
-    
-    return c;
+
+Info operator+(const Info &a, const Info &b) {
 }
+
+using L = SegmentTree<Info>;
