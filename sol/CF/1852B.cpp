@@ -30,8 +30,9 @@ void solve() {
         }
     }
     cout << "YES\n";
-    for_each(b.begin(), b.end(), [](auto i) { cout << i << " "; });
-    cout << "\n";
+    for (int i = 0; i < n; i++) {
+        cout << b[i] << " \n"[i == n - 1];
+    }
 }
 
 int main() {
