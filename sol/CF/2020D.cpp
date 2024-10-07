@@ -48,8 +48,11 @@ void solve() {
     cin >> n >> m;
 
     vector<array<int, 3>> q(m);
-    for (auto &&[a, d, k] : q) {
-        cin >> a >> d >> k;
+    for (int i = 0; i < m; i++) {
+        for (int j = 0; j < 3; j++) {
+            cin >> q[i][j];
+        }
+        q[i][0]--;
     }
 
     DSU dsu(n);
