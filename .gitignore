@@ -4,12 +4,13 @@
 
 **akiba.cpp
 
+demo/
+
 *.exe
 *.ini
 oo.in
 oo.out
 
-/demo/test.cpp
 __temp.cpp
 ___temp.cpp
 ____temp.py
