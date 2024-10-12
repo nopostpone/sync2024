@@ -1,7 +1,6 @@
 #include <bits/stdc++.h>
 using namespace std;
 using ll = long long;
-using ull = unsigned long long;
 
 int main() {
     cin.tie(nullptr)->sync_with_stdio(false);
@@ -16,7 +15,7 @@ int main() {
             pre[i + 1][j] = pre[i][j] + (s[i] == char(j + 'A'));
         }
     }
-    ull ans = 0;
+    ll ans = 0;
     for (int i = 1; i <= n; i++) {
         for (int j = 0; j < 26; j++) {
             int l = pre[i - 1][j];
