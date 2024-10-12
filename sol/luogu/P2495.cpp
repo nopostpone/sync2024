@@ -140,7 +140,6 @@ int main() {
     
     vector<bool> imp(n);
     vector vt(n, vector<pair<int, ll>>());
-    // vector<vector<pair<int, ll>>> vt;
     vector<ll> dp(n);
 
     for (cin >> m; m--;) {
