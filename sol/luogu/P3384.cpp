@@ -1,5 +1,5 @@
-// HLD + LazySegmentTree 维护路在HLD中加入getPath和getTree，和数据结构解耦。径/子树信息
-// 24.10.13 upd: 
+// HLD + LazySegmentTree 维护路径/子树信息
+// 24.10.13 upd: 在HLD中加入getPath和getTree，和数据结构解耦。
 #include <bits/stdc++.h>
 using namespace std;
 using ll = long long;
