@@ -1,7 +1,7 @@
 struct HLD {
     int n;
-    std::vector<int> siz, top, dep, parent, in, out, seq;
-    std::vector<std::vector<int>> adj;
+    vector<int> siz, top, dep, parent, in, out, seq;
+    vector<vector<int>> adj;
     int cur;
 
     HLD() {}
@@ -33,7 +33,7 @@ struct HLD {
     }
     void dfs1(int u) {
         if (parent[u] != -1) {
-            adj[u].erase(std::find(adj[u].begin(), adj[u].end(), parent[u]));
+            adj[u].erase(find(adj[u].begin(), adj[u].end(), parent[u]));
         }
 
         siz[u] = 1;
@@ -43,7 +43,7 @@ struct HLD {
             dfs1(v);
             siz[u] += siz[v];
             if (siz[v] > siz[adj[u][0]]) {
-                std::swap(v, adj[u][0]);
+                swap(v, adj[u][0]);
             }
         }
     }
@@ -66,12 +66,31 @@ struct HLD {
         }
         return dep[u] < dep[v] ? u : v;
     }
-
     int dist(int u, int v) {
         return dep[u] + dep[v] - 2 * dep[lca(u, v)];
     }
-
     bool isAncester(int fa, int son) {
         return in[fa] <= in[son] && in[son] < out[fa];
+    }
+    auto getPath(int u, int v) {
+        vector<pair<int, int>> ret;
+        while (top[u] != top[v]) {
+            if (dep[top[u]] > dep[top[v]]) {
+                ret.push_back({in[top[u]], in[u]});
+                u = parent[top[u]];
+            } else {
+                ret.push_back({in[top[v]], in[v]});
+                v = parent[top[v]];
+            }
+        }
+        if (dep[u] > dep[v]) {
+            ret.push_back({in[v], in[u]});
+        } else {
+            ret.push_back({in[u], in[v]});
+        }
+        return ret;
+    }
+    pair<int, int> getTree(int u) {
+        return make_pair(in[u], out[u]);
     }
 };
