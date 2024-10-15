@@ -1,5 +1,4 @@
 #include <bits/stdc++.h>
-#define endl "\n"
 using namespace std;
 using ll = long long;
 
@@ -7,54 +6,51 @@ int main() {
     cin.tie(nullptr)->sync_with_stdio(false);
 
     int n;
-    cin >> n;
-    n += 2;
-    
     string s, t;
-    cin >> s >> t;
-    s += "  ";
-    t += "  ";
+    cin >> n >> s >> t;
 
-    using psi = pair<string, int>;
-
-    queue<psi> q;
-    q.push({s, 0});
+    s += "..";
+    t += "..";
 
     set<string> vis;
     vis.insert(s);
+    using psi = pair<string, int>;
 
-    int res = -1;
-    while (!q.empty()) {
-        auto [now, cost] = q.front();
+    queue<psi> q;
+    q.push(make_pair(s, 0));
+
+    int ans = -1;
+    while (not q.empty()) {
+        auto [now, time] = q.front();
         q.pop();
-        cerr << now << endl;
+
         if (now == t) {
-            res = cost;
+            ans = time;
             break;
         }
-        
-        int pos = -1;
-        for (int i = 0; i < n - 1; i++) {
-            if (now[i] == ' ' and now[i + 1] == ' ') {
+
+        int pos;
+        for (int i = 0; i < n + 1; i++) {
+            if (now[i] == '.' and now[i + 1] == '.') {
                 pos = i;
             }
         }
-        for (int i = 0; i < n - 1; i++) {
-            if (now[i] != ' ' and now[i + 1] != ' ') {
-                string nxt = now;
+        for (int i = 0; i < n + 1; i++) {
+            if (now[i] != '.' and now[i + 1] != '.') {
+                string nxt(now);
                 nxt[pos] = nxt[i];
                 nxt[pos + 1] = nxt[i + 1];
-                nxt[i] = nxt[i + 1] = ' ';
-
+                nxt[i] = '.';
+                nxt[i + 1] = '.';
                 if (not vis.contains(nxt)) {
-                    q.push({nxt, cost + 1});
                     vis.insert(nxt);
+                    q.push({nxt, time + 1});
                 }
             }
         }
     }
 
-    cout << res << endl;
+    cout << ans << endl;
     
     return 0;
 }
