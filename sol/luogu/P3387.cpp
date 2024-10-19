@@ -99,28 +99,31 @@ int main() {
             adj[bel[i]].insert(bel[j]);
         }
     }
-    vector<bool> in(siz);
-    for (int i = 0; i < siz; i++) {
-        for (int j : adj[i]) {
-            in[j] = true;
-        }
-    }
 
-    int ans = 0;
-    auto dfs = [&](auto &&self, int u, int t) -> void {
+    vector<int> dp(siz, -1);
+    auto dfs = [&](auto &&self, int u) -> void {
         for (int v : adj[u]) {
-            self(self, v, t + b[v]);
+            if (dp[v] != -1) {
+                dp[u] = b[u] + dp[v];
+                return;
+            }
+            self(self, u);
+            dp[u] = max(dp[u], b[u] + dp[v]);
         }
-        ans = max(ans, t);
+        dp[u] = b[u];
     };
 
     for (int i = 0; i < siz; i++) {
-        if (not in[i]) {
-            dfs(dfs, i, b[i]);
+        if (dp[i] == -1) {
+            dfs(dfs, i);
         }
     }
 
-    cout << ans << "\n";
-    
+    int ans = -1;
+    for (auto i : dp) {
+        ans = max(ans, i);
+    }
+    cout << ans << endl;
+
     return 0;
 }
