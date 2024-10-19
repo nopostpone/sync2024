@@ -104,13 +104,13 @@ int main() {
     auto dfs = [&](auto &&self, int u) -> void {
         for (int v : adj[u]) {
             if (dp[v] != -1) {
-                dp[u] = b[u] + dp[v];
-                return;
+                dp[u] = max(dp[u], b[u] + dp[v]);
+                continue;
             }
-            self(self, u);
+            self(self, v);
             dp[u] = max(dp[u], b[u] + dp[v]);
         }
-        dp[u] = b[u];
+        dp[u] = max(dp[u], b[u]);
     };
 
     for (int i = 0; i < siz; i++) {
