@@ -2,46 +2,65 @@
 using namespace std;
 using ll = long long;
 
-void solve() {
-    int n, k;
-    cin >> n >> k;
-
-    vector<array<int, 2>> a(n);
-    for (int j : {0, 1}) {
-        for (int i = 0; i < n; i++) {
-            cin >> a[i][j];
-        }
-    }
-    ranges::sort(a);
-
-    priority_queue<ll> q;
-
-    ll bsum = 0;
-    for (int i = 0; i < k; i++) {
-        q.push(a[i][1]);
-        bsum += a[i][1];
-    }
-
-    ll ans = bsum * a[k - 1].front();
-    for (int i = k; i < n; i++) {
-        bsum -= q.top();
-        q.pop();
-
-        q.push(a[i].back());
-        bsum += a[i].back();
-        ans = min(ans, bsum * a[i].front());
-    }
-    cout << ans << "\n";
-
-}
+constexpr int inf = 1e9;
 
 int main() {
     cin.tie(nullptr)->sync_with_stdio(false);
 
-    int T;
-    for (cin >> T; T--;) {
-        solve();
+    int n, q;
+    cin >> n >> q;
+
+    vector<int> dp(n, inf);
+    dp[1] = 0;
+    
+    int x = 0, ph = 0;
+    for (int i = 0; i < q; i++) {
+        char c;
+        int t;
+        cin >> c >> t;
+        t--;
+        bool h = c == 'R';
+
+        vector<int> ndp(n, inf);
+        
+        auto upd = [&](int x, int y, int a, int d) {
+            int dx = (a - x + n) % n;
+            int dy = (a - y + n) % n;
+            if (dx >= dy) {
+                ndp[(a + 1) % n] = min(ndp[(a + 1) % n], d + dx + dy + 1);
+            } else {
+                ndp[y] = min(ndp[y], d + dx);
+            }
+
+            dx = (x - a + n) % n;
+            dy = (y - a + n) % n;
+            if (dx >= dy) {
+                ndp[(a - 1 + n) % n] = min(ndp[(a - 1 + n) % n], d + dx + dy + 1);
+            } else {
+                ndp[y] = min(ndp[y], d + dx);
+            }
+        };
+
+        if (h == ph) {
+            for (int j = 0; j < n; j++) {
+                if (dp[j] != inf) {
+                    upd(x, j, t, dp[j]);
+                }
+            }
+        } else {
+            for (int j = 0; j < n; j++) {
+                if (dp[j] != inf) {
+                    upd(j, x, t, dp[j]);
+                }
+            }
+        }
+        ph = h;
+        x = t;
+        dp = ndp;
     }
+    
+
+    cout << *min_element(dp.begin(), dp.end()) << endl;
 
     return 0;
 }
