@@ -91,7 +91,7 @@ struct LazySegmentTree {
     void rangeApply(int l, int r, const Tag &v) {
         return rangeApply(1, 0, n, l, r, v);
     }
-    
+
     template<class F>
     int findFirst(int p, int l, int r, int x, int y, F &&pred) {
         if (l >= y || r <= x) {
@@ -139,46 +139,46 @@ struct LazySegmentTree {
         return findLast(1, 0, n, l, r, pred);
     }
     
-    void maintainL(int p, int l, int r, int pre) {
-        if (info[p].difl > 0 && info[p].maxlowl < pre) {
-            return;
-        }
-        if (r - l == 1) {
-            info[p].max = info[p].maxlowl;
-            info[p].maxl = info[p].maxr = l;
-            info[p].maxlowl = info[p].maxlowr = -inf;
-            return;
-        }
-        int m = (l + r) / 2;
-        push(p);
-        maintainL(2 * p, l, m, pre);
-        pre = std::max(pre, info[2 * p].max);
-        maintainL(2 * p + 1, m, r, pre);
-        pull(p);
-    }
-    void maintainL() {
-        maintainL(1, 0, n, -1);
-    }
-    void maintainR(int p, int l, int r, int suf) {
-        if (info[p].difr > 0 && info[p].maxlowr < suf) {
-            return;
-        }
-        if (r - l == 1) {
-            info[p].max = info[p].maxlowl;
-            info[p].maxl = info[p].maxr = l;
-            info[p].maxlowl = info[p].maxlowr = -inf;
-            return;
-        }
-        int m = (l + r) / 2;
-        push(p);
-        maintainR(2 * p + 1, m, r, suf);
-        suf = std::max(suf, info[2 * p + 1].max);
-        maintainR(2 * p, l, m, suf);
-        pull(p);
-    }
-    void maintainR() {
-        maintainR(1, 0, n, -1);
-    }
+    // void maintainL(int p, int l, int r, int pre) {
+    //     if (info[p].difl > 0 && info[p].maxlowl < pre) {
+    //         return;
+    //     }
+    //     if (r - l == 1) {
+    //         info[p].max = info[p].maxlowl;
+    //         info[p].maxl = info[p].maxr = l;
+    //         info[p].maxlowl = info[p].maxlowr = -inf;
+    //         return;
+    //     }
+    //     int m = (l + r) / 2;
+    //     push(p);
+    //     maintainL(2 * p, l, m, pre);
+    //     pre = std::max(pre, info[2 * p].max);
+    //     maintainL(2 * p + 1, m, r, pre);
+    //     pull(p);
+    // }
+    // void maintainL() {
+    //     maintainL(1, 0, n, -1);
+    // }
+    // void maintainR(int p, int l, int r, int suf) {
+    //     if (info[p].difr > 0 && info[p].maxlowr < suf) {
+    //         return;
+    //     }
+    //     if (r - l == 1) {
+    //         info[p].max = info[p].maxlowl;
+    //         info[p].maxl = info[p].maxr = l;
+    //         info[p].maxlowl = info[p].maxlowr = -inf;
+    //         return;
+    //     }
+    //     int m = (l + r) / 2;
+    //     push(p);
+    //     maintainR(2 * p + 1, m, r, suf);
+    //     suf = std::max(suf, info[2 * p + 1].max);
+    //     maintainR(2 * p, l, m, suf);
+    //     pull(p);
+    // }
+    // void maintainR() {
+    //     maintainR(1, 0, n, -1);
+    // }
 };
 
 struct Tag {
