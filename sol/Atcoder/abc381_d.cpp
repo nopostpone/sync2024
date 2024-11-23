@@ -16,16 +16,15 @@ int main() {
     auto work = [&](int x) -> int {
         int res = 0;
         int st = x - 2;
-        unordered_map<int, int> f;
+        vector<int> f(n + 1, -1);
 
         for (int i = x; i < n; i += 2) {
             if (a[i] != a[i - 1]) {
                 res = max(res, i - st - 2);
-                f.clear();
                 st = i;
                 continue;
             }
-            if (f.contains(a[i]) and f[a[i]] > st) {
+            if (f[a[i]] > st) {
                 res = max(res, i - st - 2);
                 st = f[a[i]];
             }
