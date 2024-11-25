@@ -50,10 +50,10 @@ int main() {
             }
         }
 
-        int ans = pre[r][1] - pre[pos[lo]][1];
+        int ans = min(pre[r][1] - pre[pos[lo]][1], pre[pos[lo]][0] - pre[l - 1][0]);
         if (lo > 0) {
             lo--;
-            ans = max(ans, pre[pos[lo]][0] - pre[l - 1][0]);
+            ans = max(ans, min(pre[r][1] - pre[pos[lo]][1], pre[pos[lo]][0] - pre[l - 1][0]));
         }
         cout << 2 * ans + 1 << "\n";
     }
