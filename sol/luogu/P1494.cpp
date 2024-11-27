@@ -1,112 +1,94 @@
-// https://www.luogu.com.cn/problem/P1494
-// 莫队算法模板题
+// 莫队板子
+// 24.11.28 upd 更简洁
+
 #include <bits/stdc++.h>
 using namespace std;
-#define endl '\n'
-#define qwq (cout << "qwq" << endl)
 using ll = long long;
-const ll inf = 0x3f3f3f3f;
-const int N = 1e5 + 100;
 
-int n, m, maxn;
-int a[N], cnt[N];
-ll ans1[N], ans2[N], sum;
+int main() {
+    cin.tie(nullptr)->sync_with_stdio(false);
 
-inline int read()
-{
-    int x = 0, f = 1;
-    char ch = getchar();
-    while (ch < '0' || ch > '9')
-    {
-        if (ch == '-')
-            f = -1;
-        ch = getchar();
+    int n, m;
+    cin >> n >> m;
+
+    vector<int> a(n);
+    for (int i = 0; i < n; i++) {
+        cin >> a[i];
+        a[i]--;
     }
-    while (ch >= '0' && ch <= '9')
-    {
-        x = x * 10 + (ch ^ 48);
-        ch = getchar();
+
+    // q -> {l, r, id}
+    vector<array<int, 3>> q(m);
+    for (int i = 0; i < m; i++) {
+        for (int j = 0; j < 2; j++) {
+            cin >> q[i][j];
+        }
+        q[i][0]--;
+        q[i][1]--;
+        q[i][2] = i;
     }
-    return x * f;
-}
 
-ll gcd(ll a, ll b)
-{
-    return b ? gcd(b, a % b) : a;
-}
+    const int len = sqrt(n);
+    sort(q.begin(), q.end(), [&len](auto x, auto y) {
+        if (x[0] / len == y[0] / len) {
+            if ((x[0] / len) % 2 == 1) {
+                return x[1] > y[1];
+            } else {
+                return x[1] < y[1];
+            }
+        }
+        return x[0] < y[0];
+    });
 
-struct Q
-{
-    int l, r, idx;
-    bool operator<(const Q &rhs) const
-    {
-        return (l / maxn == rhs.l / maxn) ? ((l / maxn) & 1 ? r < rhs.r : r > rhs.r) : l < rhs.l;
-        // if (l / maxn != rhs.l / maxn)
-        //     return l < rhs.l;
-        // return (l / maxn) & 1 ? r < rhs.r : r > rhs.r;
-    }
-} q[N];
+    ll sum = 0;
+    vector<int> cnt(n);
 
-void add(int x)
-{
-    sum += cnt[x];
-    cnt[x]++;
-}
-
-void del(int x)
-{
-    cnt[x]--;
-    sum -= cnt[x];
-}
-
-void solve()
-{
-    n = read(), m = read();
-    maxn = sqrt(n);
-    for (int i = 1; i <= n; i++)
-        a[i] = read();
-    for (int i = 0; i < m; i++)
-        q[i].l = read(), q[i].r = read(), q[i].idx = i;
-    sort(q, q + m);
-    int l = 1, r = 0;
-    for (int i = 0; i < m; i++)
-    {
-        if (q[i].l == q[i].r)
-        {
-            ans1[q[i].idx] = 0, ans2[q[i].idx] = 1;
+    vector<ll> ans1(m), ans2(m);
+    int L = 0, R = -1;
+    for (auto [l, r, id] : q) {
+        if (l == r) {
+            ans1[id] = 0;
+            ans2[id] = 1;
             continue;
         }
-        while (l > q[i].l)
-            add(a[--l]);
-        while (r < q[i].r)
-            add(a[++r]);
-        while (l < q[i].l)
-            del(a[l++]);
-        while (r > q[i].r)
-            del(a[r--]);
-        ans1[q[i].idx] = sum;
-        ans2[q[i].idx] = (long long)(r - l + 1) * (r - l) / 2;
-    }
-    for (int i = 0; i < m; i++)
-    {
-        if (ans1[i] != 0)
-        {
-            long long g = gcd(ans1[i], ans2[i]);
-            ans1[i] /= g, ans2[i] /= g;
+        while (L > l) {
+            L--;
+            assert(0 <= L and L < n);
+            sum += cnt[a[L]];
+            cnt[a[L]]++;
         }
-        else
-            ans2[i] = 1;
-        cout << ans1[i] << '/' << ans2[i] << endl;
+        while (R < r) {
+            R++;
+            assert(0 <= R and R < n);
+            sum += cnt[a[R]];
+            cnt[a[R]]++;
+        }
+        while (L < l) {
+            cnt[a[L]]--;
+            sum -= cnt[a[L]];
+            L++;
+            assert(0 <= L and L < n);
+        }
+        while (R > r) {
+            cnt[a[R]]--;
+            sum -= cnt[a[R]];
+            R--;
+            assert(0 <= R and R < n);
+        }
+        ans1[id] = sum;
+        ans2[id] = 1ll * (r - l + 1) * (r - l) / 2;
     }
-    return;
-}
 
-int main()
-{
-    ios::sync_with_stdio(0), cin.tie(0), cout.tie(0);
-    int _ = 1;
-    // cin >> _;
-    while (_--)
-        solve();
+    for (int i = 0; i < m; i++) {
+        if (ans1[i] == 0) {
+            ans2[i] = 1;
+        } else {
+            ll g = std::gcd(ans1[i], ans2[i]);
+            ans1[i] /= g;
+            ans2[i] /= g;
+        }
+        cout << ans1[i] << "/" << ans2[i] << "\n";
+    }
+
     return 0;
 }
