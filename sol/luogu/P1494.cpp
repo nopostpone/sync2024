@@ -1,6 +1,3 @@
-// 莫队板子
-// 24.11.28 upd 更简洁
-
 #include <bits/stdc++.h>
 using namespace std;
 using ll = long long;
@@ -43,12 +40,12 @@ int main() {
     ll sum = 0;
     vector<int> cnt(n);
 
-    vector<ll> ans1(m), ans2(m);
+    vector<ll> num(m), den(m);
     int L = 0, R = -1;
     for (auto [l, r, id] : q) {
         if (l == r) {
-            ans1[id] = 0;
-            ans2[id] = 1;
+            num[id] = 0;
+            den[id] = 1;
             continue;
         }
         while (L > l) {
@@ -75,19 +72,19 @@ int main() {
             R--;
             assert(0 <= R and R < n);
         }
-        ans1[id] = sum;
-        ans2[id] = 1ll * (r - l + 1) * (r - l) / 2;
+        num[id] = sum;
+        den[id] = 1ll * (r - l + 1) * (r - l) / 2;
     }
 
     for (int i = 0; i < m; i++) {
-        if (ans1[i] == 0) {
-            ans2[i] = 1;
+        if (num[i] == 0) {
+            den[i] = 1;
         } else {
-            ll g = std::gcd(ans1[i], ans2[i]);
-            ans1[i] /= g;
-            ans2[i] /= g;
+            ll g = std::gcd(num[i], den[i]);
+            num[i] /= g;
+            den[i] /= g;
         }
-        cout << ans1[i] << "/" << ans2[i] << "\n";
+        cout << num[i] << "/" << den[i] << "\n";
     }
 
     return 0;
