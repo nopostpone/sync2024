@@ -2,33 +2,54 @@
 using namespace std;
 using ll = long long;
 
-int main() {
-    cin.tie(nullptr)->sync_with_stdio(false);
-    
-    int n, m;
-    cin >> n >> m;
+// 能 O(n^2) 就别想着线性做了
 
-    vector<int> a(n);
+void solve() {
+    int n;
+    cin >> n;
+
+    vector<ll> a(n);
     for (int i = 0; i < n; i++) {
         cin >> a[i];
     }
 
-    multiset<int> s;
+    if (n == 1) {
+        cout << 1 << "\n";
+        return;
+    }
 
-    vector<int> ans(n);
-    int now = 0;
-    for (int i = 0; i < n; i++) {
-        now += a[i];
-        int t = now;
-        for (auto it = s.rbegin(); it != s.rend() and t > m; it++) {
-            ans[i]++;
-            t -= *it;
-        }
-        s.insert(a[i]);
-    }
-    for (int i = 0; i < n; i++) {
-        cout << ans[i] << " ";
-    }
+    ll res = 1e18;
     
+    auto work = [&]() {
+        const int m = a.size();
+        ll now = 0;
+        for (int i = 1; i < m; i += 2) {
+            now = max(now, a[i] - a[i - 1]);
+        }
+        return now;
+    };
+
+    if (n % 2 == 0) {
+        res = work();
+    } else {
+        for (int i = 0; i < n; i++) {
+            ll x = a[i];
+            a.erase(a.begin() + i);
+            res = min(res, work());
+            a.insert(a.begin() + i, x);
+        }
+    }
+
+    cout << res << "\n";
+}
+
+int main() {
+    cin.tie(nullptr)->sync_with_stdio(false);
+
+    int T;
+    for (cin >> T; T--;) {
+        solve();
+    }
+
     return 0;
 }
