@@ -2,8 +2,6 @@
 using namespace std;
 using ll = long long;
 
-double f[5001];
-
 int main() {
     cin.tie(nullptr)->sync_with_stdio(false);
 
@@ -26,8 +24,7 @@ int main() {
     }
 
     // 开一个箱子，获得 0~n 个稀有牌的概率
-
-    // auto f = dp0[n];
+    vector<double> f(max(n, x) + 1);
     for (int i = 0; i <= n; i++) {
         f[i] = dp0[n][i];
     }
