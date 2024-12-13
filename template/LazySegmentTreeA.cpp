@@ -1,22 +1,40 @@
+/**
+ * @brief 懒标记线段树
+ * 适用C++17及以上，低版本需要将 init() 函数中的 build 改为 std::function 形式。
+ * @tparam Info  信息
+ * @tparam Tag  懒标记
+ */
 template<class Info, class Tag>
 struct LazySegmentTree {
-    const int n;
-    std::vector<Info> info;
-    std::vector<Tag> tag;
-    LazySegmentTree(int n) : n(n), info(4 << std::__lg(n)), tag(4 << std::__lg(n)) {}
-    LazySegmentTree(std::vector<Info> init) : LazySegmentTree(init.size()) {
-        std::function<void(int, int, int)> build = [&](int p, int l, int r) {
+    int n;
+    vector<Info> info;
+    vector<Tag> tag;
+
+    LazySegmentTree() : n(0) {}
+    LazySegmentTree(int n_, Info v_ = {}) { init(n_, v_); }
+    LazySegmentTree(vector<Info> a) { init(a); }
+
+    void init(int n_, Info v_) {
+        init(vector<Info>(n_, v_));
+    }
+    void init(vector<Info> init_) {
+        n = init_.size();
+        info.assign(4 << __lg(n), {});
+        tag.assign(4 << __lg(n), {});
+
+        auto build = [&](auto self, int p, int l, int r) -> void {
             if (r - l == 1) {
-                info[p] = init[l];
+                info[p] = init_[l];
                 return;
             }
             int m = (l + r) / 2;
-            build(2 * p, l, m);
-            build(2 * p + 1, m, r);
+            self(self, 2 * p, l, m);
+            self(self, 2 * p + 1, m, r);
             pull(p);
         };
-        build(1, 0, n);
+        build(build, 1, 0, n);
     }
+
     void pull(int p) {
         info[p] = info[2 * p] + info[2 * p + 1];
     }
@@ -80,21 +98,20 @@ struct LazySegmentTree {
 };
 
 struct Tag {
-    
+    ll val{};
     void apply(const Tag &t) {
-
+        val += t.val;
     }
 };
-
 struct Info {
-    
+    ll sum{};
+    int act{};
     void apply(const Tag &t) {
-        
+        sum += t.val * act;
     }
 };
-
-Info operator+(const Info &a, const Info &b) {
-    Info c;
-    
-    return c;
+constexpr Info operator+(const Info &a, const Info &b) {
+    return {a.sum + b.sum, a.act + b.act};
 }
+
+using L = LazySegmentTree<Info, Tag>;
