@@ -1,23 +1,25 @@
 /**
- * @brief 线段树（C++17以上），低版本需要将 init() 函数中的 build 改为 std::function 形式。
+ * @brief 线段树
+ * 适用C++17及以上，
+ * 低版本需要将 init() 函数中的 build 改为 @c std::function 形式；通过 @c std::vector<T> 构造的部分也需要更改为 @c std::vector<Info> 。
  * @tparam Info  信息
  */
 template <class Info>
 struct SegmentTree {
     int n;
-    std::vector<Info> info;
+    vector<Info> info;
     SegmentTree() : n(0) {}
     SegmentTree(int n_, Info v_ = Info()) {
-        init(std::vector<Info>(n_, v_));
+        init(vector<Info>(n_, v_));
     }
     template <class T>
-    SegmentTree(std::vector<T> init_) {
+    SegmentTree(vector<T> init_) {
         init(init_);
     }
     template <class T>
-    void init(std::vector<T> init_) {
+    void init(vector<T> init_) {
         n = init_.size();
-        info.assign(4 << std::__lg(n), Info());
+        info.assign(4 << __lg(n), Info());
 
         auto build = [&](auto self, int p, int l, int r) -> void {
             if (r - l == 1) {
@@ -110,10 +112,12 @@ struct SegmentTree {
 };
 
 struct Info {
-    ll sum{};
+    
 };
 constexpr Info operator+(const Info &a, const Info &b) {
-    return Info{a.sum + b.sum};
+    Info c;
+
+    return c;
 }
 
 using L = SegmentTree<Info>;
