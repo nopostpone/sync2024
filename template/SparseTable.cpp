@@ -1,13 +1,12 @@
-template <class T, class Cmp = std::less<T>>
-struct RMQ {
+template <class T, class C = less<T>>
+struct SparseTable {
     const int n;
     const int logn;
+    const C cmp;
+    vector<vector<T>> jump;
 
-    const Cmp cmp = Cmp();
-    std::vector<std::vector<T>> jump;
-
-    constexpr RMQ(const std::vector<T> &a)
-        : n{a.size()}, logn{std::__lg(n)}, jump(logn + 1) {
+    constexpr SparseTable(const std::vector<T> &a)
+        : n{static_cast<int>(a.size())}, logn{__lg(n)}, cmp{}, jump(logn + 1) {
 
         jump[0] = a;
 
@@ -16,15 +15,15 @@ struct RMQ {
         }
 
         for (int j = 0; j < logn; j++) {
-            const int limit = n - (1 << (j + 1));
+            int limit = n - (1 << (j + 1));
             for (int i = 0; i <= limit; i++) {
-                jump[j + 1][i] = std::min(jump[j][i], jump[j][i + (1 << j)], cmp);
+                jump[j + 1][i] = min(jump[j][i], jump[j][i + (1 << j)], cmp);
             }
         }
     }
-
+    // [l, r)
     constexpr T operator()(int l, int r) const {
-        int log = std::__lg(r - l);
-        return std::min(jump[log][l], jump[log][r - (1 << log)], cmp);
+        int layers = __lg(r - l);
+        return min(jump[layers][l], jump[layers][r - (1 << layers)], cmp);
     }
 };
