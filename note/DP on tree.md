@@ -1,9 +1,25 @@
 树形DP
 ===
 
-题单来自：https://www.luogu.com.cn/training/11363#problems
+弄了个树上 DP 的题单：https://www.luogu.com.cn/training/673230#problems
+
+很多题来自：https://www.luogu.com.cn/training/11363#problems
 
 [toc]
+
+## 从求子树大小开始
+
+给出一棵有根树，求以每个节点为根的子树的大小。
+
+设 $f_{i}$ 为以 $i$ 为根的子树的大小。
+
+对于 $u\rightarrow v$，更新完 $v$ 后有
+
+$$
+f_{u} \leftarrow f_{u} + f_{v}
+$$
+
+树上 dp 的转移大致就是这个意思，在 dfs 过程中，更新完一个节点回到该节点的父亲，此时进行转移。
 
 ## 没有上司的舞会
 
@@ -42,7 +58,7 @@ $$
 
 $$
 \begin{align*}
-f_{u, i} &= \max\{f_{u, i}, f_{u, i - j - 1} + f_{v, j} + w\}\\ &i:q\rightarrow0，j:i-1\rightarrow0
+f_{u, i} &\leftarrow \max\{f_{u, i}, f_{u, i - j - 1} + f_{v, j} + w\}\\ &i:q\rightarrow0，j:i-1\rightarrow0
 \end{align*}
 $$
 
@@ -52,13 +68,13 @@ $$
 
 ## 最少点覆盖问题
 
-### [战略游戏](https://www.luogu.com.cn/problem/P2016)
+### 战略游戏
 
 一棵无根树，如果一个节点有士兵，那么与该节点相连的所有**边**都能被看到。
 
 问最少需要站几个士兵，让所有**边**都能被看到。
 
-### [保安站岗](https://www.luogu.com.cn/problem/P2458)
+### 保安站岗
 
 一棵无根树，如果一个节点有保安，那么与该节点相连的所有**节点**都能被看到。
 
@@ -82,28 +98,6 @@ $$
     \end{align}
     $$
 
-    $\Delta$：特别地，对于 $f_{u, 0}$，须**至少取一个** $f_{v, 1}$。在实现层面，可以记录是否取过，并记录 $f_{v, 1}-f_{v, 0}$ 的最小值 $\rm cost$，若最终没有取过，说明每个 $f_{v, 1}$ 都大于 $f_{v, 0}$，那么加上 $\rm cost$ 即可。该转移的核心代码如下。
-
-    ```cpp
-    auto dfs = [&](auto self, int u, int fa) -> void {
-        int cost{inf};
-        bool flag{};
-
-        for (int v : adj[u]) {
-            ...
-            dp[u][0] += min(dp[v][0], dp[v][1]);
-
-            if (dp[v][0] < dp[v][1]) {
-                cost = min(cost, dp[v][1] - dp[v][0]);
-            } else {
-                flag = true;
-            }
-            ...
-        }
-        if (not flag) {
-            dp[u][0] += cost;
-        }
-    };
-    ```
+    $\Delta$：特别地，对于 $f_{u, 0}$，须**至少取一个** $f_{v, 1}$。在实现层面，可以记录是否取过，并记录 $f_{v, 1}-f_{v, 0}$ 的最小值 $\rm cost$，若最终没有取过，说明每个 $f_{v, 1}$ 都大于 $f_{v, 0}$，那么加上 $\rm cost$ 即可。
 
 </details>
