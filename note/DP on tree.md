@@ -58,7 +58,7 @@ $$
 
 $$
 \begin{align*}
-f_{u, i} &\leftarrow \max\{f_{u, i}, f_{u, i - j - 1} + f_{v, j} + w\}\\ &i:q\rightarrow0，j:i-1\rightarrow0
+f_{u, i} &\leftarrow \max_{0 \leq i \leq q, \ 0\leq j\leq i - 1}\{f_{u, i - j - 1} + f_{v, j} + w\}
 \end{align*}
 $$
 
@@ -91,13 +91,35 @@ $$
     对于 $u\rightarrow v$，更新完 $v$ 后有
 
     $$
-    \begin{align}
+    \begin{align*}
     f_{u, 0}&\leftarrow f_{u, 1}+\min_{i = 0, 1} f_{v, i}\  (\Delta) \\
     f_{u, 1}&\leftarrow f_{u, 1}+\min_{i = 0, 1, 2} f_{v, i}\\
     f_{u, 2}&\leftarrow f_{u, 1}+\min_{i = 0, 1} f_{v, i}
-    \end{align}
+    \end{align*}
     $$
 
     $\Delta$：特别地，对于 $f_{u, 0}$，须**至少取一个** $f_{v, 1}$。在实现层面，可以记录是否取过，并记录 $f_{v, 1}-f_{v, 0}$ 的最小值 $\rm cost$，若最终没有取过，说明每个 $f_{v, 1}$ 都大于 $f_{v, 0}$，那么加上 $\rm cost$ 即可。
+
+</details>
+
+## 树上背包
+
+$n$ 个课程，每个课程有学分以及至多一个先修课。问最多选 $m$ 门课的情况下，能获得的最大学分。
+
+<details>
+
+把所有没有先修课的课程连到一个一起，作为树的根。即对于一棵定根树，包含根节点的大小为 $m$ 的连通块，最大点权和为多少，经典的树上背包。
+
+设 $f_{i, j}$ 为以 $i$ 为根的子树，（连通块大小）容量为 $j$ 时的答案。
+
+非根节点 $u$，对于 $u\rightarrow v$，更新完 $v$ 后，有
+
+$$
+\begin{align*}
+f_{u, i} \leftarrow \max_{j=\red{1}}^{i} \left\{f_{u, j} + f_{v, i - j}\right\}
+\end{align*}
+$$
+
+其中 $1\leq i\leq m$。$j$ 从 $1$ 开始是因为子树的根节点需要被连通块包。若 $u$ 为整棵树的根，则 $0\leq j \leq i$。
 
 </details>
