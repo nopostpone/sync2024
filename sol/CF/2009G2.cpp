@@ -146,7 +146,7 @@ void solve() {
         seg.modify(a[p], w);
     }
 
-    // 单调栈处理出每个位置右边的，第一个小于它的位置
+    // 单调栈处理出每个位置右边的，第一个小于它的位置，用 suf[i] 表示
     stack<int> stk;
 
     vector<int> suf(n - k + 1);
