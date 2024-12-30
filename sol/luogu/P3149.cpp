@@ -60,8 +60,6 @@ int main() {
 
     auto b = a;
     ranges::sort(b);
-    b.erase(std::unique(b.begin(), b.end()),
-            b.end());
     for (int i = 0; i < n; i++) {
         a[i] = lower_bound(b.begin(), b.end(), a[i]) - b.begin();
     }
