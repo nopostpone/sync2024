@@ -4,9 +4,9 @@ using ll = long long;
 
 using ull = unsigned long long;
 using uint = unsigned int;
-template <typename T>
+template<typename T>
 constexpr T power(T a, ull b) {
-    T res{1};
+    T res {1};
     for (; b != 0; b /= 2, a *= a) {
         if (b % 2 == 1) {
             res *= a;
@@ -15,27 +15,27 @@ constexpr T power(T a, ull b) {
     return res;
 }
 
-template <uint P>
+template<uint P>
 constexpr uint mulMod(uint a, uint b) {
     return 1ULL * a * b % P;
 }
 
-template <ull P>
+template<ull P>
 constexpr ull mulMod(ull a, ull b) {
     ull res = a * b - ull(1.L * a * b / P - 0.5L) * P;
     res %= P;
     return res;
 }
 
-template <typename U, U P>
-    requires std::unsigned_integral<U>
+template<typename U, U P>
+requires std::unsigned_integral<U>
 struct ModIntBase {
 public:
     constexpr ModIntBase() : x(0) {}
 
-    template <typename T>
-        requires std::integral<T>
-    constexpr ModIntBase(T x_) : x(norm(x_ % T{P})) {}
+    template<typename T>
+    requires std::integral<T>
+    constexpr ModIntBase(T x_) : x(norm(x_ % T {P})) {}
 
     constexpr static U norm(U x) {
         if ((x >> (8 * sizeof(U) - 1) & 1) == 1) {
@@ -120,10 +120,10 @@ private:
     U x;
 };
 
-template <uint P>
+template<uint P>
 using ModInt = ModIntBase<uint, P>;
 
-template <ull P>
+template<ull P>
 using ModInt64 = ModIntBase<ull, P>;
 
 constexpr uint P = 998244353;
@@ -139,33 +139,28 @@ int main() {
     for (int i = 0; i < n; i++) {
         cin >> a[i];
     }
-    ranges::sort(a);
 
-    constexpr int N = 5000;
+    int sum = accumulate(a.begin(), a.end(), 0);
 
-    vector dp(n + 1, vector<Z>(N + 1));
-    dp[0][0] = 1;
-
-    auto sum = dp;
-    
-
-    for (int i = 1; i <= n; i++) {
-        for (int k = 0; k <= 5000; k++) {
-            if (k >= a[i - 1]) {
-                dp[i][k] += sum[i - 1][k - a[i - 1]];
-            }
-            sum[i][k] = sum[i - 1][k] + dp[i][k];
+    vector<Z> dp(sum + 1);
+    dp[0] = 1;
+    for (int i = 0; i < n; i++) {
+        for (int j = sum - a[i]; ~j; j--) {
+            dp[j + a[i]] += dp[j];
         }
     }
 
     Z ans{};
-    for (int i = 1; i <= n; i++) {
-        for (int k = 1; k <= 5000; k++) {
-            ans += dp[i][k] * max((k - 1) / 2 + 1, a[i - 1]);
+    for (int j = 0; j <= sum; j++) {
+        ans += dp[j] * ((j + 1) / 2);
+    }
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < a[i]; j++) {
+            ans += dp[j] * (a[i] - (a[i] + j + 1) / 2);
         }
     }
 
-    cout << ans << endl;
+    cout << ans << "\n";
 
     return 0;
 }
