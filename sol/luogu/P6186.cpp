@@ -1,97 +1,112 @@
-// https://www.luogu.com.cn/problem/P6186
 #include <bits/stdc++.h>
 using namespace std;
 using ll = long long;
-#define endl '\n'
-#define lst pos << 1
-#define rst pos << 1 | 1
-#define enter putchar('\n')
-const int N = 5e5 + 100;
 
-int n;
-int a[N], b[N];
-ll p;
+template <typename T>
+struct Fenwick {
+    int n;
+    std::vector<T> a;
 
-struct segtree
-{
-    ll l, r, sum;
-} s[N * 4];
-
-void pushup(ll pos)
-{
-    s[pos].sum = s[lst].sum + s[rst].sum;
-}
-
-void build(ll l, ll r, ll pos)
-{
-    s[pos].l = l, s[pos].r = r;
-    if (l == r)
-    {
-        s[pos].sum = 0;
-        return;
+    Fenwick(int n_ = 0) {
+        init(n_);
     }
-    ll m = (l + r) >> 1;
-    build(l, m, lst);
-    build(m + 1, r, rst);
-    pushup(pos);
-}
 
-void upd(ll pos, ll c, int k)
-{
-    if (s[pos].l == s[pos].r)
-    {
-        s[pos].sum += k;
-        return;
+    void init(int n_) {
+        n = n_;
+        a.assign(n, T{});
     }
-    ll m = s[pos].l + s[pos].r >> 1;
-    if (c <= m)
-        upd(lst, c, k);
-    else
-        upd(rst, c, k);
-    pushup(pos);
-    return;
-}
 
-ll query(ll pos, ll x, ll y)
-{
-    if (x <= s[pos].l and s[pos].r <= y)
-    {
-        return s[pos].sum;
-    }
-    ll m = s[pos].l + s[pos].r >> 1;
-    ll ans = 0;
-    if (x <= m)
-        ans += query(lst, x, y);
-    if (m < y)
-        ans += query(rst, x, y);
-    return ans;
-}
-
-ll res;
-int m;
-
-void solve()
-{
-    cin >> n >> m;
-    for (int i = 1; i <= n; i++)
-        cin >> a[i];
-    sort(b + 1, b + n + 1);
-    build(1, n, 1);
-    while (m--)
-    {
-        int opt, x;
-        cin >> opt >> x;
-        if (opt == 1)
-        {
+    void add(int x, const T &v) {
+        for (int i = x + 1; i <= n; i += i & -i) {
+            a[i - 1] = a[i - 1] + v;
         }
     }
-}
 
-int main()
-{
-    ios::sync_with_stdio(0), cin.tie(0), cout.tie(0);
-    int _ = 1;
-    while (_--)
-        solve();
+    T sum(int x) {
+        T ans{};
+        for (int i = x; i > 0; i -= i & -i) {
+            ans = ans + a[i - 1];
+        }
+        return ans;
+    }
+
+    T rangeSum(int l, int r) {
+        return sum(r) - sum(l);
+    }
+
+    int select(const T &k) {
+        int x = 0;
+        T cur{};
+        for (int i = 1 << std::__lg(n); i; i /= 2) {
+            if (x + i <= n && cur + a[x + i - 1] <= k) {
+                x += i;
+                cur = cur + a[x - 1];
+            }
+        }
+        return x;
+    }
+};
+
+int main() {
+    cin.tie(nullptr)->sync_with_stdio(false);
+
+    int n, m;
+    cin >> n >> m;
+
+    vector<int> a(n);
+    for (int i = 0; i < n; i++) {
+        cin >> a[i];
+        a[i]--;
+    }
+
+    Fenwick<int> fen(n);
+    vector<int> p(n);
+    for (int i = 0; i < n; i++) {
+        fen.add(a[i], 1);
+        p[i] = fen.rangeSum(a[i] + 1, n);
+    }
+
+    Fenwick<ll> cnt(n), sum(n);
+    for (int i = 0; i < n; i++) {
+        cnt.add(p[i], 1);
+        sum.add(p[i], p[i]);
+    }
+
+    ll P = accumulate(p.begin(), p.end(), 0ll);
+
+    while (m--) {
+        int o, x;
+        cin >> o >> x;
+        if (o == 1) {
+            x--;
+            if (a[x] < a[x + 1]) {
+                cnt.add(p[x], -1);
+                sum.add(p[x], -p[x]);
+                p[x]++;
+                P++;
+                cnt.add(p[x], 1);
+                sum.add(p[x], p[x]);
+            } else {
+                cnt.add(p[x + 1], -1);
+                sum.add(p[x + 1], -p[x + 1]);
+                p[x + 1]--;
+                P--;
+                cnt.add(p[x + 1], 1);
+                sum.add(p[x + 1], p[x + 1]);
+            }
+            swap(a[x], a[x + 1]);
+            swap(p[x], p[x + 1]);
+        } else {
+            x = min(n - 1, x);
+            ll X = cnt.sum(x + 1);
+            ll Y = sum.sum(x + 1);
+            cout << (P -
+                     1ll * n * x +
+                     X * x -
+                     Y)
+                 << "\n";
+        }
+    }
+
     return 0;
 }
