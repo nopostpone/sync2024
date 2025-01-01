@@ -1,113 +1,87 @@
-// https://www.luogu.com.cn/problem/P1908
 #include <bits/stdc++.h>
 using namespace std;
 using ll = long long;
-#define endl '\n'
-#define lst pos << 1
-#define rst pos << 1 | 1
-#define enter putchar('\n')
-const int N = 5e5 + 100;
 
-int n;
-int a[N], b[N];
-ll p;
+template <typename T>
+struct Fenwick {
+    int n;
+    std::vector<T> a;
 
-struct segtree
-{
-    ll l, r, sum;
-} s[N * 4];
-
-void pushup(ll pos)
-{
-    s[pos].sum = s[lst].sum + s[rst].sum;
-}
-
-void build(ll l, ll r, ll pos)
-{
-    s[pos].l = l, s[pos].r = r;
-    if (l == r)
-    {
-        s[pos].sum = 0;
-        return;
+    Fenwick(int n_ = 0) {
+        init(n_);
     }
-    ll m = (l + r) >> 1;
-    build(l, m, lst);
-    build(m + 1, r, rst);
-    pushup(pos);
-}
 
-void upd(ll pos, ll c)
-{
-    if (s[pos].l == s[pos].r)
-    {
-        s[pos].sum++;
-        return;
+    void init(int n_) {
+        n = n_;
+        a.assign(n, T{});
     }
-    ll m = s[pos].l + s[pos].r >> 1;
-    if (c <= m)
-        upd(lst, c);
-    else
-        upd(rst, c);
-    pushup(pos);
-    return;
-}
 
-ll query(ll pos, ll x, ll y)
-{
-    if (x <= s[pos].l and s[pos].r <= y)
-    {
-        return s[pos].sum;
+    void add(int x, const T &v) {
+        for (int i = x + 1; i <= n; i += i & -i) {
+            a[i - 1] = a[i - 1] + v;
+        }
     }
-    ll m = s[pos].l + s[pos].r >> 1;
-    ll ans = 0;
-    if (x <= m)
-        ans += query(lst, x, y);
-    if (m < y)
-        ans += query(rst, x, y);
-    return ans;
-}
 
-ll res;
-ll lres[N], rres[N];
+    T sum(int x) {
+        T ans{};
+        for (int i = x; i > 0; i -= i & -i) {
+            ans = ans + a[i - 1];
+        }
+        return ans;
+    }
 
-void solve()
-{
+    T rangeSum(int l, int r) {
+        return sum(r) - sum(l);
+    }
+
+    int select(const T &k) {
+        int x = 0;
+        T cur{};
+        for (int i = 1 << std::__lg(n); i; i /= 2) {
+            if (x + i <= n && cur + a[x + i - 1] <= k) {
+                x += i;
+                cur = cur + a[x - 1];
+            }
+        }
+        return x;
+    }
+};
+
+int main() {
+    cin.tie(nullptr)->sync_with_stdio(false);
+
+    int n;
     cin >> n;
-    for (int i = 1; i <= n; i++)
-    {
+
+    vector<int> a(n);
+    for (int i = 0; i < n; i++) {
         cin >> a[i];
     }
-    for (int i = 1; i <= n; i++)
-    {
-        b[i] = a[i];
-    }
-    sort(b + 1, b + n + 1);
-    build(1, n, 1);
-    for (int i = n; i > 0; i--)
-    {
-        int id = lower_bound(b + 1, b + n + 1, a[i]) - b;
-        upd(1, id);
-        rres[i] = query(1, id + 1, n);
-    }
-    build(1, n, 1);
-    for (int i = 1; i <= n; i++)
-    {
-        int id = lower_bound(b + 1, b + n + 1, a[i]) - b;
-        upd(1, id);
-        lres[i] = query(1, 1, id - 1);
-    }
-    for (int i = 1; i <= n; i++)
-    {
-        res += lres[i] * rres[i];
-    }
-    cout << res;
-}
 
-int main()
-{
-    ios::sync_with_stdio(0), cin.tie(0), cout.tie(0);
-    int _ = 1;
-    while (_--)
-        solve();
+    const int m = *max_element(a.begin(), a.end()) + 1; // 值域小，没必要离散化
+
+    vector<int> L(n), R(n);
+
+    {
+        Fenwick<int> fen(m);
+        for (int i = 0; i < n; i++) {
+            fen.add(a[i], 1);
+            L[i] = fen.sum(a[i]);
+        }
+    }
+    {
+        Fenwick<int> fen(m);
+        for (int i = n - 1; ~i; i--) {
+            fen.add(a[i], 1);
+            R[i] = fen.rangeSum(a[i] + 1, m);
+        }
+    }
+
+    ll ans{};
+    for (int i = 0; i < n; i++) {
+        ans += L[i] * R[i];
+    }
+    cout << ans << endl;
+
     return 0;
 }
