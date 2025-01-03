@@ -92,9 +92,9 @@ $$
 
     $$
     \begin{align*}
-    f_{u, 0}&\leftarrow f_{u, 1}+\min_{i = 0, 1} f_{v, i}\  (\Delta) \\
+    f_{u, 0}&\leftarrow f_{u, 0}+\min_{i = 0, 1} f_{v, i}\  (\Delta) \\
     f_{u, 1}&\leftarrow f_{u, 1}+\min_{i = 0, 1, 2} f_{v, i}\\
-    f_{u, 2}&\leftarrow f_{u, 1}+\min_{i = 0, 1} f_{v, i}
+    f_{u, 2}&\leftarrow f_{u, 2}+\min_{i = 0, 1} f_{v, i}
     \end{align*}
     $$
 
