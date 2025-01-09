@@ -315,9 +315,10 @@ int main() {
         }
     }
 
+    // 预处理出每个数的因数
     vector ds(m + 1, vector<int>());
     for (int i = 1; i <= m; i++) {
-        if (c[i].val() == 0) {
+        if (c[i].val() == 0) { // 剪枝
             continue;
         }
         for (int j = i; j <= m; j += i) {
@@ -325,12 +326,10 @@ int main() {
         }
     }
     vector<Z> g(m + 1), f(n);
+    f[0] = 1;
     for (int i = 0; i < n; i++) {
         for (auto d : ds[a[i]]) {
             f[i] += g[d] * c[d];
-        }
-        if (i == 0) {
-            f[i] += 1;
         }
         for (auto d : ds[a[i]]) {
             g[d] += f[i];
