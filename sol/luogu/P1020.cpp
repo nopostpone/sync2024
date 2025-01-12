@@ -15,24 +15,24 @@ int main() {
 
     const int n = a.size();
 
-    vector<int> b(n + 1);
-    b[0] = inf;
+    vector<int> f(n + 1);
+    f[0] = inf;
 
-    vector<int> dp(n);
-    for (int i = 0; i < n; i++) {
+    int ans{};
+    for (int x : a) {
         int lo = 0, hi = n + 1;
         while (lo < hi) {
             int m = (lo + hi) / 2;
-            if (b[m] < a[i]) {
+            if (f[m] < x) {
                 hi = m;
             } else {
                 lo = m + 1;
             }
         }
-        dp[i] = lo;
-        b[lo] = a[i]; // ????
+        ans = max(ans, lo);
+        f[lo] = x;
     }
-    cout << *max_element(dp.begin(), dp.end()) << "\n";
+    cout << ans << "\n";
 
     set<int> s;
     for (int i = 0; i < n; i++) {
