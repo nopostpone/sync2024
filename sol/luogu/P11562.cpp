@@ -41,7 +41,6 @@ int main() {
     dp[p] = a[p];
     dfs(dfs, p, -1);
 
-    p = max_element(dp.begin(), dp.end()) - dp.begin();
-    cout << (dp[p] + 1) / 2 << endl;
+    cout << (*max_element(dp.begin(), dp.end()) + 1) / 2 << endl;
     return 0;
 }
