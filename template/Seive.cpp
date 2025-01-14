@@ -1,12 +1,14 @@
-std::vector<int> minp, primes;
+std::vector<int> minp, primes, phi;
 
 void sieve(int n) {
     minp.assign(n + 1, 0);
+    phi.assign(n + 1, 0);
     primes.clear();
     
-    for (int i = 2; i < n; i++) {
+    for (int i = 2; i <= n; i++) {
         if (minp[i] == 0) {
             minp[i] = i;
+            phi[i] = i - 1;
             primes.push_back(i);
         }
         
@@ -16,12 +18,10 @@ void sieve(int n) {
             }
             minp[i * p] = p;
             if (p == minp[i]) {
+                phi[i * p] = phi[i] * p;
                 break;
             }
+            phi[i * p] = phi[i] * (p - 1);
         }
     }
-}
-
-bool isprime(int n) {
-    return minp[n] == n;
 }
