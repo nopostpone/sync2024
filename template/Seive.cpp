@@ -4,14 +4,14 @@ void sieve(int n) {
     minp.assign(n + 1, 0);
     phi.assign(n + 1, 0);
     primes.clear();
-    
+
     for (int i = 2; i <= n; i++) {
         if (minp[i] == 0) {
             minp[i] = i;
             phi[i] = i - 1;
             primes.push_back(i);
         }
-        
+
         for (auto p : primes) {
             if (i * p > n) {
                 break;
@@ -24,4 +24,8 @@ void sieve(int n) {
             phi[i * p] = phi[i] * (p - 1);
         }
     }
+}
+
+bool isprime(int x) {
+    return minp[x] == x;
 }
