@@ -2,6 +2,20 @@
 using namespace std;
 using ll = long long;
 
+constexpr int phi(int n) {
+    int x = n;
+    for (int i = 2; i * i <= n; ++i) {
+        if (n % i == 0) {
+            x = x / i * (i - 1);
+            while (n % i == 0)
+                n /= i;
+        }
+    }
+    if (n > 1)
+        x = x / n * (n - 1);
+    return x;
+}
+
 template <class T>
 T power(int a, T b, T p) {
     T res = 1;
@@ -20,43 +34,25 @@ int main() {
     int a, m;
     cin >> a >> m;
 
-    a %= m;
-    int mm = m;
-
-    int phi = 1;
-    for (int i = 2; i * i <= mm; ++i) {
-        if (mm % i) {
-            continue;
-        }
-
-        phi *= i - 1;
-        mm /= i;
-
-        while (mm % i == 0) {
-            phi *= i;
-            mm /= i;
-        }
-    }
-    if (mm > 1)
-        phi *= mm - 1;
+    const int p = phi(m);
 
     string s;
     cin >> s;
 
-    int bm{};
+    int b{};
     bool flag{};
     for (auto c : s) {
-        bm = bm * 10 + (c - '0');
-        if (bm >= phi) {
+        b = b * 10 + (c - '0');
+        if (b >= p) {
             flag = true;
+            b %= p;
         }
-        bm %= phi;
     }
     if (flag) {
-        bm += phi;
+        b += p;
     }
 
-    cout << power(a, bm, m);
+    cout << power(a, b, m);
 
     return 0;
 }
