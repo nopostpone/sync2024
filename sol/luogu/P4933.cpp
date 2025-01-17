@@ -286,7 +286,8 @@ int main() {
         cin >> a[i];
     }
 
-    constexpr int D = 2e4;
+    const int D = *max_element(a.begin(), a.end());
+
     vector dp(n, vector<Z>(2 * D + 1));
     vector vis(n, vector<bool>(2 * D + 1));
 
