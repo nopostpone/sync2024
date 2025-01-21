@@ -42,10 +42,8 @@ void solve() {
 
     ranges::sort(c, greater());
 
-    ll ans = accumulate(a.begin(), a.end(), 0ll);
-    for (int i = 0; i < k; i++) {
-        ans -= c[i];
-    }
+    ll ans = accumulate(a.begin(), a.end(), 0ll) -
+             accumulate(c.begin(), c.begin() + k, 0ll);
     cout << ans << "\n";
 }
 
