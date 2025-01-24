@@ -1,5 +1,5 @@
-template <class T, class C = less<T>>
-struct SparseTable {
+template <typename T, class C = less<T>>
+struct ST {
     const int n;
     const int logn;
     const C cmp;
