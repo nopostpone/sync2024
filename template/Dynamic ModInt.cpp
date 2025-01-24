@@ -1,7 +1,7 @@
-using i64 = long long;
-using u64 = unsigned long long;
-using u32 = unsigned;
-using u128 = unsigned __int128;
+/**
+ * @file @b 模数类和动态模数类
+ * 适用 C++20 及以上
+ */
 
 template <class T>
 constexpr T power(T a, u64 b, T res = 1) {
@@ -286,5 +286,5 @@ private:
 template <u32 Id>
 Barrett DynModInt<Id>::bt = 998244353;
 
-constexpr u64 P = 998244353;
-using Z = ModInt64<P>;
+using Z = ModInt<998244353>;
+// using Z = DynModInt<998244353>;
