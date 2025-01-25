@@ -8,6 +8,7 @@
 *.ini
 oo.in
 oo.out
+oo.ans
 
 __temp.cpp
 ___temp.cpp
