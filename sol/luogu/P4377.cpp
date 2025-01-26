@@ -1,104 +1,50 @@
 #include <bits/stdc++.h>
 using namespace std;
-using ll = long long;
+
+using i64 = long long;
+using u64 = unsigned long long;
+using u32 = unsigned;
+using u128 = unsigned __int128;
 
 int main() {
-    cin.tie(nullptr)->sync_with_stdio(false);
-    
-    int n, m;
-    cin >> n >> m;
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
 
-    vector adj(n, vector<int>());
-    vector adj1(n, vector<bool>(n));
+    int n, w;
+    cin >> n >> w;
+
+    vector<array<int, 2>> a(n);
     for (int i = 0; i < n; i++) {
-        adj1[i][i] = true;
+        cin >> a[i][0] >> a[i][1];
     }
 
-    bool ok = false;
+    constexpr int inf = 1e9;
 
-    for (int time = 1; time <= m; time++) {
-        string s;
-        cin >> s;
-        int a = s[0] - 'A';
-        int b = s[2] - 'A';
-        if (s[1] == '<') {
-            adj[a].push_back(b);
-            adj1[a][b] = true;
-        } else {
-            adj[b].push_back(a);
-            adj1[b][a] = true;
+    auto check = [&](double x) {
+        vector<double> dp(w + 1, -inf);
+        dp[0] = 0;
+        for (auto [e, t] : a) {
+            for (int j = w; ~j; j--) {
+                int k = min(w, j + e);
+                double tem = t - e * x;
+                dp[k] = max(dp[k], dp[j] + tem);
+            }
         }
-
-        vector<int> seq;
-        auto work = [&]() {
-            vector<int> in(n);
-            for (int i = 0; i < n; i++) {
-                for (auto j : adj[i]) {
-                    in[j]++;
-                }
-            }
-            queue<int> q;
-            for (int i = 0; i < n; i++) {
-                if (in[i] == 0) {
-                    q.push(i);
-                }
-            }
-            vector<int> vis(n);
-            while (not q.empty()) {
-                int u = q.front();
-                q.pop();
-                seq.push_back(u);
-                vis[u] = true;
-                for (auto v : adj[u]) {
-                    if (vis[v]) {
-                        return false;
-                    }
-                    in[v]--;
-                    if (in[v] == 0) {
-                        q.push(v);
-                    }
-                }
-            }
-            return seq.size() == n;
-        };
-
-
-        if (work()) {
-            bool okk = true;
-            auto f(adj1);
-            for (int k = 0; k < n; k++) {
-                for (int i = 0; i < n; i++) {
-                    for (int j = 0; j < n; j++) {
-                        f[i][j] = f[i][j] | (f[i][k] and f[k][j]);
-                    }
-                }
-            }
-            for (int i = 0; i < n; i++) {
-                for (int j = i; j < n; j++) {
-                    if (not(f[i][j] or f[j][i])) {
-                        okk = false;
-                    }
-                }
-            }
-            if (okk) {
-                cout << "Sorted sequence determined after " << time << " relations: ";
-                for (auto i : seq) {
-                    cout << char(i + 'A');
-                }
-                cout << "." << endl;
-                ok = true;
-                break;
-            }
-        } else {
-            cout << "Inconsistency found after " << time << " relations.";
-            ok = true;
-            break;
-        }
-    }
-    if (not ok) {
-        cout << "Sorted sequence cannot be determined.";
-    }
+        return dp[w] >= 0;
+    };
     
+    double lo = 0, hi = 1000;
+    while (hi - lo > 1e-5) {
+        double m = (lo + hi) / 2;
+        if (check(m)) {
+            lo = m;
+        } else {
+            hi = m;
+        }
+    }
+
+    int ans = hi * 1000;
+    cout << ans << "\n";    
+
     return 0;
 }
-
