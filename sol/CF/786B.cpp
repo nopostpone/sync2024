@@ -1,3 +1,5 @@
+// 线段树优化建图 板子
+
 #include <bits/stdc++.h>
 using namespace std;
 
@@ -12,7 +14,7 @@ constexpr i64 inf = 1e18;
 using pii = pair<i64, i64>;
 
 vector<pii> adj[N * 8];
-array<int, N> leaf{};
+int leaf[N];
 
 void addEdge(int u, int v, i64 w) {
     adj[u].push_back({v, w});
@@ -100,7 +102,6 @@ int main() {
         }
         for (auto [v, w] : adj[u]) {
             if (cur + w < ans[v]) {
-                // cerr << u << " " << v << " " << w << endl;
                 ans[v] = cur + w;
                 pq.push({cur + w, v});
             }
