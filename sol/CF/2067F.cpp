@@ -301,7 +301,7 @@ void solve() {
         cin >> a[i];
     }
 
-    map<int, Z> dp; // P^Q^R = x 的方案数量 y
+    map<int, Z> dp; // P Q R 中至少两个为 x 的方案数量 dp[x]
     dp[0] = 1;
     int s = 0; // xor prefix
 
