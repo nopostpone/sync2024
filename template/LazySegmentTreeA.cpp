@@ -97,17 +97,19 @@ struct LazySegmentTree {
     }
 };
 
+constexpr i64 inf = 1e18;
+
 struct Tag {
-    ll val{};
+    i64 add = 0;
     void apply(const Tag &t) {
-        val += t.val;
+        add += t.add;
     }
 };
 struct Info {
-    ll sum{};
-    int act{};
+    i64 sum = 0;
+    i64 act = 0;
     void apply(const Tag &t) {
-        sum += t.val * act;
+        sum += act * t.add;
     }
 };
 constexpr Info operator+(const Info &a, const Info &b) {
