@@ -1,4 +1,3 @@
-// todo : cf1804_g
 #include <bits/stdc++.h>
 using namespace std;
 
