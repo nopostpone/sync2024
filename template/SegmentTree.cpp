@@ -7,31 +7,30 @@
 template <class Info>
 struct SegmentTree {
     int n;
-    vector<Info> info;
+    std::vector<Info> info;
     SegmentTree() : n(0) {}
     SegmentTree(int n_, Info v_ = Info()) {
-        init(vector<Info>(n_, v_));
+        init(std::vector<Info>(n_, v_));
     }
     template <class T>
-    SegmentTree(vector<T> init_) {
+    SegmentTree(std::vector<T> init_) {
         init(init_);
     }
     template <class T>
-    void init(vector<T> init_) {
+    void init(std::vector<T> init_) {
         n = init_.size();
-        info.assign(4 << __lg(n), Info());
-
-        auto build = [&](auto self, int p, int l, int r) -> void {
+        info.assign(4 << std::__lg(n), Info());
+        std::function<void(int, int, int)> build = [&](int p, int l, int r) {
             if (r - l == 1) {
                 info[p] = init_[l];
                 return;
             }
             int m = (l + r) / 2;
-            self(self, 2 * p, l, m);
-            self(self, 2 * p + 1, m, r);
+            build(2 * p, l, m);
+            build(2 * p + 1, m, r);
             pull(p);
         };
-        build(build, 1, 0, n);
+        build(1, 0, n);
     }
     void pull(int p) {
         info[p] = info[2 * p] + info[2 * p + 1];
@@ -112,12 +111,7 @@ struct SegmentTree {
 };
 
 struct Info {
-    
 };
-constexpr Info operator+(const Info &a, const Info &b) {
-    Info c;
 
-    return c;
+Info operator+(const Info &a, const Info &b) {
 }
-
-using L = SegmentTree<Info>;

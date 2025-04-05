@@ -4,20 +4,17 @@
  * @tparam Info  信息
  * @tparam Tag  懒标记
  */
-template<class Info, class Tag>
+template <class Info, class Tag>
 struct LazySegmentTree {
     int n;
-    vector<Info> info;
-    vector<Tag> tag;
+    std::vector<Info> info;
+    std::vector<Tag> tag;
 
     LazySegmentTree() : n(0) {}
-    LazySegmentTree(int n_, Info v_ = {}) { init(n_, v_); }
-    LazySegmentTree(vector<Info> a) { init(a); }
+    LazySegmentTree(int n_, Info v_ = {}) { init(std::vector<Info>(n_, v_)); }
+    LazySegmentTree(std::vector<Info> a) { init(a); }
 
-    void init(int n_, Info v_) {
-        init(vector<Info>(n_, v_));
-    }
-    void init(vector<Info> init_) {
+    void init(std::vector<Info> init_) {
         n = init_.size();
         info.assign(4 << __lg(n), {});
         tag.assign(4 << __lg(n), {});
@@ -95,6 +92,50 @@ struct LazySegmentTree {
     void rangeApply(int l, int r, const Tag &v) {
         return rangeApply(1, 0, n, l, r, v);
     }
+    template <class F>
+    int findFirst(int p, int l, int r, int x, int y, F &&pred) {
+        if (l >= y || r <= x) {
+            return -1;
+        }
+        if (l >= x && r <= y && !pred(info[p])) {
+            return -1;
+        }
+        if (r - l == 1) {
+            return l;
+        }
+        int m = (l + r) / 2;
+        int res = findFirst(2 * p, l, m, x, y, pred);
+        if (res == -1) {
+            res = findFirst(2 * p + 1, m, r, x, y, pred);
+        }
+        return res;
+    }
+    template <class F>
+    int findFirst(int l, int r, F &&pred) {
+        return findFirst(1, 0, n, l, r, pred);
+    }
+    template <class F>
+    int findLast(int p, int l, int r, int x, int y, F &&pred) {
+        if (l >= y || r <= x) {
+            return -1;
+        }
+        if (l >= x && r <= y && !pred(info[p])) {
+            return -1;
+        }
+        if (r - l == 1) {
+            return l;
+        }
+        int m = (l + r) / 2;
+        int res = findLast(2 * p + 1, m, r, x, y, pred);
+        if (res == -1) {
+            res = findLast(2 * p, l, m, x, y, pred);
+        }
+        return res;
+    }
+    template <class F>
+    int findLast(int l, int r, F &&pred) {
+        return findLast(1, 0, n, l, r, pred);
+    }
 };
 
 constexpr i64 inf = 1e18;
@@ -105,15 +146,25 @@ struct Tag {
         add += t.add;
     }
 };
+
 struct Info {
+    i64 min = inf;
+    i64 max = -inf;
     i64 sum = 0;
     i64 act = 0;
+
     void apply(const Tag &t) {
+        min += t.add;
+        max += t.add;
         sum += act * t.add;
     }
 };
-constexpr Info operator+(const Info &a, const Info &b) {
-    return {a.sum + b.sum, a.act + b.act};
-}
 
-using L = LazySegmentTree<Info, Tag>;
+constexpr Info operator+(const Info &a, const Info &b) {
+    Info c;
+    c.min = std::min(a.min, b.min);
+    c.max = std::max(a.max, b.max);
+    c.sum = a.sum + b.sum;
+    c.act = a.act + b.act;
+    return c;
+}
