@@ -1,48 +1,56 @@
 /// @brief 可撤销并查集
 struct DSU {
-    std::vector<int> siz, f;
-    std::vector<std::pair<int *, int>> his;
- 
-    DSU () {}
-    DSU(int n) {
-        init(n);
+    std::vector<std::pair<int &, int>> his;
+    
+    int n;
+    std::vector<int> f, g, bip;
+    
+    DSU(int n_) : n(n_), f(n, -1), g(n), bip(n, 1) {}
+    
+    std::pair<int, int> find(int x) {
+        if (f[x] < 0) {
+            return {x, 0};
+        }
+        auto [u, v] = find(f[x]);
+        return {u, v ^ g[x]};
     }
     
-    void init(int n) {
-        f.resize(n);
-        iota(f.begin(), f.end(), 0);
-        siz.assign(n, 1);
+    void set(int &a, int b) {
+        his.emplace_back(a, a);
+        a = b;
     }
-    bool merge(int x, int y) {
-        x = find(x);
-        y = find(y);
-        if (x == y) {
-            return false;
+    
+    void merge(int a, int b, int &ans) {
+        auto [u, xa] = find(a);
+        auto [v, xb] = find(b);
+        int w = xa ^ xb ^ 1;
+        if (u == v) {
+            if (bip[u] && w) {
+                set(bip[u], 0);
+                ans--;
+            }
+            return;
         }
-        if (siz[x] < siz[y]) {
-            std::swap(x, y);
+        if (f[u] > f[v]) {
+            std::swap(u, v);
         }
-        his.emplace_back(&siz[x], siz[x]);
-        siz[x] += siz[y];
-        his.emplace_back(&f[y], f[y]);
-        f[y] = x;
-        return true;
+        ans -= bip[u];
+        ans -= bip[v];
+        set(bip[u], bip[u] && bip[v]);
+        set(f[u], f[u] + f[v]);
+        set(f[v], u);
+        set(g[v], w);
+        ans += bip[u];
     }
-    int find(int x) {
-        while (x != f[x]) {
-            x = f[x];
-        }
-        return x;
+    
+    int timeStamp() {
+        return his.size();
     }
-    int same(int x, int y) {
-        return find(x) == find(y);
-    }
-    int size(int x) {
-        return siz[find(x)];
-    }
-    void undo(int x) {
-        while (int(his.size()) > x) {
-            *his.back().first = his.back().second;
+    
+    void rollback(int t) {
+        while (his.size() > t) {
+            auto [x, y] = his.back();
+            x = y;
             his.pop_back();
         }
     }
