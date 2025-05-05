@@ -24,14 +24,14 @@ struct DSU {
     bool same(int x, int y) {
         return find(x) == find(y);
     }
-    bool merge(int fa, int son) {
-        fa = find(fa);
-        son = find(son);
-        if (fa == son) {
+    bool merge(int x, int y) {
+        x = find(x);
+        y = find(y);
+        if (x == y) {
             return false;
         }
-        siz[fa] += siz[son];
-        f[son] = fa;
+        siz[x] += siz[y];
+        f[y] = x;
         return true;
     }
     int size(int x) {
