@@ -1,171 +1,113 @@
-// https://codeforces.com/problemset/problem/896/C
-// 阿朵莉树
 #include <bits/stdc++.h>
 using namespace std;
-using ll = long long;
-#define endl '\n'
-#define enter putchar('\n')
-const int N = 1e5 + 100;
 
-inline char nc()
-{
-    static char buf[100000], *p1 = buf, *p2 = buf;
-    return p1 == p2 && (p2 = (p1 = buf) + fread(buf, 1, 100000, stdin), p1 == p2) ? EOF : *p1++;
-}
-inline ll read()
-{
-    int x = 0, f = 1;
-    char ch = nc();
-    while (ch < '0' || ch > '9')
-    {
-        if (ch == '-')
-            f = -1;
-        ch = nc();
-    }
-    while (ch >= '0' && ch <= '9')
-    {
-        x = x * 10 + (ch ^ 48);
-        ch = nc();
-    }
-    return x * f;
-}
-void write(ll x)
-{
-    if (x < 0)
-        putchar('-'), x = -x;
-    if (x >= 10)
-        write(x / 10);
-    putchar(x % 10 + '0');
-}
+using i64 = long long;
+using u64 = unsigned long long;
+using u32 = unsigned;
+using u128 = unsigned __int128;
 
-struct node
-{
-    int l, r;
-    mutable ll v;
-    node(int L, int R = -1, ll V = 0) : l(L), r(R), v(V) {}
-    bool operator<(const node &rhs) const
-    {
-        return l < rhs.l;
-    }
-};
-
-set<node> s;
-
-ll ksm(ll a, ll x, ll mod)
-{
-    ll res = 1, ans = a % mod;
-    while (x)
-    {
-        if (x & 1)
-            res = res * ans % mod;
-        ans = ans * ans % mod;
-        x >>= 1;
+int power(int a, i64 b, int p) {
+    int res = 1 % p;
+    for (; b; b /= 2, a = (i64)a * a % p) {
+        if (b & 1) {
+            res = (i64)res * a % p;
+        }
     }
     return res;
 }
 
-set<node>::iterator split(int pos)
-{
-    auto it = s.lower_bound(node(pos));
-    if (it != s.end() and it->l == pos)
-        return it;
-    --it;
-    int l = it->l, r = it->r;
-    ll v = it->v;
-    s.erase(it);
-    s.insert(node(l, pos - 1, v));
-    return s.insert(node(pos, r, v)).first;
-}
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
 
-void assign(int l, int r, ll v)
-{
-    auto itr = split(r + 1), itl = split(l);
-    s.erase(itl, itr);
-    s.insert(node(l, r, v));
-}
+    int n, m, seed, maxv;
+    cin >> n >> m >> seed >> maxv;
 
-void add(int l, int r, ll v)
-{
-    auto itr = split(r + 1), itl = split(l);
-    for (; itl != itr; itl++)
-        itl->v += v;
-}
+    auto rng = [&]() {
+        auto ret = seed;
+        seed = ((i64)seed * 7 + 13) % 1000000007;
+        return ret;
+    };
 
-ll rank_(int l, int r, int k)
-{
-    vector<pair<ll, int>> vp;
-    auto itr = split(r + 1), itl = split(l);
-    vp.clear();
-    for (; itl != itr; ++itl)
-        vp.push_back(pair<ll, int>(itl->v, itl->r - itl->l + 1));
-    sort(vp.begin(), vp.end());
-    for (vector<pair<ll, int>>::iterator it = vp.begin(); it != vp.end(); ++it)
-    {
-        k -= it->second;
-        if (k <= 0)
-            return it->first;
+    vector<int> a(n);
+    for (int i = 0; i < n; i++) {
+        a[i] = (rng() % maxv) + 1;
     }
-}
 
-ll sum(int l, int r, int x, int y)
-{
-    auto itr = split(r + 1), itl = split(l);
-    ll res = 0;
-    for (; itl != itr; itl++)
-        res = (res + ll(itl->r - itl->l + 1) * ksm(itl->v, ll(x), ll(y))) % y;
-    return res;
-}
-
-int n, m;
-ll seed, vm, a[N];
-const int _m = 1e9 + 7;
-
-ll sd()
-{
-    ll tmp = seed;
-    seed = (seed * 7 + 13) % _m;
-    return tmp;
-}
-
-void solve()
-{
-    n = read(), m = read(), seed = read(), vm = read();
-    for (int i = 1; i <= n; i++)
-    {
-        a[i] = (sd() % vm) + 1;
-        s.insert(node(i, i, a[i]));
+    map<int, i64> f;
+    for (int i = 0; i < n; i++) {
+        f[i] = a[i];
     }
-    s.insert(node(n + 1, n + 1, 0));
-    for (int i = 1; i <= m; i++)
-    {
-        int opt = int(sd() % 4) + 1;
-        int l = int(sd() % n) + 1;
-        int r = int(sd() % n) + 1;
-        if (l > r)
+    f[n] = -1;
+
+    auto split = [&](int i) {
+        auto it = f.upper_bound(i);
+        assert(it != f.begin());
+        it--;
+        if (it->first != i) {
+            f[i] = it->second;
+        }
+    };
+
+    for (int i = 0; i < m; i++) {
+        int op = rng() % 4 + 1;
+        int l = rng() % n + 1;
+        int r = rng() % n + 1;
+        if (l > r) {
             swap(l, r);
-        int x, y;
-        if (opt == 3)
-            x = int(sd() % (r - l + 1)) + 1;
-        else
-            x = int(sd() % vm) + 1;
-        if (opt == 4)
-            y = int(sd() % vm) + 1;
-        if (opt == 1)
-            add(l, r, ll(x));
-        else if (opt == 2)
-            assign(l, r, ll(x));
-        else if (opt == 3)
-            write(rank_(l, r, x)), enter;
-        else
-            write(sum(l, r, x, y)), enter;
-    }
-}
+        }
+        l--;
 
-int main()
-{
-    ios::sync_with_stdio(0), cin.tie(0), cout.tie(0);
-    int _ = 1;
-    while (_--)
-        solve();
+        int x;
+        if (op == 3) {
+            x = rng() % (r - l);
+        } else {
+            x = (rng() % maxv) + 1;
+        }
+
+        split(l);
+        split(r);
+
+        if (op == 1) {
+            for (auto it = f.find(l); it->first != r; it++) {
+                it->second += x;
+            }
+        } else if (op == 2) {
+            for (auto it = f.find(l); it->first != r; it = f.erase(it)) {
+            }
+
+            f[l] = x;
+        } else if (op == 3) {
+            vector<pair<i64, int>> v;
+            for (auto it = f.find(l); it->first != r; it++) {
+                int num = next(it)->first - it->first;
+                i64 val = it->second;
+
+                v.emplace_back(val, num);
+            }
+
+            ranges::sort(v);
+            for (auto [val, num] : v) {
+                if (x < num) {
+                    cout << val << "\n";
+                    break;
+                }
+                x -= num;
+            }
+        } else {
+            int y = (rng() % maxv) + 1;
+
+            int ans = 0;
+            for (auto it = f.find(l); it->first != r; it++) {
+                int num = next(it)->first - it->first;
+                int val = it->second % y;
+
+                int res = (i64)num * power(val, x, y) % y;
+                ans = (ans + res) % y;
+            }
+            cout << ans << "\n";
+        }
+    }
+
     return 0;
 }
