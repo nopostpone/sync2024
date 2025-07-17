@@ -284,15 +284,16 @@ int main() {
         pw[i + 1] = pw[i] * 2;
     }
 
+    // g[m] 表示考虑前 m 个点，存在 1 -> m 的路径的方案数
     vector<Z> g(N + 1);
     {
-        vector<Z> dp(N);
+        vector<Z> dp(N); // 恰好有 j 个点满足 0 -> j 的方案数
         dp[0] = 1;
         for (int i = 0; i < N - 1; i++) {
             vector<Z> ndp(N);
             for (int j = 0; j <= i; j++) {
-                ndp[j + 1] += dp[j];
-                ndp[j] -= dp[j];
+                ndp[j + 1] += dp[j]; // 每一个 dp[j]，从 0 连到新点，变成 dp[j + 1]
+                ndp[j] -= dp[j]; // 每一个 dp[j]，但新点是独立的，
             }
             for (int j = 0; j <= i + 1; j++) {
                 ndp[j] *= pw[j] - 1;
