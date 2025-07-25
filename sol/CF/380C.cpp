@@ -104,8 +104,6 @@ int main() {
         cin >> l >> r;
         l--;
 
-        cerr << l << " " << r + 1 << endl;
-
         int t = rmq(l, r + 1);
         int ans = r - l - (f[l] - t) - (f[r] - t);
         cout << ans << "\n";
