@@ -6,91 +6,94 @@ using u64 = unsigned long long;
 using u32 = unsigned;
 using u128 = unsigned __int128;
 
-constexpr i64 inf = 1e18;
-
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
 
-    int n, m;
-    cin >> n >> m;
+    int n, k;
+    cin >> n >> k;
 
-    vector dis(n + 1, vector<i64>(n + 1, inf));
-    for (int i = 0; i <= n; i++) {
-        dis[i][i] = 0;
+    vector<int> a(n);
+    for (int i = 0; i < n; i++) {
+        cin >> a[i];
     }
-    for (int i = 0; i < m; i++) {
-        int u, v, w;
-        cin >> u >> v >> w;
+
+    vector<vector<int>> adj(n);
+    for (int i = 1; i < n; i++) {
+        int u, v;
+        cin >> u >> v;
         u--;
         v--;
-        dis[u][v] = min<i64>(dis[u][v], w);
-        dis[v][u] = min<i64>(dis[v][u], w);
-    }
-    int k, t;
-    cin >> k >> t;
-    for (int i = 0; i < k; i++) {
-        int d;
-        cin >> d;
-        d--;
-        dis[d][n] = t;
-        dis[n][d] = 0;
+
+        adj[u].push_back(v);
+        adj[v].push_back(u);
     }
 
-    for (int k = 0; k <= n; k++) {
-        for (int i = 0; i <= n; i++) {
-            for (int j = 0; j <= n; j++) {
-                dis[i][j] = min(dis[i][j], dis[i][k] + dis[k][j]);
-            }
-        }
-    }
+    /**
+     * dp0 : no constrain
+     * dp1 : must have a path contains root as a endpoint
+    */
+    vector<array<i64, 6>> dp0(n), dp1(n);
+    vector<int> siz(n);
+    auto dfs = [&](auto &&self, int x, int p) -> void {
+        siz[x] = 1;
 
-    int q;
-    cin >> q;
-    while (q--) {
-        int o;
-        cin >> o;
+        /**
+         * g0 : can't choose x
+         * g1 : choose x as endpoint
+         * g2 : choose x not as endpoint (a -> x -> b)
+        */
+        i64 g[3][6]{};
+        g[1][1] = a[x];
 
-        if (o == 1) {
-            int x, y, t;
-            cin >> x >> y >> t;
-            x--;
-            y--;
-            dis[x][y] = min<i64>(dis[x][y], t);
-            dis[y][x] = min<i64>(dis[y][x], t);
-            for (int i = 0; i <= n; i++) {
-                for (int j = 0; j <= n; j++) {
-                    dis[i][j] = min({dis[i][j],
-                                     dis[i][x] + dis[x][y] + dis[y][j],
-                                     dis[i][y] + dis[y][x] + dis[x][j]});
-                }
+        for (auto y : adj[x]) {
+            if (y == p) {
+                continue;
             }
-        } else if (o == 2) {
-            int x;
-            cin >> x;
-            x--;
-            dis[x][n] = t;
-            dis[n][x] = 0;
-            for (int i = 0; i <= n; i++) {
-                for (int j = 0; j <= n; j++) {
-                    dis[i][j] = min({dis[i][j],
-                                     dis[i][x] + t + dis[n][j],
-                                     dis[i][n] + dis[x][j]});
-                }
-            }
-        } else {
-            i64 ans = 0;
-            for (int i = 0; i < n; i++) {
-                for (int j = 0; j < n; j++) {
-                    if (dis[i][j] == inf) {
-                        continue;
+
+            self(self, y, x);
+            i64 ng[3][6]{};
+            for (int i = 0; i <= min(k, siz[x]); i++) {
+                for (int j = 0; j <= min({k, k - i, siz[y]}); j++) {
+                    ng[0][i + j] = max(ng[0][i + j], g[0][i] + dp0[y][j]);
+                    if (i) {
+                        ng[1][i + j] = max(ng[1][i + j], g[1][i] + dp0[y][j]);
+                        ng[2][i + j] = max(ng[2][i + j], g[2][i] + dp0[y][j]);
                     }
-                    ans += dis[i][j];
+                    if (j) {
+                        /**
+                         * have chosen i paths (without x)
+                         * + j paths in subtree y (with y)
+                         * extend one path endpoint y -> x
+                        */
+                        ng[1][i + j] = max(ng[1][i + j], g[0][i] + dp1[y][j] + a[x]);
+                    }
                 }
             }
-            cout << ans << "\n";
+            for (int i = 1; i <= min(k, siz[x]); i++) {
+                for (int j = 1; j <= min({k, k - i + 1, siz[y]}); j++) {
+                    /**
+                     * have chosen i paths (with x)
+                     * + j paths (with y)
+                     * connect y <-> x, reduce numbers of paths by 1
+                    */
+                    ng[2][i + j - 1] = max(ng[2][i + j - 1], g[1][i] + dp1[y][j]);
+                }
+            }
+            swap(g, ng);
+            siz[x] += siz[y];
         }
-    }
+        for (int i = 0; i <= min(k, siz[x]); i++) {
+            dp0[x][i] = max(dp0[x][i], g[0][i]);
+            if (i) {
+                dp1[x][i] = max(dp1[x][i], g[1][i]);
+                dp0[x][i] = max({dp0[x][i], g[1][i], g[2][i]});
+            }
+        }
+    };
+    dfs(dfs, 0, -1);
+
+    cout << ranges::max(dp0[0]) << "\n";
 
     return 0;
 }
