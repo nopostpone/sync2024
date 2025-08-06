@@ -1,12 +1,3 @@
-#include <bits/stdc++.h>
-
-using u32 = unsigned;
-using i64 = long long;
-using u64 = unsigned long long;
-
-using i128 = __int128;
-using u128 = unsigned __int128;
-
 template <class T>
 constexpr T power(T a, u64 b, T res = 1) {
     for (; b != 0; b /= 2, a *= a) {
