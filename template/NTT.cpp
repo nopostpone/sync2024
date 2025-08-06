@@ -1,3 +1,13 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+using u32 = unsigned;
+using i64 = long long;
+using u64 = unsigned long long;
+
+using i128 = __int128;
+using u128 = unsigned __int128;
+
 template <class T>
 constexpr T power(T a, u64 b, T res = 1) {
     for (; b != 0; b /= 2, a *= a) {
@@ -198,9 +208,6 @@ struct Polynomial : public std::vector<T> {
         std::reverse(a.begin() + 1, a.end());
     }
 
-public:
-    using std::vector<T>::vector;
-
     Polynomial mod(int k) const {
         Polynomial p = self;
         p.resize(k);
@@ -251,6 +258,7 @@ public:
         }
         return a;
     }
+
     friend Polynomial operator/(Polynomial a, T b) {
         b = b.inv();
         for (auto i = 0U; i < a.size(); i++) {
@@ -258,12 +266,14 @@ public:
         }
         return a;
     }
+
     Polynomial mulxk(int k) const {
         assert(k >= 0);
         Polynomial b = self;
         b.insert(b.begin(), k, 0);
         return b;
     }
+
     Polynomial divxk(int k) const {
         assert(k >= 0);
         if (static_cast<int>(self.size()) <= k) {
@@ -271,6 +281,7 @@ public:
         }
         return Polynomial(self.begin() + k, self.end());
     }
+
     T whenXis(T x) const {
         T ans = T{};
         for (int i = static_cast<int>(self.size()) - 1; i >= 0; i--) {
@@ -278,7 +289,7 @@ public:
         }
         return ans;
     }
-    
+
     Polynomial &operator+=(Polynomial b) {
         return self = self + b;
     }
@@ -384,7 +395,7 @@ public:
         return p.mod(m);
     }
 
-    Polynomial power(long long k, int m = -1) const {
+    Polynomial power(i64 k, int m = -1) const {
         m = m < 0 ? self.size() : m;
         assert(0 <= k);
         k = k % P;
@@ -409,14 +420,14 @@ public:
         }
         T v = self[i];
         Polynomial f = divxk(i) / v;
-        return (f.ln(m - i * k) * k).exp(m - i * k).mulxk(i * k) * v.power(k);
+        return (f.ln(m - i * k) * k).exp(m - i * k).mulxk(i * k) * ::power(v, k);
     }
 
     Polynomial sqrt(int m = -1) const {
         m = m < 0 ? self.size() : m;
         Polynomial p{1};
         int k = 1;
-        constexpr T INV2 = T(1) / 2;
+        const T INV2 = T(1) / 2;
         while (k < m) {
             k <<= 1;
             p = (p + (mod(k) * p.inv(k)).mod(k)) * INV2;
