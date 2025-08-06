@@ -95,7 +95,7 @@ int main() {
         return in[par] <= in[son] and in[son] < out[par];
     };
 
-    vector<i64> dp(n, inf);
+    vector<i64> res(n, inf); // 1 -> n 且不经过 x -> parent_x 的最短路
     vector<Heap> vec(n);
 
     [&](this auto &&self, int x) -> void {
@@ -107,6 +107,7 @@ int main() {
         }
         for (auto y : nadj[x]) {
             self(y);
+            // 合并
             if (vec[x].size() < vec[y].size()) {
                 swap(vec[x], vec[y]);
             }
@@ -116,15 +117,14 @@ int main() {
             }
         }
         while (not vec[x].empty()) {
-            auto [_, y] = vec[x].top();
+            auto [d, y] = vec[x].top();
+            // 如果 x 是 y 的祖先，那么 fn[y] 经过 x，要推掉
             if (isAnc(x, y)) {
                 vec[x].pop();
             } else {
+                res[x] = d;
                 break;
             }
-        }
-        if (not vec[x].empty()) {
-            dp[x] = vec[x].top().first;
         }
     }(n - 1);
 
@@ -142,7 +142,7 @@ int main() {
         if (pEdge[u] != i or not isAnc(u, 0)) {
             ans = min(ans, f0[n - 1]);
         } else {
-            ans = min(ans, dp[u]);
+            ans = min(ans, res[u]);
         }
         cout << ans << "\n";
     }
