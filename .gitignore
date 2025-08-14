@@ -1,6 +1,7 @@
 .vscode
 .vs
 **/.cph
+/*.cpp
 
 **akiba.cpp
 
