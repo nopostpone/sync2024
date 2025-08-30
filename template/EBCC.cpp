@@ -1,6 +1,11 @@
 /**   割边与割边缩点（EBCC）
  *    2023-05-11: https://codeforces.com/contest/118/submission/205426518
 **/
+
+
+/**
+ * 默认图连通、无重边
+*/
 std::set<std::pair<int, int>> E;
 
 struct EBCC {
@@ -86,5 +91,77 @@ struct EBCC {
             }
         }
         return g;
+    }
+};
+
+/**
+ * 非简单图的 EBCC
+*/
+struct EBCC {
+    int n;
+    std::vector<std::vector<pair<int, int>>> adj;
+    std::vector<int> stk;
+    std::vector<int> dfn, low, bel;
+    int cur, cnt;
+    
+    EBCC() {}
+    EBCC(int n) {
+        init(n);
+    }
+    
+    void init(int n) {
+        this->n = n;
+        adj.assign(n, {});
+        dfn.assign(n, -1);
+        low.resize(n);
+        bel.assign(n, -1);
+        stk.clear();
+        cur = cnt = 0;
+    }
+    
+    void addEdge(int u, int v, int i) {
+        adj[u].emplace_back(v, i);
+        adj[v].emplace_back(u, i);
+    }
+    
+    void dfs(int x, int p) {
+        dfn[x] = low[x] = cur++;
+        stk.push_back(x);
+        
+        for (auto [y, i] : adj[x]) {
+            if (i == p) {
+                continue;
+            }
+            if (dfn[y] == -1) {
+                // E.emplace(x, y);
+                dfs(y, i);
+                low[x] = std::min(low[x], low[y]);
+            // } else if (bel[y] == -1 && dfn[y] < dfn[x]) {
+            //     E.emplace(x, y);
+            //     low[x] = std::min(low[x], dfn[y]);
+            // }
+            } else {
+                low[x] = std::min(low[x], dfn[y]);
+            }
+        }
+        
+        if (dfn[x] == low[x]) {
+            int y;
+            do {
+                y = stk.back();
+                bel[y] = cnt;
+                stk.pop_back();
+            } while (y != x);
+            cnt++;
+        }
+    }
+    
+    std::vector<int> work() {
+        for (int i = 0; i < n; i++) {
+            if (dfn[i] == -1) {
+                dfs(i, -1);
+            }
+        }
+        return bel;
     }
 };
