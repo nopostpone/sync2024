@@ -631,3 +631,135 @@ f2 - todo
 实现上，需要注意的是，判断一个区间是否为同一个数，可以用区间长度整除区间和、且区间和 / 区间长度等于区间 $\text{lcm}$。**不要用 `tag` 是否存在作为判断依据**，会漏情况，然后 T。
 
 [代码](https://qoj.ac/submission/1144249) | [哥哥的代码](https://qoj.ac/submission/1142980)。
+
+# September
+
+> 9 月预推免+网络赛，太忙碌，到月底才有空训练。但好在有书读了，大四课又少，狠狠 all in xcpc。
+
+设 $f(x)$ 为 $x$ 个集合的交集的大小；$g(x)$ 为 $x$ 个集合的补集，它们交集的大小。那么有二项式反演的常见形式：
+
+$$
+\begin{align*}
+f(n)&=\sum_{i=0}^n(-1)^i\binom{n}{i}g(i)\\
+g(n)&=\sum_{i=0}^n(-1)^i\binom{n}{i}f(i)
+\end{align*}
+$$
+
+设 $h(x)=(-1)^x g(x)$，代入，得到二项式反演的第二个形式：
+
+$$
+\begin{align*}
+f(n)&=\sum_{i=0}^n\binom{n}{i}h(i)\\
+h(n)&=\sum_{i=0}^n(-1)^{n-i}\binom{n}{i}f(i)
+\end{align*}
+$$
+
+设 $f(x)$ 为钦定选 $x$ 个（至少有 $x$ 个），$g(x)$ 为恰好选 $x$ 个，那么有二项式反演的第三个形式：
+
+$$
+\begin{align*}
+f(n)&=\sum_{i=n}^m\binom{i}{n}g(i)\\
+g(n)&=\sum_{i=0}^n(-1)^{i-n}\binom{i}{n}f(i)
+\end{align*}
+$$
+
+以上三个式子的证明都可以见 [GXZlegend 大佬的博客](https://www.cnblogs.com/GXZlegend/p/11407185.html)。
+
+## [P10596](https://www.luogu.com.cn/problem/P10596)
+
+借着这道题重新严谨地认识了二项式反演，讲一下两种不同的思路，最后式子长得挺像的。
+
+- 思路一
+
+先从 $n$ 个里选 $k$ 个出来，就假设这 $k$ 个是选出来的交集。接着，在剩下 $n-k$ 个里，假设事件 $A_i$ 表示最后的交集多出来了位置 $i$，可以把这 $n-k$ 个 $A_i$ 视为 $n-k$ 个集合。我们希望最后交集中不要多出任何数，即这些集合一个都不要有，就是求**这些集合的补集的交集**，的大小。
+
+那么套用二项式反演的第一个形式，有
+
+$$
+\begin{align*}
+f(i) &= 2^{(2^{n-k-i})}-1\\
+g(n-k)&=\sum_{i=0}^{n-k}(-1)^i\binom{n-k}{i}f(i) \\
+&= \sum_{i=0}^{n-k}(-1)^i\binom{n-k}{i}(2^{(2^{n-k-i})}-1)
+\end{align*}
+$$
+
+最后再算上最初选 $k$ 个出来的方案数，即乘上 $\binom nk$ 即可，即答案为
+
+$$
+\binom nk \sum_{i=0}^{n-k}(-1)^i\binom{n-k}{i}(2^{(2^{n-k-i})}-1)
+$$
+
+- 思路二
+
+我们需要选出恰好 $k$ 个，设 $f(x)$ 表示钦定 $x$ 个，$g(x)$ 表示恰好 $x$ 个，则套用二项式反演的第三个形式，有
+
+$$
+\begin{align*}
+f(i)&= \binom ni(2^{(2^{n-i})}-1)\\
+g(k)&=\sum_{i=k}^{n}(-1)^{i-k}\binom{i}{k}f(i) \\
+&=\sum_{i=k}^{n}(-1)^{i-k}\binom{i}{k}\binom ni(2^{(2^{n-i})}-1) \\
+\end{align*}
+$$
+
+即为所求。
+
+## [P4859](https://www.luogu.com.cn/problem/P4859)
+
+当 $n+k$ 为奇数时一定无解，否则，设 $m=\frac{n+k}2$。
+
+设两个数组为 $a$ 和 $b$，先分别将这两个数组排序，现在要恰好 $m$ 对 $a_i>b_i$。
+
+恰好 $m$ 个不好做，但是钦定 $m$ 个是很好做的：设 $f(i, j)$ 表示到第 $i$ 个位置，钦定 $j$ 对 $a_x>b_x$ 的方案数（**先不管没有配对的位置产生的贡献**）。对于 $i$ 这个位置，设 $p$ 为满足 $b_x < a_i$ 的 $x$ 的数量（可二分求得）。则遍历 $j$，考虑 $a_i$ 参与配对与不参与配对两个情况，则有 
+
+$$
+f(i, j) \leftarrow f(i-1, j)+f(i-1,j-1)\times(p-(j-1))
+$$
+
+现在我们知道了钦定 $j$ 对 $a_x>b_x$ 的方案数，如果再考虑没配对的位置产生的贡献，则 $f(n, j)$ 要乘上一个 $(n-j)!$。
+
+因此，由二项式反演，我们要求的答案就是
+
+$$
+\sum_{i=m}^n(-1)^{i-m}\binom im f(n, i) \times(n-i)!
+$$
+
+## [gym 106072e](https://codeforces.com/gym/106072/problem/E)
+
+> *The 2025 ICPC Asia EC Regionals Online Contest (II) E*
+>
+> 这题我的思路不好，转了很多弯。
+
+设 $x_i=a_i \oplus a_{i+1}$，有 $a_i\neq a_{i+1} \Leftrightarrow x_i \neq 0$。
+
+再转化一下 $\bigoplus_{i=1}^n a_i$。当 $n$ 为奇数时，可以写成 $x_1 \oplus x_3 \oplus\cdots\oplus x_{n-2}\oplus a_n$ 的形式，这个东西是 $0$，那么 $a_n = x_1 \oplus x_3 \oplus\cdots\oplus x_{n-2}$。也就是说，我们可以先乱取 $x_i$，每个位置除了 $0$ 都能选，即有 $2^m-1$ 种取法，然后再依次确定每个 $a_i$ 的值。因此，$n$ 为奇数时，答案为 $(2^m -1)^{n-1}$。
+
+$n$ 为偶数时，$\bigoplus_{i=1}^n a_i=\bigoplus_{i=1}^{\frac n2} x_{2i}=0$，现在就不能乱取了，多了一个奇偶数位置异或和为 $0$ 的限制。
+
+## [cf 2146e](https://codeforces.com/contest/2146/problem/E)
+
+设 $g(b, x)$ 表示数组 $b$ 中，大于 $x$ 的数的数量。则对于一个右端点 $r$，我们要求一个数 $x$ 和一个左端点 $l$，使 $x$ 不出现在 $a[l\cdots r]$ 中，且 $g(a[l\cdots r], x)$ 最大。
+
+假如我们选取一个数 $x$，肯定有一个贪心选 $l$ 的策略，那就是选在 $x$ 最后一次出现的位置，的后面一格。
+
+尝试来维护所有 $x$ 的答案。从左到右扫，扫到 $a_i$ 时，它对 $x\in[0, a_i - 1]$ 都产生 $1$ 的贡献；对 $x=a_i$，答案变为 $0$，这个可以用懒标记线段树维护。
+
+再维护一个选整个数组时的答案，与线段树的全局最大值相比，较大值即为所求。
+
+[代码](https://codeforces.com/contest/2146/submission/339959565)。
+
+## [cf 2151e](https://codeforces.com/contest/2151/problem/E)
+
+
+
+## 以下为较简单的题
+
+### [gym 106072d](https://codeforces.com/gym/106072/problem/D)
+> *The 2025 ICPC Asia EC Regionals Online Contest (II) D* 
+
+对于任意一个长度 $n$ 的数组，第 $k$ 次操作的数，对答案会贡献 $2^{n-k-1}$ 次。要让结果最大，肯定是想让大的数贡献尽可能多次，也就是从大到小一次操作。那么我们可以发现，一个数贡献的次数，仅和不大于它的数的数量有关。
+
+将 $a$ 从小到大排序，依次统计贡献。对于 $a_i$，它的贡献次数为 $(1+\sum_{j=1}^{i-1}\binom{i-1}{j} 2^{j-1})\times2^{n-i}$。
+
+这个求和是一个二项式的形式，可以转化成 $(1+2)$ 的幂次，也就是 $3$ 的幂次。
+
+经过转化，$a_i$ 的贡献为 $a_i \times(\frac{1+3^{i-1}}{2})\times 2^{n-i}$。
