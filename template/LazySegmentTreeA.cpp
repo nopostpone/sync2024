@@ -10,18 +10,20 @@ struct LazySegmentTree {
     std::vector<Info> info;
     std::vector<Tag> tag;
 
-    LazySegmentTree() : n(0) {}
-    LazySegmentTree(int n_, Info v_ = {}) { init(std::vector<Info>(n_, v_)); }
-    LazySegmentTree(std::vector<Info> a) { init(a); }
+    LazySegmentTree() = delete;
+    LazySegmentTree(int n_, const Info &v_ = {}) { init(std::vector<Info>(n_, v_)); }
+    template <class T>
+    LazySegmentTree(const std::vector<T> &data) { init(data); }
 
-    void init(std::vector<Info> init_) {
-        n = init_.size();
-        info.assign(4 << __lg(n), {});
-        tag.assign(4 << __lg(n), {});
+    template <class T>
+    void init(const std::vector<T> &data) {
+        n = data.size();
+        info.assign(4 << std::__lg(n), {});
+        tag.assign(4 << std::__lg(n), {});
 
         auto build = [&](auto self, int p, int l, int r) -> void {
             if (r - l == 1) {
-                info[p] = init_[l];
+                info[p] = data[l];
                 return;
             }
             int m = (l + r) / 2;
@@ -42,7 +44,7 @@ struct LazySegmentTree {
     void push(int p) {
         apply(2 * p, tag[p]);
         apply(2 * p + 1, tag[p]);
-        tag[p] = Tag();
+        tag[p] = {};
     }
     void modify(int p, int l, int r, int x, const Info &v) {
         if (r - l == 1) {
@@ -63,7 +65,7 @@ struct LazySegmentTree {
     }
     Info rangeQuery(int p, int l, int r, int x, int y) {
         if (l >= y || r <= x) {
-            return Info();
+            return {};
         }
         if (l >= x && r <= y) {
             return info[p];
@@ -93,7 +95,7 @@ struct LazySegmentTree {
         return rangeApply(1, 0, n, l, r, v);
     }
     template <class F>
-    int findFirst(int p, int l, int r, int x, int y, F &&pred) {
+    int findFirst(int p, int l, int r, int x, int y, const F &pred) {
         if (l >= y || r <= x) {
             return -1;
         }
@@ -103,6 +105,7 @@ struct LazySegmentTree {
         if (r - l == 1) {
             return l;
         }
+        push(p);
         int m = (l + r) / 2;
         int res = findFirst(2 * p, l, m, x, y, pred);
         if (res == -1) {
@@ -111,11 +114,11 @@ struct LazySegmentTree {
         return res;
     }
     template <class F>
-    int findFirst(int l, int r, F &&pred) {
+    int findFirst(int l, int r, const F &pred) {
         return findFirst(1, 0, n, l, r, pred);
     }
     template <class F>
-    int findLast(int p, int l, int r, int x, int y, F &&pred) {
+    int findLast(int p, int l, int r, int x, int y, const F &pred) {
         if (l >= y || r <= x) {
             return -1;
         }
@@ -125,6 +128,7 @@ struct LazySegmentTree {
         if (r - l == 1) {
             return l;
         }
+        push(p);
         int m = (l + r) / 2;
         int res = findLast(2 * p + 1, m, r, x, y, pred);
         if (res == -1) {
@@ -133,38 +137,20 @@ struct LazySegmentTree {
         return res;
     }
     template <class F>
-    int findLast(int l, int r, F &&pred) {
+    int findLast(int l, int r, const F &pred) {
         return findLast(1, 0, n, l, r, pred);
     }
 };
 
-constexpr i64 inf = 1e18;
-
 struct Tag {
-    i64 add = 0;
     void apply(const Tag &t) {
-        add += t.add;
     }
 };
 
 struct Info {
-    i64 min = inf;
-    i64 max = -inf;
-    i64 sum = 0;
-    i64 act = 0;
-
     void apply(const Tag &t) {
-        min += t.add;
-        max += t.add;
-        sum += act * t.add;
     }
 };
 
-constexpr Info operator+(const Info &a, const Info &b) {
-    Info c;
-    c.min = std::min(a.min, b.min);
-    c.max = std::max(a.max, b.max);
-    c.sum = a.sum + b.sum;
-    c.act = a.act + b.act;
-    return c;
+Info operator+(const Info &a, const Info &b) {
 }
