@@ -373,7 +373,4 @@ std::vector<Point<T>> hp(std::vector<Line<T>> lines) {
     return std::vector(ps.begin(), ps.end());
 }
 
-using real = long double;
-using P = Point<real>;
-
-constexpr real eps = 0;
+using P = Point<double>;
