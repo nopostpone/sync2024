@@ -5,6 +5,8 @@
 
 **akiba.cpp
 
+*.bat
+*.ps1
 *.exe
 *.ini
 oo.in
