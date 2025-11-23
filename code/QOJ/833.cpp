@@ -27,7 +27,7 @@ int main() {
         }
     }
 
-    vector f(n, basic_string(m, false));
+    vector f(n, basic_string(m, false)); // (0, 0) -> (x, y) ?
     f[0][0] = s[0][0];
     for (int i = 1; i < n; i++) {
         f[i][0] = f[i - 1][0] & s[i][0];
@@ -47,7 +47,7 @@ int main() {
         return 0;
     }
 
-    vector g(n, basic_string(m, false));
+    vector g(n, basic_string(m, false)); // (x, y) -> (n - 1, m - 1) ?
     g[n - 1][m - 1] = s[n - 1][m - 1];
     for (int i = n - 1; i >= 1; i--) {
         g[i - 1][m - 1] = g[i][m - 1] & s[i - 1][m - 1];
@@ -63,7 +63,7 @@ int main() {
 
     int t = n + m - 1;
 
-    vector<pair<int, int>> pl(t), pr(t);
+    vector<pair<int, int>> pl(t), pr(t); // leftmost/rightmost path
     vector visl(n, basic_string(m, false)), visr(visl);
 
     for (int i = t - 1, x = n - 1, y = m - 1; i >= 0; i--) {
@@ -92,8 +92,6 @@ int main() {
         visl[x][y] = true;
     }
 
-    // 1. intersection point + not intersection point
-    // 2. intersection point + intersection point
     i64 ans = (i64)sum * (tot - sum) + (i64)sum * (sum - 1) / 2;
 
     for (auto [x, y] : pl) {
@@ -101,6 +99,8 @@ int main() {
             continue;
         }
 
+        // if not intersect, then
+        // find the second point s.t. (u + v == x + y) and (u, v) is on one path
         int u = x - 1, v = y + 1;
         while (not f[u][v] or not g[u][v]) {
             u--;
