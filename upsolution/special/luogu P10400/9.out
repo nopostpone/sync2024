@@ -1,0 +1,19 @@
+18
+dec 2
+dec 2
+assign 4 2
+dec 4
+dec 4
+dec 1
+dec 1
+dec 1
+dec 1
+assign 3 1
+dec 3
+iftry 3 goto 6
+new 5
+dec 1
+dec 1
+ifeq 1 4 goto 13
+new 5
+ifeq 1 2 goto 13

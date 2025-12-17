@@ -1,0 +1,30 @@
+# LaTeX core
+*.aux
+*.log
+*.out
+*.toc
+*.lof
+*.lot
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+
+# Bibliography
+*.bbl
+*.blg
+
+# LaTeXmk
+latexmkrc
+*.run.xml
+
+# Temporary / backups
+*.tmp
+*.bak
+*~
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# Font
+fonts

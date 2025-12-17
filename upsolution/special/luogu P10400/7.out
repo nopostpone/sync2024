@@ -1,0 +1,15 @@
+14
+dec 2
+dec 2
+assign 3 2
+assign 4 6
+dec 2
+dec 4
+ifneq 3 4 goto 5
+new 5
+assign 3 1
+assign 4 6
+dec 3
+dec 4
+ifneq 2 4 goto 11
+iftry 3 goto 3

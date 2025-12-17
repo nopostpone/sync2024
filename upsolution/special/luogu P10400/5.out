@@ -1,0 +1,11 @@
+10
+assign 2 1
+dec 2
+dec 2
+assign 3 1
+dec 3
+new 4
+iftry 3 goto 5
+dec 2
+ifneq 2 5 goto 4
+new 1

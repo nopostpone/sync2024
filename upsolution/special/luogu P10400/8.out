@@ -1,0 +1,8 @@
+7
+assign 2 1
+dec 1
+dec 1
+iftry 1 goto 1
+dec 2
+new 3
+iftry 2 goto 5
