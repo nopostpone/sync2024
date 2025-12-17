@@ -89,234 +89,234 @@ ref: jiangly, skip2004, zeemanz, capps
 
 
 \textbf{\color{red}{Attention}}: 0-indexed, $[l, r)$.
-\tableofcontents
-
-\begin{figure}[h]
-    \raggedleft
-    \includegraphics[width=0.1\textwidth]{./pic/jiangly.jpg}
-    \label{}
-\end{figure}
-
-\newpage
-
-% ==================== 1 ds ====================
-\section{Data Structure}
-
-\subsection{Disjoint Set Union}
-\lstinputlisting{src/data-structure/DisjointSetUnion.cpp}
-
-\subsection{Fenwick Tree}
-\lstinputlisting{src/data-structure/FenwickTree.cpp}
-
-\subsection{Lazy Segment Tree}
-\lstinputlisting{src/data-structure/LazySegmentTree.cpp}
-
-\subsection{Sparse Table}
-\lstinputlisting{src/data-structure/SparseTable.cpp}
-
-\subsection{Mo}
-\lstinputlisting{src/data-structure/Mo.cpp}
-
-\subsection{Cartesian Tree}
-\lstinputlisting{src/data-structure/CartesianTree.cpp}
-
-\subsection{Lichao Segment Tree}
-\lstinputlisting{src/data-structure/LiChaoSegmentTree.cpp}
-
-% ==================== 2 math ====================
-\section{Math}
-
-\subsection{Formula}
-
-\begin{itemize}
-    \item Ex Euler's Theorem:
-
-    $$
-    a^b\equiv
-    \begin{cases}
-        a^{b\bmod {\varphi(m)}} ,&\gcd(a, b) = 1\\
-        a^{\left(b\bmod {\varphi(m)}\right)+\varphi(m)}, &\gcd(a, b) \neq 1,b \geq \varphi(m)
-    \end{cases} \pmod m
-    $$
-
-    \item Euclidean algorithm: $\gcd(a, b) = \gcd(b, a\bmod b)$
-
-    \item Binomial Inversion
-
-    $f(n) = |\bigcap_{1\leq i \leq n} A_i|, g(n) = |\bigcap_{1\leq i \leq n} A_i^C|$
-
-    $$
-    \begin{aligned}
-    f(n)&=\sum_{i=0}^n(-1)^i\binom{n}{i}g(i)\\
-    g(n)&=\sum_{i=0}^n(-1)^i\binom{n}{i}f(i)\\
-    f(n)&=\sum_{i=0}^n\binom{n}{i}h(i)\\
-    h(n)&=\sum_{i=0}^n(-1)^{n-i}\binom{n}{i}f(i)
-    \end{aligned}
-    $$
-
-    $f(n)$: select at least $n$. $\leftrightarrow$  $g(n)$: select exactly $n$.
-
-    $$
-    \begin{aligned}
-    f(n)&=\sum_{i=n}^m\binom{i}{n}g(i)\\
-    g(n)&=\sum_{i=n}^m(-1)^{i-n}\binom{i}{n}f(i)
-    \end{aligned}
-    $$
-\end{itemize}
-
-\subsection{Exgcd}
-\lstinputlisting{./src/math/Exgcd.cpp}
-
-\subsection{Phi}
-\lstinputlisting{./src/math/Phi.cpp}
-
-\subsection{Sieve}
-\lstinputlisting{./src/math/Sieve.cpp}
-
-\subsection{Pollard's Rho}
-\lstinputlisting{./src/math/PollardRho.cpp}
-
-\subsection{Combination}
-\lstinputlisting{./src/math/Combination.cpp}
-
-\subsection{Linear Basis}
-\lstinputlisting{./src/math/LinearBasis.cpp}
-
-\subsection{Gaussian Elimination}
-\lstinputlisting{./src/math/GaussianElimination.cpp}
-
-
-\subsection{Polynomial}
-
-\subsubsection{Lagrange Interpolation}
-\lstinputlisting{./src/polynomial/Lagrange.cpp}
-
-\subsubsection{Number Theory Transform}
-\lstinputlisting{src/polynomial/NTT.cpp}
-\lstinputlisting{src/polynomial/Poly.cpp}
-
-\subsubsection{Fast Walsh Transform}
-\lstinputlisting{src/polynomial/FWT.cpp}
-
-\subsubsection{Sum of Subset}
-\lstinputlisting{src/polynomial/Sosdp.cpp}
-
-% ==================== 3 graph ====================
-
-\section{Graph}
-
-\subsection{Tree}
-\subsubsection{Lowest Common Ancestor}
-\lstinputlisting{./src/graph/tree/LCA.cpp}
-
-\subsubsection{Heavy-Light Decomposition}
-\lstinputlisting{./src/graph/tree/HeavyLightDecomposition.cpp}
-
-\subsubsection{DSU on Tree}
-\lstinputlisting{./src/graph/tree/DsuOnTree.cpp}
-
-\subsection{Connectivity}
-
-\subsubsection{Strongly Connected Component}
-\lstinputlisting{./src/graph/Connectivity/StronglyConnectedComponent.cpp}
-
-\subsubsection{Block Cut Tree}
-\lstinputlisting{./src/graph/Connectivity/BlockCutTree.cpp}
-
-\subsection{Two Sat}
-\lstinputlisting{./src/graph/TwoSat.cpp}
-
-% ==================== 4 string ====================
-
-\section{String}
-\subsection{String Hash}
-\lstinputlisting{src/string/StringHash.cpp}
-
-\subsection{KMP}
-\lstinputlisting{src/string/KMP.cpp}
-
-\subsection{Z-function}
-\lstinputlisting{src/string/Z-function.cpp}
-
-\subsection{AhoCorasick}
-\lstinputlisting{src/string/AhoCorasick.cpp}
-
-\subsection{Suffix Array}
-\lstinputlisting{src/string/SuffixArray.cpp}
-
-\subsection{Suffix Automaton}
-\lstinputlisting{src/string/SuffixAutomaton.cpp}
-
-\subsection{Palindromic Tree}
-\lstinputlisting{src/string/PalindromicTree.cpp}
-
-% ==================== 5 geometry ====================
-
-\section{Geometry}
-\lstinputlisting{src/geometry/2d.cpp}
-
-% ==================== 6 util ====================
-
-\section{Util}
-\subsection{Mod Integer}
-\lstinputlisting{src/util/Simplify ModInt.cpp}
-\lstinputlisting{src/util/ModInt.cpp}
-
-\subsection{Fraction}
-\lstinputlisting{src/util/Fraction.cpp}
-
-\section{Tables}
-\subsection{Constant}
-
-\begin{table}[H]
-    \centering
-    \begin{tabular}{c c c c c c}
-    \toprule
-    \( n \) & \(\log_{10} n\) & \(n!\) & \(C(n, n/2)\) & \(\text{LCM}(1\dots n)\) & \(P_n\) \\
-    \midrule
-    2    & 0.30102999   & 2    & 2    & 2    & 2    \\
-    3    & 0.47712125   & 6    & 3    & 6    & 3    \\
-    4    & 0.60205999   & 24    & 6    & 12    & 5    \\
-    5    & 0.69897000   & 120    & 10    & 60    & 7    \\
-    6    & 0.77815125   & 720    & 20    & 60    & 11    \\
-    7    & 0.84509804   & 5040    & 35    & 420    & 15    \\
-    8    & 0.90308998   & 40320    & 70    & 840    & 22    \\
-    9    & 0.95424251   & 362880    & 126    & 2520    & 30    \\
-    10    & 1    & 3628800    & 252    & 2520    & 42    \\
-    11    & 1.04139269   & 39916800   & 462    & 27720    & 56    \\
-    12    & 1.07918125   & 479001600   & 924    & 27720    & 77    \\
-    15    & 1.17609126   & \(1.31\times 10^{12}\)    & 6435    & 360360    & 176    \\
-    20    & 1.30103000   & \(2.43\times 10^{18}\)    & 184756    & 232792560    & 627    \\
-    25    & 1.39794001   & \(1.55\times 10^{25}\)    & 5200300    & 26771144400    & 1958    \\
-    30    & 1.47712125   & \(2.65\times 10^{32}\)    & 155117520    & \(1.444\times 10^{14}\)    & 5604    \\
-    \bottomrule
-    \end{tabular}
-    \end{table}
-    
-    \begin{table}[H]
-    \centering
-    \begin{tabular}{c c c c c c c}
-    \toprule
-    \( n \leq \) & 10    & 100    & \(10^3\)    & \(10^4\)    & \(10^5\)    & \(10^6\)    \\
-    \midrule
-    \(\max \omega(n)\) & 2    & 3    & 4    & 5    & 6    & 7    \\
-    \(\max d(n)\) & 4    & 12    & 32    & 64    & 128    & 240    \\
-    \(\pi(n)\) & 4    & 25    & 168    & 1229    & 9592    & 78498    \\
-    \midrule
-    \( n \leq \) & \(10^7\)    & \(10^8\)    & \(10^9\)    & \(10^{10}\)    & \(10^{11}\)    & \(10^{12}\)    \\
-    \midrule
-    \(\max \omega(n)\) & 8    & 8    & 9    & 10    & 10    & 11    \\
-    \(\max d(n)\) & 448    & 768    & 1344    & 2304    & 4032    & 6720    \\
-    \(\pi(n)\) & 664579    & 5761455   & \(5.08\times 10^7\)    & \(4.55\times 10^8\)    & \(4.12\times 10^9\)    & \(3.7\times 10^{10}\)    \\
-    \midrule
-    \( n \leq \) & \(10^{13}\)    & \(10^{14}\)    & \(10^{15}\)    & \(10^{16}\)    & \(10^{17}\)    & \(10^{18}\)    \\
-    \midrule
-    \(\max \omega(n)\) & 12    & 12    & 13    & 13    & 14    & 15    \\
-    \(\max d(n)\) & 10752    & 17280    & 26880    & 41472    & 64512    & 103680    \\
-    \bottomrule
-    \end{tabular}
-    \end{table}
-
-    Prime number theorem: \(\pi(x) \sim x/\log(x)\)
-
+	\tableofcontents
+	
+	\begin{figure}[h]
+		\raggedleft
+		\includegraphics[width=0.1\textwidth]{./pic/jiangly.jpg}
+		\label{}
+	\end{figure}
+	
+	\newpage
+	
+	% ==================== 1 ds ====================
+	\section{Data Structure}
+	
+	\subsection{Disjoint Set Union}
+	\lstinputlisting{src/data-structure/DisjointSetUnion.cpp}
+	
+	\subsection{Fenwick Tree}
+	\lstinputlisting{src/data-structure/FenwickTree.cpp}
+	
+	\subsection{Lazy Segment Tree}
+	\lstinputlisting{src/data-structure/LazySegmentTree.cpp}
+	
+	\subsection{Sparse Table}
+	\lstinputlisting{src/data-structure/SparseTable.cpp}
+	
+	\subsection{Mo}
+	\lstinputlisting{src/data-structure/Mo.cpp}
+	
+	\subsection{Cartesian Tree}
+	\lstinputlisting{src/data-structure/CartesianTree.cpp}
+	
+	\subsection{Lichao Segment Tree}
+	\lstinputlisting{src/data-structure/LiChaoSegmentTree.cpp}
+	
+	% ==================== 2 math ====================
+	\section{Math}
+	
+	\subsection{Formula}
+	
+	\begin{itemize}
+		\item Ex Euler's Theorem:
+		      
+		      $$
+		      a^b\equiv
+		      \begin{cases}
+		      	a^{b\bmod {\varphi(m)}} ,                        & \gcd(a, b) = 1                      \\
+		      	a^{\left(b\bmod {\varphi(m)}\right)+\varphi(m)}, & \gcd(a, b) \neq 1,b \geq \varphi(m) 
+		      \end{cases} \pmod m
+		      $$
+		      
+		\item Euclidean algorithm: $\gcd(a, b) = \gcd(b, a\bmod b)$
+		      
+		\item Binomial Inversion
+		      
+		      $f(n) = |\bigcap_{1\leq i \leq n} A_i|, g(n) = |\bigcap_{1\leq i \leq n} A_i^C|$
+		      
+		      $$
+		      \begin{aligned}
+		      	f(n) & =\sum_{i=0}^n(-1)^i\binom{n}{i}g(i)     \\
+		      	g(n) & =\sum_{i=0}^n(-1)^i\binom{n}{i}f(i)     \\
+		      	f(n) & =\sum_{i=0}^n\binom{n}{i}h(i)           \\
+		      	h(n) & =\sum_{i=0}^n(-1)^{n-i}\binom{n}{i}f(i) 
+		      \end{aligned}
+		      $$
+		      
+		      $f(n)$: select at least $n$. $\leftrightarrow$  $g(n)$: select exactly $n$.
+		      
+		      $$
+		      \begin{aligned}
+		      	f(n) & =\sum_{i=n}^m\binom{i}{n}g(i)           \\
+		      	g(n) & =\sum_{i=n}^m(-1)^{i-n}\binom{i}{n}f(i) 
+		      \end{aligned}
+		      $$
+	\end{itemize}
+	
+	\subsection{Exgcd}
+	\lstinputlisting{./src/math/Exgcd.cpp}
+	
+	\subsection{Phi}
+	\lstinputlisting{./src/math/Phi.cpp}
+	
+	\subsection{Sieve}
+	\lstinputlisting{./src/math/Sieve.cpp}
+	
+	\subsection{Pollard's Rho}
+	\lstinputlisting{./src/math/PollardRho.cpp}
+	
+	\subsection{Combination}
+	\lstinputlisting{./src/math/Combination.cpp}
+	
+	\subsection{Linear Basis}
+	\lstinputlisting{./src/math/LinearBasis.cpp}
+	
+	\subsection{Gaussian Elimination}
+	\lstinputlisting{./src/math/GaussianElimination.cpp}
+	
+	
+	\subsection{Polynomial}
+	
+	\subsubsection{Lagrange Interpolation}
+	\lstinputlisting{./src/polynomial/Lagrange.cpp}
+	
+	\subsubsection{Number Theory Transform}
+	\lstinputlisting{src/polynomial/NTT.cpp}
+	\lstinputlisting{src/polynomial/Poly.cpp}
+	
+	\subsubsection{Fast Walsh Transform}
+	\lstinputlisting{src/polynomial/FWT.cpp}
+	
+	\subsubsection{Sum of Subset}
+	\lstinputlisting{src/polynomial/Sosdp.cpp}
+	
+	% ==================== 3 graph ====================
+	
+	\section{Graph}
+	
+	\subsection{Tree}
+	\subsubsection{Lowest Common Ancestor}
+	\lstinputlisting{./src/graph/tree/LCA.cpp}
+	
+	\subsubsection{Heavy-Light Decomposition}
+	\lstinputlisting{./src/graph/tree/HeavyLightDecomposition.cpp}
+	
+	\subsubsection{DSU on Tree}
+	\lstinputlisting{./src/graph/tree/DsuOnTree.cpp}
+	
+	\subsection{Connectivity}
+	
+	\subsubsection{Strongly Connected Component}
+	\lstinputlisting{./src/graph/Connectivity/StronglyConnectedComponent.cpp}
+	
+	\subsubsection{Block Cut Tree}
+	\lstinputlisting{./src/graph/Connectivity/BlockCutTree.cpp}
+	
+	\subsection{Two Sat}
+	\lstinputlisting{./src/graph/TwoSat.cpp}
+	
+	% ==================== 4 string ====================
+	
+	\section{String}
+	\subsection{String Hash}
+	\lstinputlisting{src/string/StringHash.cpp}
+	
+	\subsection{KMP}
+	\lstinputlisting{src/string/KMP.cpp}
+	
+	\subsection{Z-function}
+	\lstinputlisting{src/string/Z-function.cpp}
+	
+	\subsection{AhoCorasick}
+	\lstinputlisting{src/string/AhoCorasick.cpp}
+	
+	\subsection{Suffix Array}
+	\lstinputlisting{src/string/SuffixArray.cpp}
+	
+	\subsection{Suffix Automaton}
+	\lstinputlisting{src/string/SuffixAutomaton.cpp}
+	
+	\subsection{Palindromic Tree}
+	\lstinputlisting{src/string/PalindromicTree.cpp}
+	
+	% ==================== 5 geometry ====================
+	
+	\section{Geometry}
+	\lstinputlisting{src/geometry/2d.cpp}
+	
+	% ==================== 6 util ====================
+	
+	\section{Util}
+	\subsection{Mod Integer}
+	\lstinputlisting{src/util/Simplify ModInt.cpp}
+	\lstinputlisting{src/util/ModInt.cpp}
+	
+	\subsection{Fraction}
+	\lstinputlisting{src/util/Fraction.cpp}
+	
+	\section{Tables}
+	\subsection{Constant}
+	
+	\begin{table}[H]
+		\centering
+		\begin{tabular}{c c c c c c}
+			\toprule
+			\( n \) & \(\log_{10} n\) & \(n!\)                 & \(C(n, n/2)\) & \(\text{LCM}(1\dots n)\) & \(P_n\) \\
+			\midrule
+			2       & 0.30102999      & 2                      & 2             & 2                        & 2       \\
+			3       & 0.47712125      & 6                      & 3             & 6                        & 3       \\
+			4       & 0.60205999      & 24                     & 6             & 12                       & 5       \\
+			5       & 0.69897000      & 120                    & 10            & 60                       & 7       \\
+			6       & 0.77815125      & 720                    & 20            & 60                       & 11      \\
+			7       & 0.84509804      & 5040                   & 35            & 420                      & 15      \\
+			8       & 0.90308998      & 40320                  & 70            & 840                      & 22      \\
+			9       & 0.95424251      & 362880                 & 126           & 2520                     & 30      \\
+			10      & 1               & 3628800                & 252           & 2520                     & 42      \\
+			11      & 1.04139269      & 39916800               & 462           & 27720                    & 56      \\
+			12      & 1.07918125      & 479001600              & 924           & 27720                    & 77      \\
+			15      & 1.17609126      & \(1.31\times 10^{12}\) & 6435          & 360360                   & 176     \\
+			20      & 1.30103000      & \(2.43\times 10^{18}\) & 184756        & 232792560                & 627     \\
+			25      & 1.39794001      & \(1.55\times 10^{25}\) & 5200300       & 26771144400              & 1958    \\
+			30      & 1.47712125      & \(2.65\times 10^{32}\) & 155117520     & \(1.444\times 10^{14}\)  & 5604    \\
+			\bottomrule
+		\end{tabular}
+	\end{table}
+	    
+	\begin{table}[H]
+		\centering
+		\begin{tabular}{c c c c c c c}
+			\toprule
+			\( n \leq \)       & 10          & 100         & \(10^3\)            & \(10^4\)            & \(10^5\)            & \(10^6\)              \\
+			\midrule
+			\(\max \omega(n)\) & 2           & 3           & 4                   & 5                   & 6                   & 7                     \\
+			\(\max d(n)\)      & 4           & 12          & 32                  & 64                  & 128                 & 240                   \\
+			\(\pi(n)\)         & 4           & 25          & 168                 & 1229                & 9592                & 78498                 \\
+			\midrule
+			\( n \leq \)       & \(10^7\)    & \(10^8\)    & \(10^9\)            & \(10^{10}\)         & \(10^{11}\)         & \(10^{12}\)           \\
+			\midrule
+			\(\max \omega(n)\) & 8           & 8           & 9                   & 10                  & 10                  & 11                    \\
+			\(\max d(n)\)      & 448         & 768         & 1344                & 2304                & 4032                & 6720                  \\
+			\(\pi(n)\)         & 664579      & 5761455     & \(5.08\times 10^7\) & \(4.55\times 10^8\) & \(4.12\times 10^9\) & \(3.7\times 10^{10}\) \\
+			\midrule
+			\( n \leq \)       & \(10^{13}\) & \(10^{14}\) & \(10^{15}\)         & \(10^{16}\)         & \(10^{17}\)         & \(10^{18}\)           \\
+			\midrule
+			\(\max \omega(n)\) & 12          & 12          & 13                  & 13                  & 14                  & 15                    \\
+			\(\max d(n)\)      & 10752       & 17280       & 26880               & 41472               & 64512               & 103680                \\
+			\bottomrule
+		\end{tabular}
+	\end{table}
+	
+	Prime number theorem: \(\pi(x) \sim x/\log(x)\)
+	
 \end{document}
