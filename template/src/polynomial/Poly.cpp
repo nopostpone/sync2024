@@ -1,31 +1,28 @@
-// with ModIntBase
-std::vector<int> rev;
-template <u32 P>
-std::vector<ModInt<P>> roots{0, 1};
+constexpr int P = 998244353;
 
-template <u32 P>
-constexpr ModInt<P> findPrimitiveRoot() {
-    ModInt<P> i = 2;
-    int k = __builtin_ctz((int)P - 1);
-    while (true) {
-        if (power(i, (P - 1) / 2) != 1) {
-            break;
-        }
-        i += 1;
+constexpr int norm(int x) {
+    if (x >= P) {
+        x -= P;
     }
-    return power(i, (P - 1) >> k);
+    if (x < 0) {
+        x += P;
+    }
+    return x;
+}
+constexpr int power(int a, i64 b) {
+    int res = 1;
+    for (; b; b /= 2, a = 1ll * a * a % P) {
+        if (b % 2) {
+            res = 1ll * res * a % P;
+        }
+    }
+    return res;
 }
 
-template <u32 P>
-constexpr ModInt<P> primitiveRoot = findPrimitiveRoot<P>();
+std::vector<int> rev, roots{0, 1};
 
-template <>
-constexpr ModInt<998244353> primitiveRoot<998244353>{31};
-
-template <u32 P>
-constexpr void dft(std::vector<ModInt<P>> &a) {
+void dft(std::vector<int> &a) {
     int n = a.size();
-
     if (int(rev.size()) != n) {
         int k = __builtin_ctz(n) - 1;
         rev.resize(n);
@@ -33,423 +30,178 @@ constexpr void dft(std::vector<ModInt<P>> &a) {
             rev[i] = rev[i >> 1] >> 1 | (i & 1) << k;
         }
     }
-
     for (int i = 0; i < n; i++) {
         if (rev[i] < i) {
             std::swap(a[i], a[rev[i]]);
         }
     }
-
-    if (roots<P>.size() < n) {
-        int k = __builtin_ctz(roots<P>.size());
-        roots<P>.resize(n);
+    if (roots.size() < n) {
+        int k = __builtin_ctz(roots.size());
+        roots.resize(n);
         while ((1 << k) < n) {
-            auto e = power(primitiveRoot<P>, 1 << (__builtin_ctz(P - 1) - k - 1));
+            int e = power(31, 1 << (__builtin_ctz(P - 1) - k - 1));
             for (int i = 1 << (k - 1); i < (1 << k); i++) {
-                roots<P>[2 * i] = roots<P>[i];
-                roots<P>[2 * i + 1] = roots<P>[i] * e;
+                roots[2 * i] = roots[i];
+                roots[2 * i + 1] = 1LL * roots[i] * e % P;
             }
             k++;
         }
     }
+
     for (int k = 1; k < n; k *= 2) {
         for (int i = 0; i < n; i += 2 * k) {
             for (int j = 0; j < k; j++) {
-                ModInt<P> u = a[i + j];
-                ModInt<P> v = a[i + j + k] * roots<P>[k + j];
-                a[i + j] = u + v;
-                a[i + j + k] = u - v;
+                int u = a[i + j];
+                int v = 1LL * a[i + j + k] * roots[k + j] % P;
+                a[i + j] = (u + v) % P;
+                a[i + j + k] = (u - v) % P;
             }
         }
     }
 }
 
-template <u32 P>
-constexpr void idft(std::vector<ModInt<P>> &a) {
+void idft(std::vector<int> &a) {
     int n = a.size();
     std::reverse(a.begin() + 1, a.end());
     dft(a);
-    ModInt<P> inv = (1 - (int)P) / n;
+    int inv = (1 - P) / n;
     for (int i = 0; i < n; i++) {
-        a[i] *= inv;
+        a[i] = 1ll * a[i] * inv % P;
     }
 }
 
-template <int P = 998244353>
-struct Poly : public std::vector<ModInt<P>> {
-    using V = ModInt<P>;
+using Poly = std::vector<int>;
 
-    Poly() : std::vector<V>() {}
-    explicit constexpr Poly(int n) : std::vector<V>(n) {}
-
-    explicit constexpr Poly(const std::vector<V> &a) : std::vector<V>(a) {}
-    constexpr Poly(const std::initializer_list<V> &a) : std::vector<V>(a) {}
-
-    template <class InputIt, class = std::_RequireInputIter<InputIt>>
-    explicit constexpr Poly(InputIt first, InputIt last) : std::vector<V>(first, last) {}
-
-    template <class F>
-    explicit constexpr Poly(int n, F f) : std::vector<V>(n) {
-        for (int i = 0; i < n; i++) {
-            (*this)[i] = f(i);
-        }
+Poly shift(Poly a, int k) {
+    if (k >= 0) {
+        a.insert(a.begin(), k, 0);
+        return a;
+    } else if (a.size() <= -k) {
+        return Poly();
+    } else {
+        return Poly(a.begin() - k, a.end());
     }
+}
+Poly trunc(Poly a, int k) {
+    a.resize(k);
+    return a;
+}
 
-    constexpr Poly shift(int k) const {
-        if (k >= 0) {
-            auto b = *this;
-            b.insert(b.begin(), k, 0);
-            return b;
-        } else if (this->size() <= -k) {
-            return Poly();
-        } else {
-            return Poly(this->begin() + (-k), this->end());
-        }
+Poly operator+(const Poly &a, const Poly &b) {
+    Poly res(std::max(a.size(), b.size()));
+    for (int i = 0; i < a.size(); i++) {
+        res[i] = a[i];
     }
-    constexpr Poly trunc(int k) const {
-        Poly f = *this;
-        f.resize(k);
-        return f;
+    for (int i = 0; i < b.size(); i++) {
+        res[i] = norm(res[i] + b[i]);
     }
-    constexpr friend Poly operator+(const Poly &a, const Poly &b) {
-        Poly res(std::max(a.size(), b.size()));
+    return res;
+}
+Poly operator-(const Poly &a, const Poly &b) {
+    Poly res(std::max(a.size(), b.size()));
+    for (int i = 0; i < a.size(); i++) {
+        res[i] = a[i];
+    }
+    for (int i = 0; i < b.size(); i++) {
+        res[i] = norm(res[i] - b[i]);
+    }
+    return res;
+}
+Poly operator-(const Poly &a) {
+    Poly res(a.size());
+    for (auto &x : res) {
+        x = -x;
+    }
+    return res;
+}
+Poly operator*(Poly a, Poly b) {
+    if (a.empty() or b.empty()) {
+        return Poly();
+    }
+    if (a.size() < b.size()) {
+        std::swap(a, b);
+    }
+    int n = 1;
+    int tot = a.size() + b.size() - 1;
+    while (n < tot) {
+        n *= 2;
+    }
+    if (b.size() < 128) {
+        Poly c(tot);
         for (int i = 0; i < a.size(); i++) {
-            res[i] += a[i];
-        }
-        for (int i = 0; i < b.size(); i++) {
-            res[i] += b[i];
-        }
-        return res;
-    }
-    constexpr friend Poly operator-(const Poly &a, const Poly &b) {
-        Poly res(std::max(a.size(), b.size()));
-        for (int i = 0; i < a.size(); i++) {
-            res[i] += a[i];
-        }
-        for (int i = 0; i < b.size(); i++) {
-            res[i] -= b[i];
-        }
-        return res;
-    }
-    constexpr friend Poly operator-(const Poly &a) {
-        std::vector<V> res(a.size());
-        for (int i = 0; i < int(res.size()); i++) {
-            res[i] = -a[i];
-        }
-        return Poly(res);
-    }
-    constexpr friend Poly operator*(Poly a, Poly b) {
-        if (a.size() == 0 || b.size() == 0) {
-            return Poly();
-        }
-        if (a.size() < b.size()) {
-            std::swap(a, b);
-        }
-        int n = 1, tot = a.size() + b.size() - 1;
-        while (n < tot) {
-            n *= 2;
-        }
-        if (((P - 1) & (n - 1)) != 0 || b.size() < 128) {
-            Poly c(a.size() + b.size() - 1);
-            for (int i = 0; i < a.size(); i++) {
-                for (int j = 0; j < b.size(); j++) {
-                    c[i + j] += a[i] * b[j];
-                }
+            for (int j = 0; j < b.size(); j++) {
+                c[i + j] = norm(c[i + j] + 1ll * a[i] * b[j] % P);
             }
-            return c;
         }
-        a.resize(n);
-        b.resize(n);
-        dft<P>(a);
-        dft<P>(b);
-        for (int i = 0; i < n; ++i) {
-            a[i] *= b[i];
-        }
-        idft<P>(a);
-        a.resize(tot);
-        return a;
+        return c;
     }
-    constexpr friend Poly operator*(V a, Poly b) {
-        for (int i = 0; i < int(b.size()); i++) {
-            b[i] *= a;
-        }
-        return b;
-    }
-    constexpr friend Poly operator*(Poly a, V b) {
-        for (int i = 0; i < int(a.size()); i++) {
-            a[i] *= b;
-        }
-        return a;
-    }
-    constexpr friend Poly operator/(Poly a, V b) {
-        for (int i = 0; i < int(a.size()); i++) {
-            a[i] /= b;
-        }
-        return a;
-    }
-    constexpr Poly &operator+=(Poly b) {
-        return (*this) = (*this) + b;
-    }
-    constexpr Poly &operator-=(Poly b) {
-        return (*this) = (*this) - b;
-    }
-    constexpr Poly &operator*=(Poly b) {
-        return (*this) = (*this) * b;
-    }
-    constexpr Poly &operator*=(V b) {
-        return (*this) = (*this) * b;
-    }
-    constexpr Poly &operator/=(V b) {
-        return (*this) = (*this) / b;
-    }
-    constexpr Poly deriv() const {
-        if (this->empty()) {
-            return Poly();
-        }
-        Poly res((int)this->size() - 1);
-        for (int i = 0; i < this->size() - 1; ++i) {
-            res[i] = (i + 1) * (*this)[i + 1];
-        }
-        return res;
-    }
-    constexpr Poly integr() const {
-        Poly res(this->size() + 1);
-        for (int i = 0; i < this->size(); ++i) {
-            res[i + 1] = (*this)[i] / (i + 1);
-        }
-        return res;
-    }
-    constexpr Poly inv(int m) const {
-        Poly x{(*this)[0].inv()};
-        int k = 1;
-        while (k < m) {
-            k *= 2;
-            x = (x * (Poly{2} - trunc(k) * x)).trunc(k);
-        }
-        return x.trunc(m);
-    }
-    constexpr Poly log(int m) const {
-        return (deriv() * inv(m)).integr().trunc(m);
-    }
-    constexpr Poly exp(int m) const {
-        Poly x{1};
-        int k = 1;
-        while (k < m) {
-            k *= 2;
-            x = (x * (Poly{1} - x.log(k) + trunc(k))).trunc(k);
-        }
-        return x.trunc(m);
-    }
-    constexpr Poly pow(int k, int m) const {
-        int i = 0;
-        while (i < this->size() && (*this)[i] == 0) {
-            i++;
-        }
-        if (i == this->size() || 1LL * i * k >= m) {
-            return Poly(m);
-        }
-        V v = (*this)[i];
-        auto f = shift(-i) * v.inv();
-        return (f.log(m - i * k) * k).exp(m - i * k).shift(i * k) * power(v, k);
-    }
-    constexpr Poly sqrt(int m) const {
-        Poly x{1};
-        int k = 1;
-        while (k < m) {
-            k *= 2;
-            x = (x + (trunc(k) * x.inv(k)).trunc(k)) * CInv<2, P>;
-        }
-        return x.trunc(m);
-    }
-    constexpr Poly mulT(Poly b) const {
-        if (b.size() == 0) {
-            return Poly();
-        }
-        int n = b.size();
-        std::reverse(b.begin(), b.end());
-        return ((*this) * b).shift(-(n - 1));
-    }
-    constexpr std::vector<V> eval(std::vector<V> x) const {
-        if (this->size() == 0) {
-            return std::vector<V>(x.size(), 0);
-        }
-        const int n = std::max(x.size(), this->size());
-        std::vector<Poly> q(4 * n);
-        std::vector<V> ans(x.size());
-        x.resize(n);
-        std::function<void(int, int, int)> build = [&](int p, int l, int r) {
-            if (r - l == 1) {
-                q[p] = Poly{1, -x[l]};
-            } else {
-                int m = (l + r) / 2;
-                build(2 * p, l, m);
-                build(2 * p + 1, m, r);
-                q[p] = q[2 * p] * q[2 * p + 1];
-            }
-        };
-        build(1, 0, n);
-        std::function<void(int, int, int, const Poly &)> work = [&](int p, int l, int r, const Poly &num) {
-            if (r - l == 1) {
-                if (l < int(ans.size())) {
-                    ans[l] = num[0];
-                }
-            } else {
-                int m = (l + r) / 2;
-                work(2 * p, l, m, num.mulT(q[2 * p + 1]).trunc(m - l));
-                work(2 * p + 1, m, r, num.mulT(q[2 * p]).trunc(r - m));
-            }
-        };
-        work(1, 0, n, mulT(q[1].inv(n)));
-        return ans;
-    }
-};
 
-template <int P = 998244353>
-Poly<P> berlekampMassey(const Poly<P> &s) {
-    Poly<P> c;
-    Poly<P> oldC;
-    int f = -1;
-    for (int i = 0; i < s.size(); i++) {
-        auto delta = s[i];
-        for (int j = 1; j <= c.size(); j++) {
-            delta -= c[j - 1] * s[i - j];
-        }
-        if (delta == 0) {
-            continue;
-        }
-        if (f == -1) {
-            c.resize(i + 1);
-            f = i;
-        } else {
-            auto d = oldC;
-            d *= -1;
-            d.insert(d.begin(), 1);
-            ModInt<P> df1 = 0;
-            for (int j = 1; j <= d.size(); j++) {
-                df1 += d[j - 1] * s[f + 1 - j];
-            }
-            assert(df1 != 0);
-            auto coef = delta / df1;
-            d *= coef;
-            Poly<P> zeros(i - f - 1);
-            zeros.insert(zeros.end(), d.begin(), d.end());
-            d = zeros;
-            auto temp = c;
-            c += d;
-            if (i - temp.size() > f - oldC.size()) {
-                oldC = temp;
-                f = i;
-            }
-        }
+    a.resize(n);
+    b.resize(n);
+    dft(a);
+    dft(b);
+    for (int i = 0; i < n; i++) {
+        a[i] = 1ll * a[i] * b[i] % P;
     }
-    c *= -1;
-    c.insert(c.begin(), 1);
-    return c;
+    idft(a);
+    a.resize(tot);
+    return std::move(a);
 }
 
-template <int P = 998244353>
-ModInt<P> linearRecurrence(Poly<P> p, Poly<P> q, i64 n) {
-    int m = q.size() - 1;
-    while (n > 0) {
-        auto newq = q;
-        for (int i = 1; i <= m; i += 2) {
-            newq[i] *= -1;
-        }
-        auto newp = p * newq;
-        newq = q * newq;
-        for (int i = 0; i < m; i++) {
-            p[i] = newp[i * 2 + n % 2];
-        }
-        for (int i = 0; i <= m; i++) {
-            q[i] = newq[i * 2];
-        }
-        n /= 2;
+Poly operator*(Poly a, int b) {
+    for (int i = 0; i < a.size(); i++) {
+        a[i] = 1ll * a[i] * b % P;
     }
-    return p[0] / q[0];
+    return a;
+}
+Poly operator/(Poly a, int b) {
+    const int invb = power(b, P - 2);
+    for (int i = 0; i < a.size(); i++) {
+        a[i] = 1ll * a[i] * invb % P;
+    }
+    return a;
 }
 
-struct Comb {
-    int n;
-    std::vector<Z> _fac;
-    std::vector<Z> _invfac;
-    std::vector<Z> _inv;
-
-    Comb() : n{0}, _fac{1}, _invfac{1}, _inv{0} {}
-    Comb(int n) : Comb() {
-        init(n);
+Poly deriv(const std::vector<int> &a) {
+    if (a.empty()) {
+        return Poly();
     }
-
-    void init(int m) {
-        m = std::min(m, (int)Z::mod() - 1);
-        if (m <= n)
-            return;
-        _fac.resize(m + 1);
-        _invfac.resize(m + 1);
-        _inv.resize(m + 1);
-
-        for (int i = n + 1; i <= m; i++) {
-            _fac[i] = _fac[i - 1] * i;
-        }
-        _invfac[m] = _fac[m].inv();
-        for (int i = m; i > n; i--) {
-            _invfac[i - 1] = _invfac[i] * i;
-            _inv[i] = _invfac[i] * _fac[i - 1];
-        }
-        n = m;
+    Poly res(a.size() - 1);
+    for (int i = 0; i < res.size(); i++) {
+        res[i] = 1ll * (i + 1) * a[i + 1] % P;
     }
-
-    Z fac(int m) {
-        if (m > n)
-            init(2 * m);
-        return _fac[m];
+    return res;
+}
+Poly integr(const std::vector<int> &a) {
+    Poly res(a.size() + 1);
+    for (int i = 0; i < a.size(); ++i) {
+        res[i + 1] = 1ll * a[i] * power(i + 1, P - 2) % P;
     }
-    Z invfac(int m) {
-        if (m > n)
-            init(2 * m);
-        return _invfac[m];
+    return res;
+}
+Poly inv(const std::vector<int> &a, int m) {
+    Poly x {power(a[0], P - 2)};
+    for (int k = 1; k < m;) {
+        k *= 2;
+        x = (x * (Poly {2} - trunc(a, k) * x));
+        x.resize(k);
     }
-    Z inv(int m) {
-        if (m > n)
-            init(2 * m);
-        return _inv[m];
+    x.resize(m);
+    return x;
+}
+Poly log(std::vector<int> a, int m) {
+    a = deriv(a) * inv(a, m);
+    a = integr(a);
+    a.resize(m);
+    return a;
+}
+Poly exp(std::vector<int> a, int m) {
+    Poly x {1};
+    for (int k = 1; k < m;) {
+        k *= 2;
+        x = (x * (Poly {1} - log(x, k) + trunc(a, k)));
+        x.resize(k);
     }
-    Z binom(int n, int m) {
-        if (n < m || m < 0)
-            return 0;
-        return fac(n) * invfac(m) * invfac(n - m);
-    }
-} comb;
-
-template <int P = 998244353>
-Poly<P> get(int n, int m) {
-    if (m == 0) {
-        return Poly(n + 1);
-    }
-    if (m % 2 == 1) {
-        auto f = get(n, m - 1);
-        Z p = 1;
-        for (int i = 0; i <= n; i++) {
-            f[n - i] += comb.binom(n, i) * p;
-            p *= m;
-        }
-        return f;
-    }
-    auto f = get(n, m / 2);
-    auto fm = f;
-    for (int i = 0; i <= n; i++) {
-        fm[i] *= comb.fac(i);
-    }
-    Poly pw(n + 1);
-    pw[0] = 1;
-    for (int i = 1; i <= n; i++) {
-        pw[i] = pw[i - 1] * (m / 2);
-    }
-    for (int i = 0; i <= n; i++) {
-        pw[i] *= comb.invfac(i);
-    }
-    fm = fm.mulT(pw);
-    for (int i = 0; i <= n; i++) {
-        fm[i] *= comb.invfac(i);
-    }
-    return f + fm;
+    x.resize(m);
+    return x;
 }

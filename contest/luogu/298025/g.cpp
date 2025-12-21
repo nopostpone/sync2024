@@ -40,8 +40,6 @@ int main() {
     }
     int st = find(busy.begin(), busy.end(), false) - busy.begin();
 
-    assert(st != n);
-    
     queue<int> q;
     q.push(st);
 
@@ -62,7 +60,6 @@ int main() {
                 continue;
             }
             nadj[x].push_back(y);
-            // cerr << x + 1 << " " << y + 1 << "\n";
             vis[y] = true;
 
             if (not busy[y]) {
@@ -80,15 +77,8 @@ int main() {
         return not v.empty();
     }) << "\n";
 
-    // cout << st + 1 << " ";
-    // cout << nadj[st].size() << " ";
-    // for (auto y : nadj[st]) {
-    //     cout << y + 1 << " \n"[y == nadj[st].back()];
-    // }
-
     for (auto x : ord) {
         if (not nadj[x].empty()) {
-            // assert(not busy[x]);
             cout << x + 1 << " " << nadj[x].size() << " ";
             for (auto y : nadj[x]) {
                 cout << y + 1 << " ";
@@ -96,17 +86,6 @@ int main() {
             cout << "\n";
         }
     }
-
-    // for (int x = 0; x < n; x++) {
-    //     if (not nadj[x].empty()) {
-    //         // assert(not busy[x]);
-    //         cout << x + 1 << " " << nadj[x].size() << " ";
-    //         for (auto y : nadj[x]) {
-    //             cout << y + 1 << " ";
-    //         }
-    //         cout << "\n";
-    //     }
-    // }
 
     return 0;
 }

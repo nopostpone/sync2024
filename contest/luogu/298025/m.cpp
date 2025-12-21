@@ -20,6 +20,7 @@ void solve() {
             fac.push_back(d);
         }
     }
+    d--;
     if (d * d == n) {
         d--;
     }

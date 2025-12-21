@@ -33,10 +33,6 @@ void solve() {
         ft[t[i]] = i;
     }
 
-    // for (int i = 0; i < m; i++) {
-    //     cerr << nxt[i] << " \n"[i == m - 1];
-    // }
-
     priority_queue<int, vector<int>, greater<>> q;
     {
         vector<bool> vis(n);
