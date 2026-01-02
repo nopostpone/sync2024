@@ -19,16 +19,22 @@ void solve() {
     int n;
     cin >> n;
 
+    bool found = false;
+
     [&](this auto &&self, int l, int r, i64 sum) -> void {
         if (r - l == 1) {
             cout << "! " << sum << endl;
+            found = true;
+        }
+
+        if (found) {
             return;
         }
         
-        int lo = l, hi = r;
+        int lo = l + 1, hi = r + 1;
         while (lo < hi) {
             int x = midpoint(lo, hi);
-            auto res = query(lo, x);
+            auto res = query(l, x);
             if (res >= sum / 2) {
                 hi = x;
             } else {
