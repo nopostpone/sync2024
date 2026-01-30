@@ -1,16 +1,8 @@
-#include <bits/stdc++.h>
-using namespace std;
-
-using i64 = long long;
 using Hash = array<int, 2>;
 
 constexpr int P = 998244353;
-constexpr Hash base = {567, 1234}; // any
-
-int main() {
-    ios::sync_with_stdio(false);
-    cin.tie(nullptr);
-
+constexpr Hash B = {567, 1234}; // any
+{
     string s;
     cin >> s;
 
@@ -20,8 +12,8 @@ int main() {
     p[0] = {1, 1};
     for (int j = 0; j < 2; j++) {
         for (int i = 0; i < n; i++) {
-            h[i + 1][j] = (i64(base[j]) * h[i][j] + s[i]) % P;
-            p[i + 1][j] = (i64(base[j]) * p[i][j]) % P;
+            h[i + 1][j] = (i64(B[j]) * h[i][j] + s[i]) % P;
+            p[i + 1][j] = (i64(B[j]) * p[i][j]) % P;
         }
     }
 
@@ -32,6 +24,4 @@ int main() {
         }
         return res;
     };
-
-    return 0;
 }

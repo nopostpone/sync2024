@@ -48,7 +48,7 @@ headheight=20pt, headsep=5pt, footskip=0pt]{geometry}
     \vskip 1em
     {\@date \par}
     \vskip 1em
-    {\textbf{v1.0} \textcolor{red}{$\bullet$}\textcolor{yellow}{$\bullet$}\textcolor{green}{$\bullet$}\textcolor{cyan}{$\bullet$}\textcolor{blue}{$\bullet$} \par}
+    {\textbf{v1.2} \textcolor{red}{$\bullet$}\textcolor{yellow}{$\bullet$}\textcolor{green}{$\bullet$}\textcolor{cyan}{$\bullet$}\textcolor{blue}{$\bullet$} \par}
     \vskip 1em
 }
 \makeatother
@@ -126,7 +126,7 @@ ref: jiangly, skip2004, zeemanz, capps
 	% ==================== 2 math ====================
 	\section{Math}
 	
-	\subsection{Formula}
+	\subsection{Formulas}
 	
 	\begin{itemize}
 		\item Ex Euler's Theorem:
@@ -148,20 +148,43 @@ ref: jiangly, skip2004, zeemanz, capps
 		      $$
 		      \begin{aligned}
 		      	f(n) & =\sum_{i=0}^n(-1)^i\binom{n}{i}g(i)     \\
-		      	g(n) & =\sum_{i=0}^n(-1)^i\binom{n}{i}f(i)     \\
-		      	f(n) & =\sum_{i=0}^n\binom{n}{i}h(i)           \\
-		      	h(n) & =\sum_{i=0}^n(-1)^{n-i}\binom{n}{i}f(i) 
+		      	g(n) & =\sum_{i=0}^n(-1)^i\binom{n}{i}f(i)
 		      \end{aligned}
 		      $$
-		      
-		      $f(n)$: select at least $n$. $\leftrightarrow$  $g(n)$: select exactly $n$.
+
+			  or
+			  
+			  $f(n)$: select \textbf{at most} $n$ $\leftrightarrow$  $g(n)$: select exactly $n$
+
+			  $$
+			  \begin{aligned}
+		      	f(n) & =\sum_{i=0}^n\binom{n}{i}g(i)           \\
+		      	g(n) & =\sum_{i=0}^n(-1)^{n-i}\binom{n}{i}f(i) 
+		      \end{aligned}
+			  $$
+
+		      $f(x)$: select \textbf{at least} $x$ $\leftrightarrow$  $g(x)$: select exactly $x$
 		      
 		      $$
 		      \begin{aligned}
-		      	f(n) & =\sum_{i=n}^m\binom{i}{n}g(i)           \\
-		      	g(n) & =\sum_{i=n}^m(-1)^{i-n}\binom{i}{n}f(i) 
+		      	f(x) & =\sum_{i=x}^n\binom{i}{x}g(i)           \\
+		      	g(x) & =\sum_{i=x}^n(-1)^{i-x}\binom{i}{x}f(i) 
 		      \end{aligned}
 		      $$
+
+		\item Stars and bars
+
+		\item Vandermonde Convolution
+			  $$
+			  \begin{aligned}
+				\sum_{i=0}^k \binom{n}{i}\binom{m}{k - i} &= \binom{n + m}{k} \\
+				\sum_{i=-r}^s \binom{n}{r + i}\binom{m}{s - i} &= \binom{n + m}{r + s} \\
+				\sum_{i=1}^n \binom{n}{i}\binom{n}{i - 1} &= \binom{2n}{n - 1} \\
+				\sum_{i=0}^n \binom{n}{i} ^2 &= \binom{2n}{n} \\
+				\sum_{i=0}^m \binom{n}{i}\binom{m}{i} &= \binom{n + m}{m}
+			  \end{aligned}
+			  $$
+
 	\end{itemize}
 	
 	\subsection{Exgcd}
@@ -252,13 +275,15 @@ ref: jiangly, skip2004, zeemanz, capps
 	% ==================== 5 geometry ====================
 	
 	\section{Geometry}
-	\lstinputlisting{src/geometry/2d.cpp}
+	\subsection{Vector2D}
+	\lstinputlisting{src/geometry/VectorBase.cpp}
+	\subsection{ConvexHull}
+	\lstinputlisting{src/geometry/ConvexHull.cpp}
 	
 	% ==================== 6 util ====================
 	
 	\section{Util}
 	\subsection{Mod Integer}
-	\lstinputlisting{src/util/Simplify ModInt.cpp}
 	\lstinputlisting{src/util/ModInt.cpp}
 	
 	\subsection{Fraction}

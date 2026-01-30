@@ -1,6 +1,8 @@
+using i64 = long long;
+
 constexpr int P = 998244353;
 
-constexpr int norm(int x) {
+int norm(int x) {
     if (x >= P) {
         x -= P;
     }
@@ -9,7 +11,7 @@ constexpr int norm(int x) {
     }
     return x;
 }
-constexpr int power(int a, i64 b) {
+int power(int a, i64 b) {
     int res = 1;
     for (; b; b /= 2, a = 1ll * a * a % P) {
         if (b % 2) {
@@ -83,8 +85,8 @@ Poly shift(Poly a, int k) {
     }
 }
 Poly trunc(Poly a, int k) {
-    a.resize(k);
-    return a;
+    k = std::min(k, (int)a.size());
+    return Poly(a.begin(), a.begin() + k);
 }
 
 Poly operator+(const Poly &a, const Poly &b) {
@@ -162,7 +164,7 @@ Poly operator/(Poly a, int b) {
     return a;
 }
 
-Poly deriv(const std::vector<int> &a) {
+Poly deriv(const Poly &a) {
     if (a.empty()) {
         return Poly();
     }
@@ -172,14 +174,14 @@ Poly deriv(const std::vector<int> &a) {
     }
     return res;
 }
-Poly integr(const std::vector<int> &a) {
+Poly integr(const Poly &a) {
     Poly res(a.size() + 1);
     for (int i = 0; i < a.size(); ++i) {
         res[i + 1] = 1ll * a[i] * power(i + 1, P - 2) % P;
     }
     return res;
 }
-Poly inv(const std::vector<int> &a, int m) {
+Poly inv(const Poly &a, int m) {
     Poly x {power(a[0], P - 2)};
     for (int k = 1; k < m;) {
         k *= 2;
@@ -189,13 +191,13 @@ Poly inv(const std::vector<int> &a, int m) {
     x.resize(m);
     return x;
 }
-Poly log(std::vector<int> a, int m) {
+Poly log(Poly a, int m) {
     a = deriv(a) * inv(a, m);
     a = integr(a);
     a.resize(m);
     return a;
 }
-Poly exp(std::vector<int> a, int m) {
+Poly exp(Poly a, int m) {
     Poly x {1};
     for (int k = 1; k < m;) {
         k *= 2;

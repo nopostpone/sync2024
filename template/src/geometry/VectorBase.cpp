@@ -1,11 +1,7 @@
-#include <bit/stdc++.h>
-using i64 = long long;
-
 // Point
-// Try to avoid using floating-point numbers.
 struct Point {
-    i64 x;
-    i64 y;
+    double x;
+    double y;
 
     Point operator-() const {
         return Point(-x, -y);
@@ -19,34 +15,32 @@ Point operator+(Point a, Point b) {
 Point operator-(Point a, Point b) {
     return Point(a.x + b.x, a.y + b.y);
 }
-Point operator*(i64 a, Point b) {
+Point operator*(double a, Point b) {
     return Point(a * b.x, a * b.y);
 }
-Point operator*(Point a, i64 b) {
+Point operator*(Point a, double b) {
     return b * a;
 }
 bool operator==(Point a, Point b) {
     return a.x == b.x and a.y == b.y;
 }
 
-i64 dot(const Point &a, const Point &b) {
+double dot(const Point &a, const Point &b) {
     return a.x * b.x + a.y * b.y;
 }
-i64 cross(const Point &a, const Point &b) {
+double cross(const Point &a, const Point &b) {
     return a.x * b.y - a.y * b.x;
 }
-i64 square(const Point &p) {
+double square(const Point &p) {
     return dot(p, p);
 }
 double length(const Point &p) {
     return std::sqrt(square(p));
 }
 
-// Division -> Floating Type Needed
 Point operator/(Point a, double b) {
     return Point(a.x / b, a.y / b);
 }
-// Direction vector
 Point normalize(Point p) {
     return p / length(p);
 }
@@ -56,7 +50,6 @@ struct Line {
     Point b;
 };
 
-// Line Operations
 double length(const Line &l) {
     return length(l.a - l.b);
 }
@@ -67,12 +60,9 @@ bool parallel(const Line &l1, const Line &l2) {
 double distance(const Point &a, const Point &b) {
     return length(a - b);
 }
-// NEED FLOATING
-// Point to Line
 double distancePL(const Point &p, const Line &l) {
     return std::abs(cross(l.a - l.b, l.a - p)) / length(l);
 }
-// Point to Segment
 double distancePS(const Point &p, const Line &l) {
     if (dot(p - l.a, l.b - l.a) < 0) {
         return distance(p, l.a);
@@ -83,11 +73,9 @@ double distancePS(const Point &p, const Line &l) {
     return distancePL(p, l);
 }
 
-// Counterclockwise 90 deg
 Point rotate(const Point &a) {
     return Point (-a.y, a.x);
 }
-
 int sgn(const Point &a) {
     return a.y > 0 or (a.y == 0 and a.x > 0) ? 1 : -1;
 }
@@ -104,7 +92,7 @@ bool pointOnSegment(const Point &p, const Line &l) {
         and std::min(l.a.y, l.b.y) <= p.y and p.y <= std::max(l.a.y, l.b.y);
 }
 // O(n)
-// Do not use this method if the polygon is a convex hull.
+// using O(log n) method if convex
 bool pointInPolygon(const Point &a, const std::vector<Point> &p) {
     int n = p.size();
     for (int i = 0; i < n; i++) {
@@ -125,7 +113,6 @@ bool pointInPolygon(const Point &a, const std::vector<Point> &p) {
     }
     return t == 1;
 }
-
 // 0 : not intersect
 // 1 : strictly intersect
 // 2 : overlap
@@ -187,4 +174,79 @@ double distanceSS(const Line &l1, const Line &l2) {
         return 0.0;
     }
     return std::min({distancePS(l1.a, l2), distancePS(l1.b, l2), distancePS(l2.a, l1), distancePS(l2.b, l1)});
+}
+
+bool segmentInPolygon(const Line &l, const std::vector<Point> &p) {
+    int n = p.size();
+    if (not pointInPolygon(l.a, p)) {
+        return false;
+    }
+    if (not pointInPolygon(l.b, p)) {
+        return false;
+    }
+    for (int i = 0; i < n; i++) {
+        auto u = p[i];
+        auto v = p[(i + 1) % n];
+        auto w = p[(i + 2) % n];
+        auto [t, p1, p2] = segmentIntersection(l, Line(u, v));
+        if (t == 1) {
+            return false;
+        }
+        if (t == 0) {
+            continue;
+        }
+        if (t == 2) {
+            if (pointOnSegment(v, l) and v != l.a and v != l.b) {
+                if (cross(v - u, w - v) > 0) {
+                    return false;
+                }
+            }
+        } else {
+            if (p1 != u and p1 != v) {
+                if (pointOnLineLeft(l.a, Line(v, u)) or 
+                    pointOnLineLeft(l.b, Line(v, u))) {
+                    return false;
+                }
+            } else if (p1 == v) {
+                if (l.a == v) {
+                    if (pointOnLineLeft(u, l)) {
+                        if (pointOnLineLeft(w, l) and
+                            pointOnLineLeft(w, Line(u, v))) {
+                            return false;
+                        }
+                    } else {
+                        if (pointOnLineLeft(w, l) or
+                            pointOnLineLeft(w, Line(u, v))) {
+                            return false;
+                        }
+                    }
+                } else if (l.b == v) {
+                    if (pointOnLineLeft(u, Line(l.b, l.a))) {
+                        if (pointOnLineLeft(w, Line(l.b, l.a)) and
+                            pointOnLineLeft(w, Line(u, v))) {
+                            return false;
+                        }
+                    } else {
+                        if (pointOnLineLeft(w, Line(l.b, l.a)) or
+                            pointOnLineLeft(w, Line(u, v))) {
+                            return false;
+                        }
+                    }
+                } else {
+                    if (pointOnLineLeft(u, l)) {
+                        if (pointOnLineLeft(w, Line(l.b, l.a)) or
+                            pointOnLineLeft(w, Line(u, v))) {
+                            return false;
+                        }
+                    } else {
+                        if (pointOnLineLeft(w, l) or
+                            pointOnLineLeft(w, Line(u, v))) {
+                            return false;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    return true;
 }
