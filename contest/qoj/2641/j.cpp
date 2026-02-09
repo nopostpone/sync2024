@@ -1,9 +1,14 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-using p32 = pair<int, int>;
+using u32 = unsigned;
+using i64 = long long;
+using u64 = unsigned long long;
 
-constexpr int B = 450;
+using i128 = __int128;
+using u128 = unsigned __int128;
+
+constexpr int B = 480;
 
 int main() {
     ios::sync_with_stdio(false);
@@ -12,114 +17,133 @@ int main() {
     int n, q, m;
     cin >> n >> q >> m;
 
-    vector<array<int, 2>> a(n);
+    vector<int> a(n);
     for (int i = 0; i < n; i++) {
-        cin >> a[i][0];
-        a[i][1] = i;
+        cin >> a[i];
     }
-    ranges::sort(a);
-
-    vector<int> p(n);
+    vector<int> ord(n);
+    ranges::iota(ord, 0);
+    ranges::sort(ord, [&](int i, int j) {
+        return a[i] < a[j];
+    });
+    vector<int> pa(n);
     for (int i = 0; i < n; i++) {
-        p[a[i][1]] = i;
+        pa[ord[i]] = i;
     }
-
-    const int nb = (n + B - 1) / B;
-    vector<vector<array<int, 4>>> ask(nb);
-
-    for (int i = 0; i < q; i++) {
-        int l, r, v;
-        cin >> l >> r >> v;
-        l--;
-        ask[l / B].push_back({l, r, v, i});
-    }
-
-    vector<int> nxt(n), prv(n);
-    for (int i = 0; i < n; i++) {
-        nxt[i] = (i + 1) % n;
-        prv[i] = (i + n - 1) % n;
-    }
-
-    vector<p32> e;
-    auto length = [m](const p32 &a) {
-        auto [l, r] = a;
-        if (l > r) {
-            return m + r - l;
+    auto dis = [&](int i, int j) {
+        if (pa[i] < pa[j]) {
+            return a[j] - a[i];
+        } else {
+            return a[j] - a[i] + m;
         }
-        return r - l;
     };
 
-    p32 max1 {}, max2 {};
+    array<int, 3> def {0, -1, -1};
+    array<int, 3> max1(def), max2(def);
 
-    auto update = [&](const p32 &cur) {
-        auto len = length(cur);
-        if (len >= length(max1)) {
+    auto update = [&](int l, int r) {
+        array<int, 3> cur {dis(l, r), l, r};
+        if (cur > max1) {
             max2 = max1;
             max1 = cur;
-        } else if (len > length(max2)) {
+        } else if (cur > max2) {
             max2 = cur;
         }
     };
 
-    for (int i = 0; i < n; i++) {
-        
-    }
-
-    vector<int> ans(q);
-
-    vector<int> his;
-    auto erase = [&](int i, bool flag) {
-        int j = p[i];
-
-        int l = prv[j];
-        int r = nxt[j];
-        nxt[l] = r;
-        nxt[r] = l;
-
-        update(pair(a[l][0], a[r][0]));
-
-        if (flag) {
-            his.push_back(j);
-        }
-    };
-    auto rollback = [&](int t) {
-        while (his.size() > t) {
-            int i = his.back();
-            his.pop_back();
-
-            int l = prv[i];
-            int r = nxt[i];
-
-            nxt[l] = i;
-            prv[r] = i;
-        }
-    };
-
+    vector<int> pre(n), nxt(n);
     for (int i = 0; i < n; i++) {
         int j = (i + 1) % n;
-        update(pair(a[i][0], a[j][0]));
+        pre[ord[j]] = ord[i];
+        nxt[ord[i]] = ord[j];
+
+        update(ord[i], ord[j]);
     }
 
-    for (int b = 0, p = 0; b < nb; b++) {
-        ranges::sort(ask[b], [](auto a, auto b) {
-            return a[1] > b[1];
-        });
-
+    const int nb = (n + B - 1) / B;
+    vector<vector<array<int, 4>>> ask(nb);
+    
+    for (int i = 0; i < q; i++) {
+        int l, r, v;
+        cin >> l >> r >> v;
+        l--;
         
+        ask[l / B].push_back({r, l, v, i});
     }
+    for (int i = 0; i < nb; i++) {
+        ranges::sort(ask[i], greater());
+    }
+    
+    auto del = [&](int x) {
+        for (int l : {pre[x], x}) {
+            if (max1[1] == l) {
+                max1 = def;
+            }
+            if (max2[1] == l) {
+                max2 = def;
+            }
+        }
+        if (max1[1] == -1) {
+            swap(max1, max2);
+        }
+        update(pre[x], nxt[x]);
+        pre[nxt[x]] = pre[x];
+        nxt[pre[x]] = nxt[x];
+    };
+    auto rollback = [&](int x) {
+        pre[nxt[x]] = x;
+        nxt[pre[x]] = x;
+    };
 
-    for (auto x : ans) {
-        cout << m - x << "\n";
+    vector<int> ans(q);
+    int pl = 0;
+    int pr = n;
+    for (int b = 0; b < nb; b++) {
+        auto exhis = array{max1, max2};
+        for (auto [r, l, v, i] : ask[b]) {            
+            while (pr > r) {
+                del(--pr);
+            }
+            auto his = array{max1, max2};
+            while (pl < l) {
+                del(pl++);
+            }
+
+            const auto &[d1, l1, r1] = max1;
+            if (pa[l1] < pa[r1]) {
+                if (v <= a[l1] or v >= a[r1]) {
+                    ans[i] = d1;
+                } else {
+                    ans[i] = max({max2[0], a[r1] - v, v - a[l1]});
+                }
+            } else {
+                if (v <= a[l1] and v >= a[r1]) {
+                    ans[i] = d1;
+                } else if (v > a[l1]) {
+                    ans[i] = max({max2[0], v - a[l1], a[r1] + m - v});
+                } else {
+                    ans[i] = max({max2[0], a[r1] - v, v + m - a[l1]});
+                }
+            }
+            ans[i] = m - ans[i];
+
+            while (pl > b * B) {
+                rollback(--pl);
+            }
+            max1 = his[0];
+            max2 = his[1];
+        }
+        while (pr < n) {
+            rollback(pr++);
+        }
+        max1 = exhis[0];
+        max2 = exhis[1];
+        while (pl < min(n, (b + 1) * B)) {
+            del(pl++);
+        }
+    }
+    
+    for (int i = 0; i < q; i++) {
+        cout << ans[i] << "\n";
     }
 }
-
-/*
-4 6 7
-2 0 2 5
-1 4 3
-2 4 6
-1 3 1
-1 3 5
-3 4 0
-3 3 2
-*/
