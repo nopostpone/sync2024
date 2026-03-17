@@ -62,19 +62,12 @@ void solve() {
         adj[u].push_back(v);
         adj[v].push_back(u);
     }
-
-    vector<bool> todo(n);
-    for (int i = 0; i < n; i++) {
-        if (not dsu.same(i, i + n)) {
-            todo[g.find(i)] = true;
-        }
-    }
-
-    int ans = 0; 
+    
+    int ans = 0;
 
     vector<bool> vis(n);
     for (int i = 0; i < n; i++) {
-        if (not todo[i]) {
+        if (dsu.same(i, i + n) or vis[i]) {
             continue;
         }
         int cnt[2] {};
