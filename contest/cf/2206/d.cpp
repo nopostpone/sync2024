@@ -124,7 +124,7 @@ void solve() {
     int n, q;
     cin >> n >> q;
     
-    vector<int> siz(n), top(n), dep(n), parent(n), in(n), out(n), seq(n);
+    vector<int> siz(n), top(n), parent(n), in(n), seq(n), bot(n);
     vector<vector<int>> adj(n);
     parent[0] = -1;
     
@@ -144,18 +144,19 @@ void solve() {
         siz[x] = 1;
 
         for (auto &y : adj[x]) {
-            dep[y] = dep[x] + 1;
             self(self, y);
             siz[x] += siz[y];
             if (siz[y] > siz[adj[x][0]]) {
                 std::swap(y, adj[x][0]);
             }
         }
+        bot[x] = adj[x].empty() ? x : bot[adj[x][0]];
     };
     dfs1(dfs1, 0);
     
     int cur = 0;
     vector<i64> f(n), s(n);
+    LazySegmentTree<Info, Tag> seg(n);
     auto dfs2 = [&](auto &&self, int x) -> void {
         in[x] = cur++;
         seq[in[x]] = x;
@@ -169,32 +170,14 @@ void solve() {
             }
             sum += f[y];
         }
+        seg.modify(in[x], {a[x], a[x], 1});
+        seg.rangeApply(in[x] + 1, in[bot[x]] + 1, {s[x]});
+
         f[x] = max(sum, (i64)a[x]);
-        out[x] = cur;
     };
     dfs2(dfs2, 0);
     
-    LazySegmentTree<Info, Tag> seg(n);
-    for (int i = 0; i < n; i++) {
-        seg.modify(in[i], {a[i], a[i], 1});
-    }
-
-    vector<int> bound(n);
-    for (int i = 0; i < n; i++) {
-        if (not adj[i].empty()) {
-            continue;
-        }
-        int r = in[i] + 1;
-        int l = in[top[i]];
-        
-        bound[l] = r;
-        
-        for (int j = l; j < r; j++) {
-            seg.rangeApply(j + 1, r, {s[seq[j]]});
-        }
-    }
-
-    cout << seg.rangeQuery(0, bound[0]).res << "\n";
+    cout << f[0] << "\n";
 
     for (int _ = 0; _ < q; _++) {
         int u, x;
@@ -203,22 +186,22 @@ void solve() {
 
         i64 d = x - a[u];
         int l = in[top[u]];
-        int r = bound[l];
+        int r = in[bot[u]] + 1;
 
-        i64 ds = -seg.rangeQuery(l, r).res;        
+        i64 ds = -f[seq[l]];
         seg.rangeApply(in[u], in[u] + 1, {d});
-        ds += seg.rangeQuery(l, r).res;
+        ds += f[seq[l]] = seg.rangeQuery(l, r).res;
         
         for (int v = parent[seq[l]]; v != -1; v = parent[seq[l]]) {
             l = in[top[v]];
-            r = bound[l];
-            i64 nds = -seg.rangeQuery(l, r).res;
+            r = in[bot[v]] + 1;
+            i64 nds = -f[seq[l]];
             seg.rangeApply(in[v] + 1, r, {ds});
-            nds += seg.rangeQuery(l, r).res;
+            nds += f[seq[l]] = seg.rangeQuery(l, r).res;
             ds = nds;
         }
 
-        cout << seg.rangeQuery(0, bound[0]).res << "\n";
+        cout << f[0] << "\n";
         a[u] = x;
     }
 }
