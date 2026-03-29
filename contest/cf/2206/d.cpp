@@ -184,12 +184,11 @@ void solve() {
         cin >> u >> x;
         u--;
 
-        i64 d = x - a[u];
         int l = in[top[u]];
         int r = in[bot[u]] + 1;
 
         i64 ds = -f[seq[l]];
-        seg.rangeApply(in[u], in[u] + 1, {d});
+        seg.rangeApply(in[u], in[u] + 1, {x - a[u]});
         ds += f[seq[l]] = seg.rangeQuery(l, r).res;
         
         for (int v = parent[seq[l]]; v != -1; v = parent[seq[l]]) {
