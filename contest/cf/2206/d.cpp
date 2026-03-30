@@ -104,20 +104,16 @@ struct Tag {
 
 struct Info {
     i64 res = 0;
-    i64 sum = 0;
-    i64 act = 0;
+
+    Info() {}
+    Info(i64 x) : res(x) {}
 
     void apply(const Tag &v) {
-        sum += v.add * act;
         res += v.add;
     }
 };
 Info operator+(const Info &a, const Info &b) {
-    Info c;
-    c.sum = a.sum + b.sum;
-    c.act = a.act + b.act;
-    c.res = max(a.res, b.res);
-    return c;
+    return {max(a.res, b.res)};
 }
 
 void solve() {
@@ -154,14 +150,14 @@ void solve() {
     };
     dfs1(dfs1, 0);
     
-    int cur = 0;
     vector<i64> f(n), s(n);
-    LazySegmentTree<Info, Tag> seg(n);
+
+    int cur = 0;
     auto dfs2 = [&](auto &&self, int x) -> void {
         in[x] = cur++;
         seq[in[x]] = x;
         i64 sum = 0;
-
+        
         for (auto y : adj[x]) {
             top[y] = y == adj[x][0] ? top[x] : y;
             self(self, y);
@@ -170,12 +166,18 @@ void solve() {
             }
             sum += f[y];
         }
-        seg.modify(in[x], {a[x], a[x], 1});
-        seg.rangeApply(in[x] + 1, in[bot[x]] + 1, {s[x]});
-
         f[x] = max(sum, (i64)a[x]);
     };
     dfs2(dfs2, 0);
+
+    vector<Info> init(n);
+    for (int i = 0; i < n; i++) {
+        init[in[i]] = a[i];
+    }
+    LazySegmentTree<Info, Tag> seg(init);
+    for (int i = 0; i < n; i++) {
+        seg.rangeApply(in[i] + 1, in[bot[i]] + 1, {s[i]});
+    }
     
     cout << f[0] << "\n";
 
