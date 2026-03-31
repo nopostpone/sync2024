@@ -10,7 +10,7 @@ using u128 = unsigned __int128;
 
 constexpr i64 inf = 1e18;
 
-constexpr int B = 800;
+constexpr int B = 631;
 
 template<class T, T e, class Cmp = std::less<T>>
 struct SparseTable {
@@ -115,11 +115,12 @@ int main() {
         }
         cout << ans << "\n";
     };
-
+    
     if (m <= B) {
         vector<SparseTable<i64, 0, greater<>>> rmq(m);
         for (int i = 0; i < m; i++) {
             vector<i64> init;
+            init.reserve((n + m - 1) / m);
             for (int j = i; j < n; j += m) {
                 init.push_back(w[j]);
             }
@@ -129,7 +130,7 @@ int main() {
             int l, r;
             cin >> l >> r;
             l--;
-    
+            
             if (r - l < m) {
                 cout << "unbounded\n";
                 continue;
@@ -140,13 +141,13 @@ int main() {
                 int tr = (r - 1 - i) / m + 1;
                 sum += rmq[i](tl, tr);
             }
-
+            
             ans(sum);
         }
     } else {
         const int k = (n + m - 1) / m;
         vector f(k, vector(k, vector(m + 1, i64())));
-
+        
         for (int i = 0; i < m; i++) {
             for (int l = 0; l < k; l++) {
                 if (l * m + i >= n) {
@@ -158,13 +159,6 @@ int main() {
                         cur = max(cur, w[r * m + i]);
                     }
                     f[l][r][i + 1] = cur;
-                }
-            }
-            for (int l = i; l < n; l += m) {
-                i64 cur = w[l];
-                for (int r = l; r < n; r += m) {
-                    cur = max(cur, w[r]);
-                    f[l / m][r / m][i + 1] = cur;
                 }
             }
         }
