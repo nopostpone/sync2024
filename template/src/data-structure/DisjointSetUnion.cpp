@@ -35,8 +35,9 @@ struct DSU {
 
 // DSU with Rollback
 struct DSU {
-    std::vector<std::pair<int &, int>> his;
-    std::vector<int> f, siz;
+    std::vector<std::pair<int *, int>> his;
+    std::vector<int> f, siz, weight;
+ 
     DSU () {}
     DSU(int n) {
         init(n);
@@ -45,9 +46,10 @@ struct DSU {
         f.resize(n);
         std::iota(f.begin(), f.end(), 0);
         siz.assign(n, 1);
+        weight.assign(n, 0);
     }
     void set(int &a, int b) {
-        his.emplace_back(a, a);
+        his.emplace_back(&a, a); 
         a = b;
     }
     int find(int x) {
@@ -65,9 +67,17 @@ struct DSU {
         if (siz[x] < siz[y]) {
             std::swap(x, y);
         }
+        set(weight[x], weight[x] + weight[y]);
         set(siz[x], siz[x] + siz[y]);
         set(f[y], x);
         return true;
+    }
+    void addWeight(int x, int val) {
+        x = find(x);
+        set(weight[x], weight[x] + val);
+    }
+    int getWeight(int x) {
+        return weight[find(x)];
     }
     bool same(int x, int y) {
         return find(x) == find(y);
@@ -77,16 +87,16 @@ struct DSU {
     }
     void rollback(int t) {
         while (his.size() > t) {
-            auto [x, y] = his.back();
-            x = y;
+            auto [ptr, old] = his.back();
+            *ptr = old;
             his.pop_back();
         }
     }
 };
 
-// Maintain whether each connected component is bipartite
+// Maintain the numbers of bip graph
 struct DSU {
-    std::vector<std::pair<int &, int>> his;
+    std::vector<std::pair<int *, int>> his;
     int n;
     std::vector<int> f, g, bip;
     DSU(int n_) : n(n_), f(n, -1), g(n), bip(n, 1) {}
@@ -98,7 +108,7 @@ struct DSU {
         return {u, v ^ g[x]};
     }
     void set(int &a, int b) {
-        his.emplace_back(a, a);
+        his.emplace_back(&a, a);
         a = b;
     }
     void merge(int a, int b, int &ans) {
@@ -128,8 +138,8 @@ struct DSU {
     }
     void rollback(int t) {
         while (his.size() > t) {
-            auto [x, y] = his.back();
-            x = y;
+            auto [ptr, old] = his.back();
+            *ptr = old;
             his.pop_back();
         }
     }
