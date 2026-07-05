@@ -21,7 +21,7 @@ To compile, run **twice** the following command in this directory (requires TeX 
 latexmk -xelatex main.tex
 ```
 
-Run the command above twice, because the first run will not generate a directory.
+Run the command above twice, because the first run will not generate a content.
 
 Due to differences in Xelatex versions, this template **does not contain Chinese characters**. To add Chinese characters, please add the necessary package files according to your environment.
 
