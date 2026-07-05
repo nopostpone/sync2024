@@ -15,11 +15,13 @@ git sparse-checkout set template
 git checkout main
 ```
 
-To compile, run the following command in this directory (requires TeX Live 2024, XeLaTeX):
+To compile, run **twice** the following command in this directory (requires TeX Live 2024, XeLaTeX):
 
 ```
 latexmk -xelatex main.tex
 ```
+
+Run the command above twice, because the first run will not generate a directory.
 
 Due to differences in Xelatex versions, this template **does not contain Chinese characters**. To add Chinese characters, please add the necessary package files according to your environment.
 
