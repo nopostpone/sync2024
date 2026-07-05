@@ -1,14 +1,16 @@
 \documentclass[10pt]{article}
 
-\usepackage[a4paper, landscape, twocolumn, twoside, top=25pt, bottom=7pt, left=30pt, right=30pt, 
+% Page layout: A4 landscape, two columns, and narrow margins for a compact ICPC notebook.
+\usepackage[a4paper, landscape, twocolumn, twoside, top=25pt, bottom=7pt, left=30pt, right=30pt,
 headheight=20pt, headsep=5pt, footskip=0pt]{geometry}
 \setlength{\columnsep}{0.4in}
 
+% Basic document utilities: links in the table of contents and optional images.
 \usepackage[hidelinks]{hyperref}
 \usepackage{graphicx}
 
+% Header and footer: page number on the outer side, team/user name in the center.
 \usepackage{fancyhdr}
-% 页眉页脚设置
 \pagestyle{fancy}
 \fancyhead[LE,RO]{\bfseries\thepage}
 \fancyhead[LO,RE]{}
@@ -17,29 +19,32 @@ headheight=20pt, headsep=5pt, footskip=0pt]{geometry}
 
 \usepackage{color}
 
-\usepackage{fontspec} % 引入fontspec宏包
+% XeLaTeX font setup. Compile with xelatex, not pdflatex.
+\usepackage{fontspec}
 \setmonofont{FiraCode-Regular.ttf} [
     Contextuals = Alternate,
     Scale = 0.9,
 ]
 
-% 代码字体格式
+% Source code rendering with listings and Fira Code ligature support.
 \usepackage{listings}
 \usepackage{lstfiracode}
 
+% Math and table packages used by formula notes and reference tables.
 \usepackage{lipsum}
 \usepackage{amsmath}
 % \usepackage{enumerate}
-
 \usepackage{booktabs}
 \usepackage{array}
 \usepackage{siunitx}
 \usepackage{float}
 
+% Metadata displayed by the custom title block below.
 \title{ICPC Template Library}
 \author{postpone}
 \date{\today}
 
+% Custom title block: keeps the first page short and template-specific.
 \makeatletter
 \renewcommand{\maketitle} {
     {\Huge \textbf {\@title} \par}
@@ -53,10 +58,13 @@ headheight=20pt, headsep=5pt, footskip=0pt]{geometry}
 }
 \makeatother
 
+% Color palette for C++ syntax highlighting.
 \definecolor{dkgreen}{RGB}{63, 127, 85}
 \definecolor{dkpurple}{RGB}{127, 0, 85}
 \definecolor{dkgrey}{RGB}{127, 127, 127}
 \definecolor{dkred}{RGB}{154, 0, 0}
+
+% Global listings style for all \lstinputlisting source files.
 \lstset {
     basicstyle = \small\ttfamily,
     language = C++,
@@ -82,21 +90,24 @@ headheight=20pt, headsep=5pt, footskip=0pt]{geometry}
 
 \begin{document}
 
+% Cover page and global notes before the generated table of contents.
 \thispagestyle{empty}
 
 \maketitle
+% Reference authors and global indexing convention for snippets.
 ref: jiangly, skip2004, zeemanz, capps
 
 
 \textbf{\color{red}{Attention}}: 0-indexed, $[l, r)$.
 	\tableofcontents
-	
+
+	% Optional avatar/logo block for the cover page.
 	% \begin{figure}[h]
 	% 	\raggedleft
 	% 	\includegraphics[width=0.1\textwidth]{./pic/jiangly.jpg}
 	% 	\label{}
 	% \end{figure}
-	
+
 	\newpage
 	
 	% ==================== 1 ds ====================
@@ -127,64 +138,8 @@ ref: jiangly, skip2004, zeemanz, capps
 	\section{Math}
 	
 	\subsection{Formulas}
-	
-	\begin{itemize}
-		\item Ex Euler's Theorem:
-		      
-		      $$
-		      a^b\equiv
-		      \begin{cases}
-		      	a^{b\bmod {\varphi(m)}} ,                        & \gcd(a, b) = 1                      \\
-		      	a^{\left(b\bmod {\varphi(m)}\right)+\varphi(m)}, & \gcd(a, b) \neq 1,b \geq \varphi(m) 
-		      \end{cases} \pmod m
-		      $$
-		      
-		\item Euclidean algorithm: $\gcd(a, b) = \gcd(b, a\bmod b)$
-		      
-		\item Binomial Inversion
-		      
-		      $f(n) = |\bigcap_{1\leq i \leq n} A_i|, g(n) = |\bigcap_{1\leq i \leq n} A_i^C|$
-		      
-		      $$
-		      \begin{aligned}
-		      	f(n) & =\sum_{i=0}^n(-1)^i\binom{n}{i}g(i)     \\
-		      	g(n) & =\sum_{i=0}^n(-1)^i\binom{n}{i}f(i)
-		      \end{aligned}
-		      $$
+	\input{tex/math/formulas.tex}
 
-			  or
-			  
-			  $f(n)$: select \textbf{at most} $n$ $\leftrightarrow$  $g(n)$: select exactly $n$
-
-			  $$
-			  \begin{aligned}
-		      	f(n) & =\sum_{i=0}^n\binom{n}{i}g(i)           \\
-		      	g(n) & =\sum_{i=0}^n(-1)^{n-i}\binom{n}{i}f(i) 
-		      \end{aligned}
-			  $$
-
-		      $f(x)$: select \textbf{at least} $x$ $\leftrightarrow$  $g(x)$: select exactly $x$
-		      
-		      $$
-		      \begin{aligned}
-		      	f(x) & =\sum_{i=x}^n\binom{i}{x}g(i)           \\
-		      	g(x) & =\sum_{i=x}^n(-1)^{i-x}\binom{i}{x}f(i) 
-		      \end{aligned}
-		      $$
-
-		\item Vandermonde Convolution
-			  $$
-			  \begin{aligned}
-				\sum_{i=0}^k \binom{n}{i}\binom{m}{k - i} &= \binom{n + m}{k} \\
-				\sum_{i=-r}^s \binom{n}{r + i}\binom{m}{s - i} &= \binom{n + m}{r + s} \\
-				\sum_{i=1}^n \binom{n}{i}\binom{n}{i - 1} &= \binom{2n}{n - 1} \\
-				\sum_{i=0}^n \binom{n}{i} ^2 &= \binom{2n}{n} \\
-				\sum_{i=0}^m \binom{n}{i}\binom{m}{i} &= \binom{n + m}{m}
-			  \end{aligned}
-			  $$
-
-	\end{itemize}
-	
 	\subsection{Exgcd}
 	\lstinputlisting{./src/math/Exgcd.cpp}
 	
@@ -289,56 +244,6 @@ ref: jiangly, skip2004, zeemanz, capps
 	
 	\section{Tables}
 	\subsection{Constant}
-	
-	\begin{table}[H]
-		\centering
-		\begin{tabular}{c c c c c c}
-			\toprule
-			\( n \) & \(\log_{10} n\) & \(n!\)                 & \(C(n, n/2)\) & \(\text{LCM}(1\dots n)\) & \(P_n\) \\
-			\midrule
-			2       & 0.30102999      & 2                      & 2             & 2                        & 2       \\
-			3       & 0.47712125      & 6                      & 3             & 6                        & 3       \\
-			4       & 0.60205999      & 24                     & 6             & 12                       & 5       \\
-			5       & 0.69897000      & 120                    & 10            & 60                       & 7       \\
-			6       & 0.77815125      & 720                    & 20            & 60                       & 11      \\
-			7       & 0.84509804      & 5040                   & 35            & 420                      & 15      \\
-			8       & 0.90308998      & 40320                  & 70            & 840                      & 22      \\
-			9       & 0.95424251      & 362880                 & 126           & 2520                     & 30      \\
-			10      & 1               & 3628800                & 252           & 2520                     & 42      \\
-			11      & 1.04139269      & 39916800               & 462           & 27720                    & 56      \\
-			12      & 1.07918125      & 479001600              & 924           & 27720                    & 77      \\
-			15      & 1.17609126      & \(1.31\times 10^{12}\) & 6435          & 360360                   & 176     \\
-			20      & 1.30103000      & \(2.43\times 10^{18}\) & 184756        & 232792560                & 627     \\
-			25      & 1.39794001      & \(1.55\times 10^{25}\) & 5200300       & 26771144400              & 1958    \\
-			30      & 1.47712125      & \(2.65\times 10^{32}\) & 155117520     & \(1.444\times 10^{14}\)  & 5604    \\
-			\bottomrule
-		\end{tabular}
-	\end{table}
-	    
-	\begin{table}[H]
-		\centering
-		\begin{tabular}{c c c c c c c}
-			\toprule
-			\( n \leq \)       & 10          & 100         & \(10^3\)            & \(10^4\)            & \(10^5\)            & \(10^6\)              \\
-			\midrule
-			\(\max \omega(n)\) & 2           & 3           & 4                   & 5                   & 6                   & 7                     \\
-			\(\max d(n)\)      & 4           & 12          & 32                  & 64                  & 128                 & 240                   \\
-			\(\pi(n)\)         & 4           & 25          & 168                 & 1229                & 9592                & 78498                 \\
-			\midrule
-			\( n \leq \)       & \(10^7\)    & \(10^8\)    & \(10^9\)            & \(10^{10}\)         & \(10^{11}\)         & \(10^{12}\)           \\
-			\midrule
-			\(\max \omega(n)\) & 8           & 8           & 9                   & 10                  & 10                  & 11                    \\
-			\(\max d(n)\)      & 448         & 768         & 1344                & 2304                & 4032                & 6720                  \\
-			\(\pi(n)\)         & 664579      & 5761455     & \(5.08\times 10^7\) & \(4.55\times 10^8\) & \(4.12\times 10^9\) & \(3.7\times 10^{10}\) \\
-			\midrule
-			\( n \leq \)       & \(10^{13}\) & \(10^{14}\) & \(10^{15}\)         & \(10^{16}\)         & \(10^{17}\)         & \(10^{18}\)           \\
-			\midrule
-			\(\max \omega(n)\) & 12          & 12          & 13                  & 13                  & 14                  & 15                    \\
-			\(\max d(n)\)      & 10752       & 17280       & 26880               & 41472               & 64512               & 103680                \\
-			\bottomrule
-		\end{tabular}
-	\end{table}
-	
-	Prime number theorem: \(\pi(x) \sim x/\log(x)\)
-	
+	\input{tex/tables/constants.tex}
+
 \end{document}

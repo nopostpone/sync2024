@@ -1,5 +1,3 @@
-using i64 = long long;
-
 constexpr int P = 998244353;
 
 int norm(int x) {

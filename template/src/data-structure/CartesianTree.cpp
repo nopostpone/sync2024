@@ -1,6 +1,6 @@
 // root = rangeMin
-vector<int> lc(n, -1), rc(n, -1);
-vector<int> stk;
+std::vector<int> lc(n, -1), rc(n, -1);
+std::vector<int> stk;
 for (int i = 0; i < n; i++) {
     while (not stk.empty() and p[i] < p[stk.back()]) {
         int x = stk.back();

@@ -1,5 +1,5 @@
 {
-    vector<int> fac(n + 1), invfac(n + 1);
+    std::vector<int> fac(n + 1), invfac(n + 1);
     fac[0] = 1;
     for (int i = 1; i <= n; i++) {
         fac[i] = mul(fac[i - 1], i);

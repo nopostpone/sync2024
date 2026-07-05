@@ -44,7 +44,8 @@
             ask.push_back({x, y, (int)mod.size(), (int)ask.size()});
         }
     }
-    std::ranges::sort(ask, [&](auto i, auto j) {
+    std::sort(ask.begin(), ask.end(),
+        [&](auto i, auto j) {
         if (i[0] / B != j[0] / B)
             return i[0] < j[0];
         if (i[1] / B != j[1] / B)
