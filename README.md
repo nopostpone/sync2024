@@ -2,14 +2,18 @@
 
 This repository contains code, problem solutions, algorithm templates and reference materials collected during programming contests and algorithm practice.
 
-## [Template Here](./template/)
+## ICPC Template Library
 
-## Main Online Judges
+- [pdf](https://nopostpone.github.io/sync2024/template/icpc%20template%20v1.2.pdf)
+
+- [source code](./template/)
+
+## My profile on some main online judges
 
 - codeforces: [postpone](https://codeforces.com/profile/postpone)
 
 - luogu: [postpone](https://www.luogu.com.cn/user/1281794)
 
-- atcoder: [potpone](https://atcoder.jp/users/potpone)
+- atcoder: [nopostpone](https://atcoder.jp/users/nopostpone)
 
 - nowcoder: [postpone](https://ac.nowcoder.com/acm/contest/profile/499494289)
