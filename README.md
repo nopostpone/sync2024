@@ -4,7 +4,7 @@ This repository contains code, problem solutions, algorithm templates and refere
 
 ## ICPC Template Library
 
-- [pdf](https://nopostpone.github.io/sync2024/template/icpc%20template%20v1.2.pdf)
+- [pdf](https://nopostpone.github.io/sync2024/template/icpc-template-1-3.pdf)
 
 - [source code](./template/)
 
