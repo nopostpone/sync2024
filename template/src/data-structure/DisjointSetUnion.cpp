@@ -1,5 +1,6 @@
 struct DSU {
     std::vector<int> f, siz;
+
     DSU() {}
     DSU(int n) {
         init(n);
@@ -18,6 +19,7 @@ struct DSU {
     bool same(int x, int y) {
         return find(x) == find(y);
     }
+    // merge y to x
     bool merge(int x, int y) {
         x = find(x);
         y = find(y);
@@ -33,11 +35,64 @@ struct DSU {
     }
 };
 
+// Weighted DSU
+// Amortized O(\alpha(n)), worst-case O(log n)
+template <class T>
+struct DSU {
+    std::vector<int> f, siz;
+    std::vector<T> w;
+
+    DSU() {}
+    DSU(int n) {
+        init(n);
+    }
+    void init(int n) {
+        f.resize(n);
+        std::iota(f.begin(), f.end(), 0);
+        siz.assign(n, 1);
+        w.assign(n, T());
+    }
+    int find(int x) {
+        if (x != f[x]) {
+            int y = find(f[x]);
+            w[x] += w[f[x]];
+            f[x] = y;
+        }
+        return f[x];
+    }
+    bool same(int x, int y) {
+        return find(x) == find(y);
+    }
+    // 
+    bool merge(int x, int y, T k) {
+        int rx = find(x);
+        int ry = find(y);
+        if (rx == ry) {
+            return w[x] - w[y] == k;
+        }
+        // union by rank
+        if (siz[rx] < siz[ry]) {
+            f[rx] = ry;
+            w[rx] = k - w[x] + w[y];
+            siz[ry] += siz[rx];
+        } else {
+            f[ry] = rx;
+            w[ry] = -k + w[x] - w[y];
+            siz[rx] += siz[ry];
+        }
+        return true;
+    }
+    int size(int x) {
+        return siz[find(x)];
+    }
+};
+
+
 // DSU with Rollback
 struct DSU {
     std::vector<std::pair<int *, int>> his;
-    std::vector<int> f, siz, weight;
- 
+    std::vector<int> f, siz;
+
     DSU () {}
     DSU(int n) {
         init(n);
@@ -46,7 +101,6 @@ struct DSU {
         f.resize(n);
         std::iota(f.begin(), f.end(), 0);
         siz.assign(n, 1);
-        weight.assign(n, 0);
     }
     void set(int &a, int b) {
         his.emplace_back(&a, a); 
@@ -67,71 +121,12 @@ struct DSU {
         if (siz[x] < siz[y]) {
             std::swap(x, y);
         }
-        set(weight[x], weight[x] + weight[y]);
         set(siz[x], siz[x] + siz[y]);
         set(f[y], x);
         return true;
     }
-    void addWeight(int x, int val) {
-        x = find(x);
-        set(weight[x], weight[x] + val);
-    }
-    int getWeight(int x) {
-        return weight[find(x)];
-    }
     bool same(int x, int y) {
         return find(x) == find(y);
-    }
-    int cur() {
-        return his.size();
-    }
-    void rollback(int t) {
-        while (his.size() > t) {
-            auto [ptr, old] = his.back();
-            *ptr = old;
-            his.pop_back();
-        }
-    }
-};
-
-// Maintain the numbers of bip graph
-struct DSU {
-    std::vector<std::pair<int *, int>> his;
-    int n;
-    std::vector<int> f, g, bip;
-    DSU(int n_) : n(n_), f(n, -1), g(n), bip(n, 1) {}
-    std::pair<int, int> find(int x) {
-        if (f[x] < 0) {
-            return {x, 0};
-        }
-        auto [u, v] = find(f[x]);
-        return {u, v ^ g[x]};
-    }
-    void set(int &a, int b) {
-        his.emplace_back(&a, a);
-        a = b;
-    }
-    void merge(int a, int b, int &ans) {
-        auto [u, xa] = find(a);
-        auto [v, xb] = find(b);
-        int w = xa ^ xb ^ 1;
-        if (u == v) {
-            if (bip[u] && w) {
-                set(bip[u], 0);
-                ans--;
-            }
-            return;
-        }
-        if (f[u] > f[v]) {
-            std::swap(u, v);
-        }
-        ans -= bip[u];
-        ans -= bip[v];
-        set(bip[u], bip[u] && bip[v]);
-        set(f[u], f[u] + f[v]);
-        set(f[v], u);
-        set(g[v], w);
-        ans += bip[u];
     }
     int cur() {
         return his.size();
