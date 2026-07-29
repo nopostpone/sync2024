@@ -114,15 +114,15 @@ void solve()  {
     int q;
     std::cin >> a >> b >> q;
 
-    bool swapped = false;
+    bool swap = false;
     if (a > b) {
-        swapped = true;
+        swap = true;
         std::swap(a, b);
     }
 
-    i64 diff = b - a;
+    i64 d = b - a;
 
-    if (diff == 0) {
+    if (d == 0) {
         for (int i = 0; i < q; i++) {
             i64 k;
             std::cin >> k;
@@ -131,32 +131,32 @@ void solve()  {
         }
         return;
     }
-    std::map<i64, int> pf;
+    std::map<i64, int> f;
     int cnt = 0;
 
     {
-        i64 td = diff;
-        auto fac = factorize(diff);
+        i64 curD = d;
+        auto fac = factorize(d);
     
         for (auto x : fac) {
-            while (td % x == 0) {
-                td /= x;
-                pf[x]++;
+            while (curD % x == 0) {
+                curD /= x;
+                f[x]++;
                 cnt++;
             }
         }
-        if (td != 1) {
-            pf[td]++;
+        if (curD != 1) {
+            f[curD]++;
             cnt++;
         }
     }
 
     i64 x = a;
     i64 cur = 0;
-    std::vector<std::array<i64, 3>> events {{0, diff, x}};
+    std::vector<std::array<i64, 3>> events {{0, d, x}};
     while (cnt > 0) {
         i64 m = 1e18;
-        for (auto [x1, y] : pf) {
+        for (auto [x1, y] : f) {
             if (y == 0) {
                 continue;
             }
@@ -164,15 +164,15 @@ void solve()  {
         }
         x += m;
         cur += m;
-        for (auto &[x1, y] : pf) {
-            while (x % x1 == 0 and diff % x1 == 0) {
-                diff /= x1;
+        for (auto &[x1, y] : f) {
+            while (x % x1 == 0 and d % x1 == 0) {
+                d /= x1;
                 x /= x1;
                 y--;
                 cnt--;
             }
         }
-        events.push_back({cur, diff, x});
+        events.push_back({cur, d, x});
     }
 
     i64 max = 1e18;
@@ -186,7 +186,7 @@ void solve()  {
 
         i64 a = x;
         i64 b = x + d;
-        if (swapped) {
+        if (swap) {
             std::swap(a, b);
         }
         std::cout << a << " " << b << "\n";
