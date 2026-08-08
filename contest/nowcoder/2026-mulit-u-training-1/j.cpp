@@ -34,7 +34,7 @@ bool isRoyal(hand a) {
     return false;
 }
 
-bool isStraight(hand a) {
+bool isStraight(hand &a) {
     // a is sorted
     static int sp[5] {2, 3, 4, 5, 14};
     bool same = true;
@@ -42,6 +42,9 @@ bool isStraight(hand a) {
         same &= (a[i][0] == sp[i]);
     }
     if (same) {
+        for (int i = 0; i < 5; i++) {
+            a[i][0] = i + 1;
+        }
         return true;
     }
     for (int i = 1; i < 5; i++) {
@@ -101,10 +104,30 @@ type getType(hand &a) {
     return highcard;
 }
 
-int compare(hand a, hand b) {
-    rgs::sort(a);
-    rgs::sort(b);
+u64 getScore(hand a) {
+    u64 res = getType(a);
+    std::array<int, 15> cnt {};
+    for (int i = 0; i < 5; i++) {
+        cnt[a[i][0]]++;
+    }
+    rgs::sort(a, [&](auto x, auto y) {
+        return cnt[x[0]] > cnt[y[0]] or (cnt[x[0]] == cnt[y[0]] and x[0] > y[0]);
+    });
 
+    for (int i = 0; i < 5; i++) {
+        res = (res << 4) | a[i][0];
+    }
+    return res;
+}
+
+int compare(hand a, hand b) {
+    auto sa = getScore(a);
+    auto sb = getScore(b);
+
+    if (sa == sb) {
+        return 0;
+    }
+    return (sa > sb ? 1 : -1);
 }
 constexpr int rank2num(char c) {
     if (c == 'A') {
@@ -119,9 +142,14 @@ constexpr int rank2num(char c) {
     if (c == 'K') {
         return 13;
     }
+    if (c == 'T') {
+        return 10;
+    }
 
     return c - '0';
 }
+
+constexpr std::string Suit = "CDSH";
 
 void solve() {
     hand c, p;
@@ -136,7 +164,54 @@ void solve() {
         p[i] = {rank2num(rank), suit};
     }
     
-    
+    std::set<std::array<int, 2>> vis;
+    for (int i = 0; i < 4; i++) {
+        vis.insert(c[i]);
+        vis.insert(p[i]);
+    }
+
+    int wincnt = 0;
+    for (int i = 2; i <= 14; i++) {
+        for (int j : Suit) {
+            if (vis.contains({i, j})) {
+                continue;
+            }
+            p[4] = {i, j};
+            vis.insert(p[4]);
+            
+            bool win = false, draw = false;
+
+            for (int ni = 2; ni <= 14 and not win; ni++) {
+                for (int nj : Suit) {
+                    if (vis.contains({ni, nj})) {
+                        continue;
+                    }
+                    c[4] = {ni, nj};
+                    int res = compare(c, p);
+                    if (res == 1) {
+                        win = true;
+                        break;
+                    } else if (res == 0) {
+                        draw = true;
+                    }
+                }
+            }
+            if (not win and not draw) {
+                std::cout << "GeiWoCaPiXie\n";
+                return;
+            } else if (win) {
+                wincnt++;
+            }
+
+            vis.erase(p[4]);
+        }
+    }
+
+    if (wincnt == 44) {
+        std::cout << "WoYaoYanPai\n";
+    } else {
+        std::cout << "PaiMeiYouWenTi\n";
+    }
 }
 
 int main() {
@@ -145,9 +220,9 @@ int main() {
 
     {
         int p = 0;
-        for (int j : {'C', 'D', 'S', 'H'}) {
-            for (int i = 1; i <= 14; i++) {
-                Royal[p] = {i, j};
+        for (int j : Suit) {
+            for (int i = 10; i <= 14; i++) {
+                Royal[p][i - 10] = {i, j};
             }
             p++;
         }
