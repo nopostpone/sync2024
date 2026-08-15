@@ -24,13 +24,13 @@ i64 square(const Point &a) {
     return a.x * a.x + a.y * a.y;
 }
 double length(const Point &a) {
-    return std::sqrt(square(a));
+    return sqrt(square(a));
 }
 
 i64 get(const Point &p, const Line &l) {
     return cross(l.b - l.a, p - l.a);
 }
-bool pointInConvex(const Point &a, const std::vector<Point> &p) {
+bool pointInConvex(const Point &a, const vector<Point> &p) {
     int n = p.size();
     if (get(a, Line(p[0], p[1])) < 0) {
         return false;
@@ -54,7 +54,7 @@ bool pointInConvex(const Point &a, const std::vector<Point> &p) {
     return get(a, Line(p[lo - 1], p[lo])) >= 0;
 }
 
-std::vector<Point> convexHull(std::vector<Point> a) {
+vector<Point> convexHull(vector<Point> a) {
     int n = a.size();
     if (n <= 1) {
         return a;
@@ -65,7 +65,7 @@ std::vector<Point> convexHull(std::vector<Point> a) {
             return a.x < b.x or (a.x == b.x and a.y < b.y);
         });
     
-    std::vector<Point> h;
+    vector<Point> h;
 
     for (int i = 0; i < n; i++) {
         while (h.size() >= 2 and cross(h[h.size() - 2] - a[i], h.back() - a[i]) <= 0) {
@@ -83,16 +83,16 @@ std::vector<Point> convexHull(std::vector<Point> a) {
     }
 
     h.pop_back();
-    return h;
+    return move(h);
 }
 
-std::vector<Point> minkowski(const std::vector<Point> &a, const std::vector<Point> &b) {
+vector<Point> minkowski(const vector<Point> &a, const vector<Point> &b) {
     int n = a.size(), m = b.size();
     if (n == 0 or m == 0) {
         return {};
     }
 
-    std::vector<Point> c{a[0] + b[0]};
+    vector<Point> c{a[0] + b[0]};
     int i = 0, j = 0;
     while (i < n and j < m) {
         auto va = a[(i + 1) % n] - a[i];
@@ -121,5 +121,14 @@ std::vector<Point> minkowski(const std::vector<Point> &a, const std::vector<Poin
     }
     c.pop_back();
 
-    return c;
+    return move(c);
+}
+
+i64 area(const vector<Point> &p) {
+    i64 res = 0;
+    int n = p.size();
+    for (int i = 0; i < n; i++) {
+        res += cross(p[i], p[(i + 1) % n]);
+    }
+    return res;
 }
